@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Health — Mar 13–16, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131929;
+    --surface2: #1a2235;
+    --surface3: #1f2940;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --green: #22d37a;
+    --green-dim: rgba(34,211,122,0.12);
+    --yellow: #f5c842;
+    --yellow-dim: rgba(245,200,66,0.12);
+    --red: #f24c4c;
+    --red-dim: rgba(242,76,76,0.12);
+    --blue: #4c9cf2;
+    --blue-dim: rgba(76,156,242,0.12);
+    --orange: #f28c4c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: #fff;
+    line-height: 1;
+  }
+  .header h1 span { color: var(--green); }
+  .header-sub { color: var(--muted); font-size: 13px; margin-top: 8px; letter-spacing: 0.3px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--yellow-dim); border: 1px solid rgba(245,200,66,0.3);
+    padding: 8px 18px; border-radius: 30px;
+  }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 10px var(--yellow); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-pill span { font-size: 12px; color: var(--yellow); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 36px;
+    border-left: 4px solid var(--red);
+    background: linear-gradient(135deg, rgba(242,76,76,0.08) 0%, rgba(11,15,26,0) 60%);
+    border: 1px solid rgba(242,76,76,0.2);
+    border-left: 4px solid var(--red);
+  }
+  .summary-box p { font-size: 14px; color: var(--text); line-height: 1.8; }
+  .summary-box strong { color: #fff; font-weight: 600; }
+
+  /* SECTION */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: #fff;
+    margin: 40px 0 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; padding: 3px 10px; border-radius: 20px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 500;
+  }
+  .badge-red    { background: var(--red-dim);    color: var(--red);    }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  }
+  .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 36px; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+  .kpi::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; border-radius:14px 14px 0 0; }
+  .kpi.g::before { background:var(--green); }
+  .kpi.r::before { background:var(--red); }
+  .kpi.y::before { background:var(--yellow); }
+  .kpi.b::before { background:var(--blue); }
+  .kpi.o::before { background:var(--orange); }
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+  .kpi-val { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .kpi.g .kpi-val { color: var(--green); }
+  .kpi.r .kpi-val { color: var(--red); }
+  .kpi.y .kpi-val { color: var(--yellow); }
+  .kpi.b .kpi-val { color: var(--blue); }
+  .kpi.o .kpi-val { color: var(--orange); }
+  .kpi-sub { font-size: 11px; color: var(--muted); }
+
+  /* COMPARISON TABLE */
+  .compare-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 36px;
+  }
+  .compare-header {
+    display: grid; grid-template-columns: 220px 1fr 1fr;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .ch-cell {
+    padding: 14px 20px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ch-cell + .ch-cell { border-left: 1px solid var(--border); }
+  .ch-cell.curr { color: var(--green); font-weight: 600; }
+  .ch-cell.prev { color: var(--muted); }
+  .pd { width:8px;height:8px;border-radius:50%; }
+  .pd.g { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .pd.m { background:var(--muted); }
+
+  .compare-section-label {
+    padding: 10px 20px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .compare-row {
+    display: grid; grid-template-columns: 220px 1fr 1fr;
+    border-top: 1px solid var(--border);
+  }
+  .cr-metric {
+    padding: 16px 20px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .cr-metric strong { font-size: 13px; color: var(--text); font-weight: 500; }
+  .cr-metric span { font-size: 11px; color: var(--muted); }
+  .cr-prev, .cr-curr {
+    padding: 16px 20px;
+    border-left: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .cr-curr { background: rgba(34,211,122,0.03); }
+  .big { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .vsub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .trend {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+  }
+  .t-up-bad   { background:var(--red-dim);    color:var(--red);    }
+  .t-down-bad { background:var(--red-dim);    color:var(--red);    }
+  .t-up-good  { background:var(--green-dim);  color:var(--green);  }
+  .t-warn     { background:var(--yellow-dim); color:var(--yellow); }
+  .t-neutral  { background:rgba(107,122,153,.15); color:var(--muted); }
+
+  /* PROGRESS BARS */
+  .pb-wrap { margin-bottom: 16px; }
+  .pb-head { display:flex; justify-content:space-between; margin-bottom:6px; }
+  .pb-label { font-size:12px; color:var(--muted); }
+  .pb-vals { display:flex; gap:8px; align-items:center; }
+  .pb-prev-val { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+  .pb-curr-val { font-size:13px; font-weight:500; font-family:'DM Mono',monospace; }
+  .pb-track { height:10px; background:var(--surface2); border-radius:10px; position:relative; overflow:hidden; }
+  .pb-prev-bar { height:100%; border-radius:10px; position:absolute; top:0; left:0; opacity:0.3; }
+  .pb-curr-bar { height:100%; border-radius:10px; position:absolute; top:0; left:0; }
+  .pb-target { position:absolute; top:0; bottom:0; width:2px; background:var(--green); opacity:0.7; }
+
+  /* VPU CHART */
+  .vpu-chart { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .bar-chart-wrap { }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .bar-sys { font-size:12px; color:var(--muted); width:40px; flex-shrink:0; }
+  .bar-track { flex:1; height:20px; background:var(--surface2); border-radius:6px; position:relative; overflow:hidden; }
+  .bar-prev { height:100%; position:absolute; top:0; left:0; border-radius:6px; opacity:0.35; }
+  .bar-curr { height:100%; position:absolute; top:0; left:0; border-radius:6px; }
+  .bar-label { font-family:'DM Mono',monospace; font-size:11px; width:80px; text-align:right; flex-shrink:0; }
+
+  /* SW VERSIONS TABLE */
+  .versions-table { width:100%; border-collapse:collapse; }
+  .versions-table th {
+    font-size:10px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--muted); padding:10px 14px; text-align:left; font-weight:500;
+    border-bottom:1px solid var(--border);
+  }
+  .versions-table td {
+    padding:12px 14px; border-top:1px solid var(--border);
+    font-size:13px;
+  }
+  .versions-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .ver-badge {
+    font-family:'DM Mono',monospace; font-size:12px;
+    padding:2px 8px; border-radius:6px;
+    background:var(--surface2); color:var(--text);
+  }
+  .ver-badge.hot { background:var(--red-dim); color:var(--red); }
+  .crash-bar-wrap { display:flex; align-items:center; gap:8px; }
+  .crash-mini { height:8px; border-radius:4px; background:var(--red); }
+  .crash-num { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
+
+  /* SPORT TAGS */
+  .sport-list { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .sport-tag {
+    display:flex; align-items:center; gap:6px;
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:20px; padding:6px 14px;
+    font-size:13px;
+  }
+  .sport-tag.top { border-color:rgba(242,76,76,0.3); background:var(--red-dim); }
+  .sport-rank { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+
+  /* ALERTS */
+  .alert-card {
+    border-radius:12px; padding:16px 20px; margin-bottom:12px;
+    border:1px solid;
+  }
+  .alert-card.p1 { background:var(--red-dim); border-color:rgba(242,76,76,0.3); }
+  .alert-card.p2 { background:var(--yellow-dim); border-color:rgba(245,200,66,0.2); }
+  .alert-card.p3 { background:rgba(107,122,153,0.1); border-color:rgba(107,122,153,0.2); }
+  .alert-header { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .p-badge {
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:600;
+    padding:3px 10px; border-radius:6px;
+  }
+  .p-badge.p1 { background:var(--red); color:#fff; }
+  .p-badge.p2 { background:var(--yellow); color:#000; }
+  .p-badge.p3 { background:var(--muted); color:#fff; }
+  .alert-name { font-size:14px; font-weight:500; color:#fff; }
+  .alert-sub { font-size:12px; color:var(--muted); }
+  .alert-tag { font-family:'DM Mono',monospace; font-size:11px; padding:2px 8px; border-radius:4px; background:var(--surface2); color:var(--muted); margin-left:auto; }
+
+  /* ACTIONS */
+  .action-list { display:flex; flex-direction:column; gap:10px; }
+  .action-item {
+    display:flex; gap:14px; align-items:flex-start;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:16px 18px;
+  }
+  .action-num {
+    font-family:'DM Mono',monospace; font-size:18px; font-weight:500;
+    line-height:1; flex-shrink:0; margin-top:2px;
+  }
+  .action-num.r { color:var(--red); }
+  .action-num.y { color:var(--yellow); }
+  .action-num.b { color:var(--blue); }
+  .action-title { font-size:14px; font-weight:500; color:#fff; margin-bottom:4px; }
+  .action-desc { font-size:12px; color:var(--muted); }
+
+  /* CARD */
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:24px;
+  }
+  .card-title { font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); margin-bottom:16px; }
+
+  /* LOG SOURCES */
+  .log-sources { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .log-card {
+    background:var(--surface2); border-radius:12px; padding:16px;
+  }
+  .log-source { font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .log-num { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1; margin-bottom:6px; }
+  .log-note { font-size:11px; color:var(--muted); }
+  .log-bar { height:6px; border-radius:10px; background:var(--surface); margin-top:10px; overflow:hidden; }
+  .log-fill { height:100%; border-radius:10px; }
+
+  /* GRID LAYOUTS */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top:48px; padding-top:20px; border-top:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .footer-note { font-size:11px; color:var(--muted); font-style:italic; }
+  .footer-brand { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .kpi:nth-child(1){animation-delay:.05s}
+  .kpi:nth-child(2){animation-delay:.1s}
+  .kpi:nth-child(3){animation-delay:.15s}
+  .kpi:nth-child(4){animation-delay:.2s}
+  .kpi:nth-child(5){animation-delay:.25s}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Platform <span>Health</span></h1>
+    <div class="header-sub">Week-over-Week Executive Comparison &nbsp;·&nbsp; Pixellot Production &nbsp;·&nbsp; Mar 13–16, 2026</div>
+  </div>
+  <div class="status-pill">
+    <div class="status-dot"></div>
+    <span>Degraded — Trending Worse</span>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <p><strong>Bottom line:</strong> Platform health has <strong>deteriorated week-over-week</strong> across all key dimensions. Recording success rates fell further below target (Cloud HD: 85.5% → 88% with partial recovery; Local HD/Pano: 80.7% → 82.4%, still far below 90% threshold). VPU crashes <strong>increased +36%</strong> (4,047 S2 events vs 3,427 last period) — 5.13.8 and 5.21.1 account for 94% of all crashes with no resolution in sight. High-severity logs <strong>grew +88%</strong> driven by a new dominant error source (venice-prod-gpu, 4.79M errors). The P1 Fatal Error in vidswap-prod persists unresolved. Soccer and Basketball face the highest customer impact exposure.</p>
+</div>
+
+<!-- KPI ROW -->
+<div class="kpi-row">
+  <div class="kpi b">
+    <div class="kpi-label">Total Events</div>
+    <div class="kpi-val">4,643</div>
+    <div class="kpi-sub">▲ +20.7% · 3,286 venues</div>
+  </div>
+  <div class="kpi r">
+    <div class="kpi-label">P1 Fatal Alert</div>
+    <div class="kpi-val">1</div>
+    <div class="kpi-sub">vidswap-prod · Unresolved</div>
+  </div>
+  <div class="kpi y">
+    <div class="kpi-label">Active Alerts</div>
+    <div class="kpi-val">9</div>
+    <div class="kpi-sub">6 Error · 2 Critical · 1 Warn</div>
+  </div>
+  <div class="kpi o">
+    <div class="kpi-label">VPU Crashes</div>
+    <div class="kpi-val">5,524</div>
+    <div class="kpi-sub">▲ +36% WoW</div>
+  </div>
+  <div class="kpi r">
+    <div class="kpi-label">High-Sev Logs</div>
+    <div class="kpi-val">6.96M</div>
+    <div class="kpi-sub">▲ +88% WoW</div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section-title">Week-over-Week Comparison <span class="badge badge-yellow">Mar 6–8 vs Mar 13–16</span></div>
+
+<div class="compare-wrap">
+  <div class="compare-header">
+    <div class="ch-cell" style="color:var(--muted)">Metric</div>
+    <div class="ch-cell prev"><div class="pd m"></div>Previous: Mar 6–8, 2026</div>
+    <div class="ch-cell curr"><div class="pd g"></div>Current: Mar 13–16, 2026</div>
+  </div>
+
+  <!-- Platform Volume -->
+  <div class="compare-section-label" style="background:rgba(76,156,242,0.05);color:var(--blue)">📊 Platform Volume</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Total Events</strong><span>Weekend workload</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted)">3,846</div><div class="vsub">2,245 distinct venues</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--blue)">4,643</div><div class="vsub">3,286 distinct venues</div></div><span class="trend t-up-bad">▲ +20.7%</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Active Alerts</strong><span>Coralogix / Datadog</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">12</div><div class="vsub">7 Errors · 2 Critical</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--yellow)">9</div><div class="vsub">6 Errors · 2 Critical · 1 Warn</div></div><span class="trend t-up-good">▼ −25%</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>P1 Fatal Error</strong><span>vidswap-prod</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">1</div><div class="vsub">No RCA completed</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">1</div><div class="vsub">Still unresolved — 2nd period</div></div><span class="trend t-neutral">= Same</span></div>
+  </div>
+
+  <!-- Recording -->
+  <div class="compare-section-label" style="background:rgba(242,76,76,0.05);color:var(--red)">🎬 Recording Success (target: 90%)</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Cloud HD</strong><span>vs 90% target</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">85.5%</div><div class="vsub">↓ from 89.5% prior period</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--yellow)">88.0%</div><div class="vsub">Still −2pp below target</div></div><span class="trend t-warn">▲ +2.5pp</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Local HD</strong><span>vs 90% target</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">80.7%</div><div class="vsub">↓ from 87.1% prior period</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">82.4%</div><div class="vsub">Still −7.6pp below target</div></div><span class="trend t-warn">▲ +1.7pp</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Cloud Pano</strong><span>vs 90% target</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">~80.7%</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">~75%</div><div class="vsub">−15pp below target</div></div><span class="trend t-down-bad">▼ Degraded</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Local Pano</strong><span>vs 90% target</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--red)">~80.7%</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">~72%</div><div class="vsub">−18pp below target · worst channel</div></div><span class="trend t-down-bad">▼ Degraded</span></div>
+  </div>
+
+  <!-- VPU -->
+  <div class="compare-section-label" style="background:rgba(245,200,66,0.05);color:var(--yellow)">💥 VPU Crashes</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>S2 Crashes</strong><span>Dominant fleet</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted)">3,427</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">4,047</div><div class="vsub">73% of all crashes</div></div><span class="trend t-up-bad">▲ +18%</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Total VPU Crashes</strong><span>All system types</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted)">~4,060</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">5,524</div></div><span class="trend t-up-bad">▲ +36%</span></div>
+  </div>
+
+  <!-- Infrastructure -->
+  <div class="compare-section-label" style="background:rgba(34,211,122,0.04);color:var(--green)">🌐 API Layer (Grafana)</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>MBE Requests</strong><span>3-day window</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted)">~2M</div><div class="vsub">Nearly all 2XX</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--green)">2.5M</div><div class="vsub">Stable success rate</div></div><span class="trend t-up-good">▲ +25%</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>MBE Latency Peak</strong><span>Max observed</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--yellow); font-size:20px">~6 min</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--yellow); font-size:20px">6.67 min</div></div><span class="trend t-neutral">≈ Stable</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>ABE Latency Spike</strong><span>Anomalous peak</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--yellow); font-size:20px">High</div><div class="vsub">Mar 7–8 spikes noted</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red); font-size:20px">~7,200ms</div><div class="vsub">Sharp spike Mar 15 · cause unknown</div></div><span class="trend t-up-bad">▲ Worsened</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>High-Severity Logs</strong><span>Coralogix</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted)">~3.7M</div><div class="vsub">prod-eks 700K dominant</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">6.96M</div><div class="vsub">venice-prod-gpu 4.79M NEW dominant</div></div><span class="trend t-up-bad">▲ +88%</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Clipping Pods (pending)</strong><span>K8s bad phase</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--yellow)">12</div><div class="vsub">Scheduling issue</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">12</div><div class="vsub">Unresolved — 2nd period</div></div><span class="trend t-neutral">= Unresolved</span></div>
+  </div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>vs-web Pods (failed)</strong><span>K8s bad phase</span></div>
+    <div class="cr-prev"><div><div class="big" style="color:var(--muted); font-size:20px">N/A</div><div class="vsub">Not flagged</div></div></div>
+    <div class="cr-curr"><div><div class="big" style="color:var(--red)">8</div><div class="vsub">New failed pods this period</div></div><span class="trend t-up-bad">▲ New issue</span></div>
+  </div>
+</div>
+
+<!-- RECORDING PROGRESS BARS -->
+<div class="section-title">Recording Success Rates <span class="badge badge-red">All below 90% target</span></div>
+<div class="card" style="margin-bottom:36px;">
+  <div style="display:flex;gap:24px;margin-bottom:24px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:#6b7a99;opacity:0.4;"></div><span style="font-size:12px;color:var(--muted)">Mar 6–8</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:12px;height:12px;border-radius:3px;background:var(--red);"></div><span style="font-size:12px;color:var(--muted)">Mar 13–16</span></div>
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:2px;background:var(--green);"></div><span style="font-size:12px;color:var(--green)">90% target</span></div>
+  </div>
+
+  <div class="pb-wrap">
+    <div class="pb-head"><span class="pb-label">Cloud HD</span><div class="pb-vals"><span class="pb-prev-val">85.5%</span><span style="color:var(--muted);font-size:11px">→</span><span class="pb-curr-val" style="color:var(--yellow)">88.0%</span></div></div>
+    <div class="pb-track"><div class="pb-prev-bar" style="width:85.5%;background:#6b7a99;"></div><div class="pb-curr-bar" style="width:88%;background:var(--yellow);"></div><div class="pb-target" style="left:90%;"></div></div>
+  </div>
+  <div class="pb-wrap">
+    <div class="pb-head"><span class="pb-label">Local HD</span><div class="pb-vals"><span class="pb-prev-val">80.7%</span><span style="color:var(--muted);font-size:11px">→</span><span class="pb-curr-val" style="color:var(--red)">82.4%</span></div></div>
+    <div class="pb-track"><div class="pb-prev-bar" style="width:80.7%;background:#6b7a99;"></div><div class="pb-curr-bar" style="width:82.4%;background:var(--red);"></div><div class="pb-target" style="left:90%;"></div></div>
+  </div>
+  <div class="pb-wrap">
+    <div class="pb-head"><span class="pb-label">Cloud Pano</span><div class="pb-vals"><span class="pb-prev-val">~80.7%</span><span style="color:var(--muted);font-size:11px">→</span><span class="pb-curr-val" style="color:var(--red)">~75%</span></div></div>
+    <div class="pb-track"><div class="pb-prev-bar" style="width:80.7%;background:#6b7a99;"></div><div class="pb-curr-bar" style="width:75%;background:var(--red);opacity:0.8;"></div><div class="pb-target" style="left:90%;"></div></div>
+  </div>
+  <div class="pb-wrap">
+    <div class="pb-head"><span class="pb-label">Local Pano</span><div class="pb-vals"><span class="pb-prev-val">~80.7%</span><span style="color:var(--muted);font-size:11px">→</span><span class="pb-curr-val" style="color:var(--red)">~72%</span></div></div>
+    <div class="pb-track"><div class="pb-prev-bar" style="width:80.7%;background:#6b7a99;"></div><div class="pb-curr-bar" style="width:72%;background:var(--red);opacity:0.7;"></div><div class="pb-target" style="left:90%;"></div></div>
+  </div>
+  <div style="margin-top:16px;padding:12px 16px;background:var(--red-dim);border-radius:8px;border:1px solid rgba(242,76,76,0.2);font-size:12px;color:var(--red);">
+    ⚠ Below 90% target for the <strong>second consecutive period</strong>. With +20% event volume, the absolute number of affected customers is larger than last week even where percentages slightly improved.
+  </div>
+</div>
+
+<!-- VPU + SPORT -->
+<div class="two-col" style="margin-bottom:36px;">
+
+  <!-- VPU -->
+  <div class="card">
+    <div class="card-title">VPU Crashes by System Type (Grafana)</div>
+    <div class="bar-row">
+      <span class="bar-sys">S2</span>
+      <div class="bar-track"><div class="bar-prev" style="width:73%;background:#6b7a99;"></div><div class="bar-curr" style="width:86%;background:var(--red);"></div></div>
+      <span class="bar-label" style="color:var(--red)">4,047 ▲+18%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-sys">S2S</span>
+      <div class="bar-track"><div class="bar-prev" style="width:8%;background:#6b7a99;"></div><div class="bar-curr" style="width:16%;background:var(--yellow);"></div></div>
+      <span class="bar-label" style="color:var(--yellow)">765 ▲+91%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-sys">S3</span>
+      <div class="bar-track"><div class="bar-prev" style="width:5%;background:#6b7a99;"></div><div class="bar-curr" style="width:14%;background:var(--orange);"></div></div>
+      <span class="bar-label" style="color:var(--orange)">648 ▲+195%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-sys">Other</span>
+      <div class="bar-track"><div class="bar-prev" style="width:0.3%;background:#6b7a99;"></div><div class="bar-curr" style="width:1.4%;background:var(--muted);"></div></div>
+      <span class="bar-label" style="color:var(--muted)">64 ▲+392%</span>
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">
+      <div style="display:flex;gap:16px;">
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:2px;background:#6b7a99;opacity:0.4;"></div>Mar 6–8</div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:2px;background:var(--red);"></div>Mar 13–16</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:var(--red-dim);border-radius:8px;font-size:12px;color:var(--red);">
+      5.13.8 + 5.21.1 = <strong>94%</strong> of all crashes. Unresolved 2nd period.
+    </div>
+  </div>
+
+  <!-- Sport -->
+  <div class="card">
+    <div class="card-title">Top Sports by Event Volume</div>
+    <div class="sport-list">
+      <div class="sport-tag top">⚽ <span>Soccer</span> <span class="sport-rank">#1</span></div>
+      <div class="sport-tag top">🏀 <span>Basketball</span> <span class="sport-rank">#2</span></div>
+      <div class="sport-tag">🥍 <span>Lacrosse</span> <span class="sport-rank">#3</span></div>
+      <div class="sport-tag">🏐 <span>Volleyball</span> <span class="sport-rank">#4</span></div>
+      <div class="sport-tag">⚾ <span>Baseball</span> <span class="sport-rank">#5</span></div>
+      <div class="sport-tag">🏒 <span>Ice Hockey</span> <span class="sport-rank">#6</span></div>
+      <div class="sport-tag">🥎 <span>Softball</span> <span class="sport-rank">#7</span></div>
+      <div class="sport-tag">🏑 <span>Field Hockey</span> <span class="sport-rank">#8</span></div>
+      <div class="sport-tag">🏈 <span>Amer. Football</span> <span class="sport-rank">#9</span></div>
+    </div>
+    <div style="padding:12px 14px;background:var(--red-dim);border-radius:8px;border:1px solid rgba(242,76,76,0.2);font-size:12px;color:var(--muted);">
+      <span style="color:var(--red);font-weight:500;">⚠ Highest customer impact risk:</span><br>Soccer &amp; Basketball (#1 &amp; #2) have the highest event volume exposed to the current 12–28% recording failure rate. Elevated support tickets expected.
+    </div>
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+      <div class="card-title" style="margin-bottom:8px;">vs Mar 6–8 (ref)</div>
+      <div style="font-size:12px;color:var(--muted);">Soccer · Basketball · Lacrosse were also top 3 last period. Overall volume increased +20.7% — same sports, more exposure.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SW VERSIONS -->
+<div class="section-title">SW Version Breakdown <span class="badge badge-red">5.13.8 + 5.21.1 = 94% of crashes</span></div>
+<div class="card" style="margin-bottom:36px;">
+  <table class="versions-table">
+    <thead>
+      <tr>
+        <th>SW Version</th>
+        <th>Recording activity</th>
+        <th>VPU crash events</th>
+        <th>Crash share</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="ver-badge hot">5.13.8</span></td>
+        <td style="color:var(--text)">High volume</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:100px;"></div>
+            <span class="crash-num" style="color:var(--red);">~2,850</span>
+          </div>
+        </td>
+        <td style="color:var(--red);font-family:'DM Mono',monospace;">52%</td>
+        <td style="color:var(--red);font-size:12px;">🔴 Primary suspect · unresolved 2nd period</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge hot">5.21.1</span></td>
+        <td style="color:var(--text)">High volume</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:81px;"></div>
+            <span class="crash-num" style="color:var(--red);">~2,319</span>
+          </div>
+        </td>
+        <td style="color:var(--red);font-family:'DM Mono',monospace;">42%</td>
+        <td style="color:var(--red);font-size:12px;">🔴 Second highest · needs investigation</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.21.6</span></td>
+        <td style="color:var(--muted)">Active</td>
+        <td><div class="crash-bar-wrap"><div class="crash-mini" style="width:3px;background:var(--yellow);"></div><span class="crash-num">~76</span></div></td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">1.4%</td>
+        <td style="color:var(--muted);font-size:12px;">Previously dominant fleet (Mar 6–8)</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.21.5 / 5.21.3 / 5.21.2</span></td>
+        <td style="color:var(--muted)">Active</td>
+        <td><div class="crash-bar-wrap"><div class="crash-mini" style="width:2px;background:var(--muted);opacity:0.5;"></div><span class="crash-num">~28–60 each</span></div></td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">&lt;1% each</td>
+        <td style="color:var(--muted);font-size:12px;"></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.13.5 / 5.13.6 / 5.13.7</span></td>
+        <td style="color:var(--muted)">Active</td>
+        <td><div class="crash-bar-wrap"><div class="crash-mini" style="width:1px;background:var(--muted);opacity:0.5;"></div><span class="crash-num">~10–19 each</span></div></td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">&lt;1% each</td>
+        <td style="color:var(--muted);font-size:12px;">Older 5.13.x family</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">4.22.x / 4.18.x / 4.14.x</span></td>
+        <td style="color:var(--muted)">Active</td>
+        <td><div class="crash-bar-wrap"><span class="crash-num">~13 each</span></div></td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">minimal</td>
+        <td style="color:var(--muted);font-size:12px;">Legacy 4.x fleet</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">3.4.8 / 2.66.x / 2.58.x</span></td>
+        <td style="color:var(--muted)">Active</td>
+        <td><div class="crash-bar-wrap"><span class="crash-num">minimal</span></div></td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">—</td>
+        <td style="color:var(--muted);font-size:12px;">Older legacy versions</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ERROR LOGS -->
+<div class="section-title">Error Log Analysis <span class="badge badge-red">+88% WoW</span></div>
+<div class="log-sources" style="margin-bottom:36px;">
+  <div class="log-card">
+    <div class="log-source">venice-prod-gpu &nbsp;<span style="color:var(--red);font-size:10px;font-weight:600;">⚠ NEW DOMINANT</span></div>
+    <div class="log-num" style="color:var(--red);">4.79M</div>
+    <div class="log-note">93% from 3 templates · ×100 above normal · Not present in Mar 6–8</div>
+    <div class="log-bar"><div class="log-fill" style="width:100%;background:var(--red);"></div></div>
+  </div>
+  <div class="log-card">
+    <div class="log-source">prod-eks</div>
+    <div class="log-num" style="color:var(--yellow);">1.39M</div>
+    <div class="log-note">▲ +99% WoW · was 700K last period · Data API + LMI alerts new</div>
+    <div class="log-bar"><div class="log-fill" style="width:29%;background:var(--yellow);"></div></div>
+  </div>
+  <div class="log-card">
+    <div class="log-source">venice-prod</div>
+    <div class="log-num" style="color:var(--orange);">606K</div>
+    <div class="log-note">▲ +109% WoW · was 290K last period</div>
+    <div class="log-bar"><div class="log-fill" style="width:13%;background:var(--orange);"></div></div>
+  </div>
+</div>
+
+<!-- ACTIVE ALERTS -->
+<div class="section-title">Active Alerts <span class="badge badge-red">9 total · 1× P1</span></div>
+<div style="margin-bottom:36px;">
+  <div class="alert-card p1">
+    <div class="alert-header">
+      <span class="p-badge p1">P1</span>
+      <span class="alert-name">[VS] FATAL ERROR — vidswap-prod</span>
+      <span class="alert-tag">16/03/2026 11:52</span>
+    </div>
+    <div class="alert-sub">Active since Mar 6–8. No RCA closed. Needs immediate owner assignment and deadline.</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">[Data API] Stats Validation</span>
+      <span class="alert-tag">prod-eks · NEW</span>
+    </div>
+    <div class="alert-sub">16/03/2026 14:07 · New this period · correlate with deployment changes after Mar 8</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">LMI Host Update Error</span>
+      <span class="alert-tag">prod-eks · NEW</span>
+    </div>
+    <div class="alert-sub">16/03/2026 21:02 · New this period</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">[VIENNA] Errors MC &nbsp;·&nbsp; [VIENNA] Service Errors</span>
+      <span class="alert-tag">multiple / venice-prod</span>
+    </div>
+    <div class="alert-sub">16/03/2026 04:26 &amp; 22:16 · Ongoing</div>
+  </div>
+  <div class="alert-card p3">
+    <div class="alert-header">
+      <span class="p-badge p3">P3</span>
+      <span class="alert-name">[AIR] Processing Alert</span>
+      <span class="alert-tag">venice-prod</span>
+    </div>
+    <div class="alert-sub">15/03/2026 14:47</div>
+  </div>
+</div>
+
+<!-- PRIORITY ACTIONS -->
+<div class="section-title">Priority Actions</div>
+<div class="action-list" style="margin-bottom:36px;">
+  <div class="action-item">
+    <div class="action-num r">1</div>
+    <div><div class="action-title">RCA for [VS] Fatal Error — vidswap-prod</div><div class="action-desc">Unresolved for 2 consecutive periods. Must have assigned owner and deadline today.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num r">2</div>
+    <div><div class="action-title">Investigate venice-prod-gpu error explosion</div><div class="action-desc">4.79M errors, ×100 above normal, MPS workers in vienna-gpu namespace. New failure surface introduced after Mar 8 — requires immediate RCA.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num r">3</div>
+    <div><div class="action-title">5.13.8 / S2 VPU crash — fix, rollback, or fleet mitigation</div><div class="action-desc">Two periods without resolution. 5.13.8 + 5.21.1 together account for 94% of all VPU crashes. Decision is overdue.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">4</div>
+    <div><div class="action-title">Fix 12 pending clipping pods</div><div class="action-desc">K8s scheduling / capacity issue — unresolved from Mar 6–8.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">5</div>
+    <div><div class="action-title">Triage 8 failed vs-web pods</div><div class="action-desc">New this period. Root cause unknown — needs investigation.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">6</div>
+    <div><div class="action-title">ABE latency post-mortem (Mar 15, ~7,200ms)</div><div class="action-desc">Correlate with prod-eks alerts and deployment log. Worse than Mar 7–8 spike.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num b">●</div>
+    <div><div class="action-title">Ongoing monitoring</div><div class="action-desc">Recording success daily vs 90% (Local HD + Pano most critical) · Prometheus OOM stability · S2S/S3 crash rate spread · venice-prod-gpu escalation</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-note">Data: Grafana (MBE/ABE/Clipping/VPU) · Coralogix (Logs/Alerts) · Datadog (K8s) · Screenshots Mar 16, 2026 · Baseline: Post-Weekend Status Mar 6–8, 2026</div>
+  <div class="footer-brand">Pixellot · Platform QA</div>
+</div>
+
+</body>
+</html>
