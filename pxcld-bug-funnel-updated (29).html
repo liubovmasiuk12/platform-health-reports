@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PXCLD Bug Funnel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f2f5;font-family:'Inter',sans-serif;color:#1a1a2e;min-height:100vh}
+.page{max-width:900px;margin:0 auto;padding:36px 24px 80px}
+
+/* HEADER */
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#4f46e5;background:#eef2ff;border:1px solid #c7d2fe;border-radius:99px;padding:4px 12px;margin-bottom:10px}
+.badge::before{content:'';width:6px;height:6px;background:#4f46e5;border-radius:50%}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.02em;line-height:1.1;color:#18181b}
+h1 em{font-style:normal;color:#4f46e5}
+.upd{font-size:12px;color:#52525b;margin-top:8px;font-weight:600}
+.close-btn{display:flex;align-items:center;gap:5px;font-family:inherit;font-size:12px;font-weight:600;color:#71717a;background:#fff;border:1px solid #e4e4e7;border-radius:8px;padding:7px 14px;cursor:pointer;transition:all .15s;flex-shrink:0;margin-top:4px}
+.close-btn:hover{color:#dc2626;border-color:#fecaca;background:#fef2f2}
+
+/* FILTERS */
+.fbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:14px 18px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.fg{display:flex;flex-direction:column;gap:4px;min-width:128px}
+.fg label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#a1a1aa}
+.fg select{font-family:inherit;font-size:13px;font-weight:500;color:#18181b;background:#fafafa;border:1px solid #e4e4e7;border-radius:7px;padding:7px 28px 7px 10px;outline:none;cursor:pointer;transition:border-color .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a1a1aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.fg select:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.rbtn{font-family:inherit;font-size:12px;font-weight:600;color:#52525b;background:#fafafa;border:1px solid #e4e4e7;border-radius:7px;padding:8px 14px;cursor:pointer;transition:all .15s;margin-left:auto;align-self:flex-end}
+.rbtn:hover{background:#fff;border-color:#d4d4d8}
+
+/* STAT CARDS */
+.scards{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-bottom:32px}
+.sc{background:#fff;border:1px solid #e4e4e7;border-radius:12px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .15s,box-shadow .15s;cursor:default}
+.sc:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.07)}
+.sc[href]:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+.sc-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#a1a1aa;margin-bottom:8px}
+.sc-v{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.sc-s{font-size:11px;color:#a1a1aa;margin-top:4px}
+
+/* ── FUNNEL ── */
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a1a1aa;margin-bottom:14px}
+
+/*
+  The funnel is an SVG-like structure using CSS clip-path.
+  Each stage is a full-width container. Inside it, we place a
+  colored div that's clipped into a trapezoid.
+  Stage 0 (widest) = 100% width, clips very slightly.
+  Each subsequent stage shrinks in absolute width,
+  centered, and clips to narrow further toward bottom.
+  The key insight: clip-path % is relative to the element itself,
+  so we just need a consistent taper per element.
+*/
+.funnel-wrap{width:100%;position:relative}
+
+.f-row-outer{
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin-bottom:3px;
+}
+
+/* The visible colored trapezoid */
+.f-trap{
+  position:relative;
+  height:auto;
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 32px 14px 48px;
+  cursor:pointer;
+  transition:brightness .15s, transform .12s;
+  overflow:visible;
+  gap:16px;
+}
+.f-trap:hover{filter:brightness(1.07);transform:scaleY(1.025)}
+.f-trap.active{outline:3px solid rgba(255,255,255,.5);outline-offset:-3px}
+
+.f-left{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.f-name{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em;text-shadow:0 1px 3px rgba(0,0,0,.2);line-height:1.2}
+.f-desc{font-size:10px;color:rgba(255,255,255,.78);font-weight:500;letter-spacing:.01em;line-height:1.4;margin-top:2px}
+.f-right{display:flex;align-items:baseline;gap:4px;flex-shrink:0;margin-left:12px}
+.f-count{font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:800;color:#fff;letter-spacing:-.02em;text-shadow:0 1px 5px rgba(0,0,0,.15)}
+.f-pct{font-size:13px;color:rgba(255,255,255,.78);font-weight:600}
+
+/* Gap between stages with drop info */
+.f-gap{
+  height:20px;display:flex;align-items:center;justify-content:center;
+  position:relative;margin-bottom:3px;
+}
+.f-gap-line{width:2px;height:100%;background:#cbd5e1}
+.f-drop{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:10px;font-weight:700;color:#6b7280;
+  background:#fff;border:1px solid #e4e4e7;border-radius:99px;
+  padding:1px 10px;white-space:nowrap;
+  box-shadow:0 1px 2px rgba(0,0,0,.05);
+}
+
+/* TOOLTIP — floats to the right side */
+.f-tooltip{
+  position:fixed;
+  top:50%;
+  right:20px;
+  transform:translateY(-50%);
+  width:420px;
+  background:#1e293b;
+  color:#cbd5e1;
+  border-radius:12px;
+  padding:24px;
+  font-size:12.5px;
+  line-height:1.6;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .18s, transform .18s;
+  z-index:200;
+  box-shadow:0 20px 48px rgba(0,0,0,.3);
+  max-height:80vh;
+  overflow-y:auto;
+}
+.f-tooltip::after{
+  content:'';
+  position:absolute;
+  left:-8px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;
+  height:0;
+  border-top:8px solid transparent;
+  border-bottom:8px solid transparent;
+  border-right:8px solid #1e293b;
+}
+.f-row-outer:hover .f-tooltip{opacity:1;transform:translateY(-50%)}
+
+.f-tt-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:8px}
+.f-tt-jql{font-size:10px;color:#64748b;font-family:'Courier New',monospace;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);word-break:break-all;line-height:1.6}
+.f-donut-container{margin-top:12px;display:flex;justify-content:center;align-items:center;height:80px}
+.f-donut-svg{width:80px;height:80px}
+
+/* DETAIL PANEL */
+.detail-panel{background:#fff;border:2px solid #e4e4e7;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:border-color .2s;margin-top:80px}
+.dp-head{padding:14px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.dp-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;color:#18181b}
+.dp-meta{display:flex;align-items:center;gap:8px}
+.dp-count{font-size:11px;font-weight:700;color:#52525b;background:#f4f4f5;border:1px solid #e4e4e7;border-radius:99px;padding:3px 11px}
+.dp-jql-btn{font-size:11px;font-weight:700;color:#4f46e5;background:#eef2ff;border:1px solid #c7d2fe;border-radius:6px;padding:3px 11px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .15s}
+.dp-jql-btn:hover{background:#c7d2fe}
+.dp-body{padding:0 20px 4px;max-height:380px;overflow-y:auto}
+.dp-body::-webkit-scrollbar{width:4px}
+.dp-body::-webkit-scrollbar-thumb{background:#e4e4e7;border-radius:2px}
+.dp-empty{font-size:13px;color:#a1a1aa;text-align:center;padding:28px 0}
+.bt{width:100%;border-collapse:collapse;font-size:13px}
+.bt th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#a1a1aa;text-align:left;padding:14px 0 10px;border-bottom:1px solid #f0f0f0}
+.bt td{padding:10px 0;border-bottom:1px solid #f9f9f9;vertical-align:middle}
+.bt tr:last-child td{border-bottom:none}
+.bt tr:hover td{background:#fafafa}
+.b-key{font-family:'Courier New',monospace;font-size:12px;font-weight:700;color:#4f46e5;padding-right:12px;white-space:nowrap;text-decoration:none}
+.b-key:hover{text-decoration:underline}
+.b-sum{color:#18181b;line-height:1.4;max-width:360px}
+.b-assignee{color:#52525b;white-space:nowrap;padding-left:12px;font-size:12px}
+.b-raised{color:#a1a1aa;white-space:nowrap;padding-left:12px;font-size:11px;font-weight:600}
+.sev{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap;margin-left:12px}
+.sev::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.sev-critical{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.sev-major{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
+.sev-minor{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.sev-trivial{background:#f8fafc;color:#64748b;border:1px solid #e2e8f0}
+.sev-needs-triage{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.sev-na{background:#fafafa;color:#a1a1aa;border:1px solid #e4e4e7}
+
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.a0{animation:up .3s ease both}.a1{animation:up .3s .07s ease both}.a2{animation:up .3s .14s ease both}.a3{animation:up .3s .21s ease both}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="a0">
+  <div>
+    <div class="badge">PXCLD → DI · CMS Team</div>
+    <h1>Bug Fix <em>Progress</em></h1>
+    <p style="font-size:13px;color:#52525b;margin-top:6px;line-height:1.6;max-width:500px">Measuring how many PXCLD bugs have been migrated, picked up, and resolved — tracking system improvement over time.</p>
+    <div class="upd" id="upd"></div>
+  </div>
+</header>
+
+<div class="fbar a1">
+  <div class="fg"><label>Severity</label>
+    <select id="f-sev" onchange="render()">
+      <option value="all">All severities</option>
+      <option value="Critical">Critical</option>
+      <option value="Major">Major</option>
+      <option value="Minor">Minor</option>
+      <option value="Trivial">Trivial</option>
+      <option value="Needs Triage">Needs Triage</option>
+    </select>
+  </div>
+  <div class="fg"><label>Raised during</label>
+    <select id="f-raised" onchange="render()">
+      <option value="all">All phases</option>
+      <option value="Production">Production</option>
+      <option value="Sprint">Sprint</option>
+      <option value="Regression">Regression</option>
+      <option value="Exploratory">Exploratory</option>
+      <option value="N/A">N/A</option>
+    </select>
+  </div>
+  <div class="fg"><label>Assignee</label>
+    <select id="f-assignee" onchange="render()"><option value="all">All assignees</option></select>
+  </div>
+</div>
+
+<div class="scards a1" id="stats"></div>
+
+<div class="a2">
+  <div class="section-title">Bug pipeline</div>
+  <div class="funnel-wrap" id="funnel"></div>
+</div>
+
+<div class="detail-panel a3" id="dp">
+  <div class="dp-head">
+    <span class="dp-title" id="dp-title" style="color:#a1a1aa">Click a stage to inspect bugs</span>
+    <div class="dp-meta">
+      <span class="dp-count" id="dp-count" style="display:none"></span>
+      <a class="dp-jql-btn" id="dp-jql" style="display:none" target="_blank">Open in Jira ↗</a>
+      <button class="close-btn" onclick="closeDetail()" style="margin:0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="dp-body" id="dp-body"><p class="dp-empty">Select a funnel stage above.</p></div>
+</div>
+
+</div>
+<script>
+const PXCLD = [{"key": "PXCLD-12075", "summary": "Stream is unavailable due to \"failed to start feeder. Error:Timeout\"", "severity": "Major", "assignee": "Moshe Derri", "labels": ["raised_during_5.21_beta"], "raised": "Sprint", "created": "2026-03-15", "project": "PXCLD"}, {"key": "PXCLD-12074", "summary": "[5.13.8] HD Cloud recording is much shorted then PANO cloud recording", "severity": "Major", "assignee": "Moshe Derri", "labels": ["support_driven"], "raised": "Production", "created": "2026-03-14", "project": "PXCLD"}, {"key": "PXCLD-12057", "summary": "[ABE] Health Status and Venue Calibration missing in CSV export", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2026-03-11", "project": "PXCLD"}, {"key": "PXCLD-12031", "summary": "[CMS][Linux] Incorrect Backoffice status", "severity": "Minor", "assignee": "Moshe Derri", "labels": ["support_driven"], "raised": "Production", "created": "2026-03-06", "project": "PXCLD"}, {"key": "PXCLD-11863", "summary": "AI player highlights failed to be generated", "severity": "Critical", "assignee": "Elad Sender", "labels": ["support_driven"], "raised": "Production", "created": "2026-02-18", "project": "PXCLD"}, {"key": "PXCLD-11725", "summary": "[2.122.0] Live event is displayed as VOD", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2026-01-28", "project": "PXCLD"}, {"key": "PXCLD-11671", "summary": "YST. Air. Wrong tenant streaming settings. Live video is broken (not playable) for 600K url/ 1M url HD links", "severity": "Major", "assignee": "Artiom Kapul", "labels": ["Air", "support_driven"], "raised": "Production", "created": "2026-01-22", "project": "PXCLD"}, {"key": "PXCLD-11655", "summary": "[5.13.5] Poly-public server was not created", "severity": "Major", "assignee": "Moshe Derri", "labels": ["support_driven"], "raised": "Production", "created": "2026-01-17", "project": "PXCLD"}, {"key": "PXCLD-11507", "summary": "YST RTMP issue", "severity": "Major", "assignee": "Shay Itzhak", "labels": [], "raised": "N/A", "created": "2025-12-26", "project": "PXCLD"}, {"key": "PXCLD-11501", "summary": "[GAAS]  Impossible to set a target version when all requirements are met", "severity": "Major", "assignee": "Elad Sender", "labels": ["support_driven"], "raised": "Production", "created": "2025-12-24", "project": "PXCLD"}, {"key": "PXCLD-11406", "summary": "[ABE] labels.isTest not included in MBE \u2192 ABE sync", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_MBE"], "raised": "N/A", "created": "2025-12-11", "project": "PXCLD"}, {"key": "PXCLD-11388", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | abe-v2", "severity": "Critical", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-12-09", "project": "PXCLD"}, {"key": "PXCLD-11371", "summary": "[5.13.6] Stream is unavailable because it's not going from poly-public Zixi server to public Zixi server", "severity": "Major", "assignee": "Moshe Derri", "labels": ["support_driven"], "raised": "Production", "created": "2025-12-06", "project": "PXCLD"}, {"key": "PXCLD-11368", "summary": "[CMS] The option to select a time is unavailable after clicking \u201csave and new.\u201d", "severity": "Major", "assignee": "Vadym Hryshchenko", "labels": ["support_driven"], "raised": "Production", "created": "2025-12-04", "project": "PXCLD"}, {"key": "PXCLD-11346", "summary": "[monitoring-helper] Fix Conveted types fields for license monitoring", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-12-02", "project": "PXCLD"}, {"key": "PXCLD-11332", "summary": "[VPUM] PIP.EXE Process not terminating after closing SB tab in VPUM", "severity": "Critical", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-12-01", "project": "PXCLD"}, {"key": "PXCLD-11328", "summary": "[MBE] Malformed tags Error on Post vodSettings API", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-12-01", "project": "PXCLD"}, {"key": "PXCLD-11291", "summary": "black stream by zixi to SV video enhancer ", "severity": "Critical", "assignee": "Mykyta Diachenko", "labels": [], "raised": "N/A", "created": "2025-11-26", "project": "PXCLD"}, {"key": "PXCLD-11261", "summary": "[monitoring-workers] A race condition in event status initialization", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-21", "project": "PXCLD"}, {"key": "PXCLD-11235", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | mbe-rest-api-important", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-20", "project": "PXCLD"}, {"key": "PXCLD-11226", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | mbe-rest-api", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-20", "project": "PXCLD"}, {"key": "PXCLD-11219", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | mbe-edge-status", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-20", "project": "PXCLD"}, {"key": "PXCLD-11190", "summary": "Stream is unavailable because system just stopped streaming to Zixi", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-17", "project": "PXCLD"}, {"key": "PXCLD-11167", "summary": "[ATC] MBE Updated with Success Status Before S3 Upload Completes", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud"], "raised": "N/A", "created": "2025-11-16", "project": "PXCLD"}, {"key": "PXCLD-11150", "summary": "[Clipping] Repack and Cut servers not persisting audit trail to Elasticsearch due to premature job exit", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud"], "raised": "N/A", "created": "2025-11-13", "project": "PXCLD"}, {"key": "PXCLD-11132", "summary": "[MBE] Handle LMI 409 Conflict errors gracefully in venue update to prevent 500 responses", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud"], "raised": "N/A", "created": "2025-11-12", "project": "PXCLD"}, {"key": "PXCLD-11106", "summary": "[CMS] Unable to remove Virtual Ad extension during event update", "severity": "Major", "assignee": "Vitalii Horodetskyi", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-11-11", "project": "PXCLD"}, {"key": "PXCLD-11084", "summary": "CMS. Processing. Email notifications issue.", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-08", "project": "PXCLD"}, {"key": "PXCLD-10981", "summary": "More data for API support", "severity": "Major", "assignee": "vadym hryshchenko", "labels": ["support_driven"], "raised": "Production", "created": "2025-11-03", "project": "PXCLD"}, {"key": "PXCLD-10979", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | abe | DEV", "severity": "Critical", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-11-03", "project": "PXCLD"}, {"key": "PXCLD-10884", "summary": "[VMC-ES] Elasticsearch Stage write threadpool saturation", "severity": "Major", "assignee": "Vladyslav Bieliavskyi", "labels": [], "raised": "N/A", "created": "2025-10-27", "project": "PXCLD"}, {"key": "PXCLD-10883", "summary": "[VMC-ES] Elasticsearch Stage circuit breaker: \u201cData too large\u201d", "severity": "Major", "assignee": "Vladyslav Bieliavskyi", "labels": [], "raised": "N/A", "created": "2025-10-27", "project": "PXCLD"}, {"key": "PXCLD-10707", "summary": "Investigate Mark old LMI host as deprecated reversal issue", "severity": "Major", "assignee": "Unassigned", "labels": [], "raised": "N/A", "created": "2025-10-07", "project": "PXCLD"}, {"key": "PXCLD-10680", "summary": "[ABE] Can't update the club admins for the club due to non-existent user ", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2025-10-06", "project": "PXCLD"}, {"key": "PXCLD-10678", "summary": "[CMS] User is able to add Betting mode for an external event", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-10-05", "project": "PXCLD"}, {"key": "PXCLD-10659", "summary": "[Stage][Automation testing] Using tenant's vas before it was added to the tenant", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-10-02", "project": "PXCLD"}, {"key": "PXCLD-10657", "summary": "Streaming delayed start", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["noc"], "raised": "N/A", "created": "2025-10-01", "project": "PXCLD"}, {"key": "PXCLD-10647", "summary": "GAAS doesn't provide a command to venue for downloading Dependencies package in updates from 3.2.7", "severity": "Major", "assignee": "Andrii Maryskevych", "labels": ["support_driven"], "raised": "Production", "created": "2025-09-30", "project": "PXCLD"}, {"key": "PXCLD-10641", "summary": "Testing WDI 20366241541145895414158", "severity": "Critical", "assignee": "Daphna Sharon", "labels": [], "raised": "N/A", "created": "2025-09-29", "project": "PXCLD"}, {"key": "PXCLD-10615", "summary": "Stream is unavailable because the stream isn't going from broadcaster to feeder", "severity": "Critical", "assignee": "Liubov Masiuk", "labels": ["bug_that_affects_beta_events_5.21.3", "noc"], "raised": "Sprint", "created": "2025-09-25", "project": "PXCLD"}, {"key": "PXCLD-10608", "summary": "[CMS] Unable to create validated events via bulk", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2025-09-24", "project": "PXCLD"}, {"key": "PXCLD-10455", "summary": "[data-api] Webhook EventId Mismatch in Vidswap Payload", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-09-11", "project": "PXCLD"}, {"key": "PXCLD-10343", "summary": "[CMS] CMS does not reflect team updates made via PAPI (PUT /api/events/:eventId)", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-09-02", "project": "PXCLD"}, {"key": "PXCLD-10339", "summary": "[CS] Remove potential memory leaking operations", "severity": "Major", "assignee": "Shay Itzhak", "labels": [], "raised": "N/A", "created": "2025-09-01", "project": "PXCLD"}, {"key": "PXCLD-10321", "summary": "CMS. Event playback issue.", "severity": "Major", "assignee": "Vitalii Horodetskyi", "labels": ["Player"], "raised": "N/A", "created": "2025-08-31", "project": "PXCLD"}, {"key": "PXCLD-10272", "summary": "CMS. Download HIGHLIGHT HQ link issue.", "severity": "Major", "assignee": "Iryna Byhar", "labels": ["CMS"], "raised": "N/A", "created": "2025-08-27", "project": "PXCLD"}, {"key": "PXCLD-10197", "summary": "[CMS] \"Before Event\" extension is available for events that are less than 15 minutes away from starting", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-08-19", "project": "PXCLD"}, {"key": "PXCLD-10636", "summary": "[5.2.13] The event is not available in OTT because of corrupted HLS", "severity": "Major", "assignee": "Dor Skoler", "labels": ["support_driven"], "raised": "Production", "created": "2025-08-13", "project": "PXCLD"}, {"key": "PXCLD-10098", "summary": "[ABE] Message for highlights deletion is not sent to OTT", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2025-08-11", "project": "PXCLD"}, {"key": "PXCLD-9844", "summary": "[ABE] Unable to create an event with geo-blocking enabled", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2025-07-17", "project": "PXCLD"}, {"key": "PXCLD-9808", "summary": "[CMS] Error message string cut", "severity": "Minor", "assignee": "Iryna Byhar", "labels": [], "raised": "N/A", "created": "2025-07-14", "project": "PXCLD"}, {"key": "PXCLD-9805", "summary": "The error pops-up during the live event in CMS player", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2025-07-14", "project": "PXCLD"}, {"key": "PXCLD-9802", "summary": "[CMS] Sometimes the number of events are loaded  correctly after one of the filters was applied on VOD tab", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-07-14", "project": "PXCLD"}, {"key": "PXCLD-10763", "summary": "[5.2.9] MP4 generation fails due to corrupted hls file", "severity": "Critical", "assignee": "Vladyslav Bieliavskyi", "labels": ["support_driven"], "raised": "Production", "created": "2025-07-02", "project": "PXCLD"}, {"key": "PXCLD-9662", "summary": "[ABE] OTT event link redirects to 404 page from event edit page", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2025-06-30", "project": "PXCLD"}, {"key": "PXCLD-9661", "summary": "[ABE][Subscription] 500 internal error is received instead if 400 when using invalid subscription id during update", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2025-06-30", "project": "PXCLD"}, {"key": "PXCLD-9541", "summary": "[PAPI] Region of the created event does not match with the create request body", "severity": "Minor", "assignee": "Iryna Byhar", "labels": [], "raised": "N/A", "created": "2025-06-18", "project": "PXCLD"}, {"key": "PXCLD-9377", "summary": "Stream is unavailable because it isn't going anywhere further from Zixi server", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-06-02", "project": "PXCLD"}, {"key": "PXCLD-9360", "summary": "[CMS] \u201cSomething went wrong\u201d error appears after multiple logins and logouts with different users", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-05-30", "project": "PXCLD"}, {"key": "PXCLD-9339", "summary": "[PAPI] Parnter request fails with timeout", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2025-05-29", "project": "PXCLD"}, {"key": "PXCLD-9297", "summary": "Users cannot access VOD content despite successful live streaming becausae Post-processing workflow hangs at end_marker validation step", "severity": "Critical", "assignee": "Dor Skoler", "labels": [], "raised": "N/A", "created": "2025-05-25", "project": "PXCLD"}, {"key": "PXCLD-9116", "summary": "Incorrect display of Generate ANGLE HQ button after the HQ feed has already been generated before", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-05-07", "project": "PXCLD"}, {"key": "PXCLD-8999", "summary": "No HD HQ in the CMS because venue_hls files were removed from the cloud", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2025-04-24", "project": "PXCLD"}, {"key": "PXCLD-8785", "summary": "[sdk-be] - fix error message", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-04-08", "project": "PXCLD"}, {"key": "PXCLD-8751", "summary": "[ABE] Unable to update event with Coupled Events extension when changing production type", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-04-06", "project": "PXCLD"}, {"key": "PXCLD-8550", "summary": "[MBE] GameBreakdown plugin is added for an event, despite event update failed", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_MBE"], "raised": "N/A", "created": "2025-03-20", "project": "PXCLD"}, {"key": "PXCLD-8539", "summary": "[PAPI] Fix the start clock API seconds parameter", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-03-19", "project": "PXCLD"}, {"key": "PXCLD-8365", "summary": "CMS player stops working during playing live event", "severity": "Major", "assignee": "Iryna Byhar", "labels": ["support_driven"], "raised": "Production", "created": "2025-03-03", "project": "PXCLD"}, {"key": "PXCLD-8120", "summary": "[GAAS] Can't set target version on a venue if \"targetVersion\" is not a valid SemVer string.", "severity": "Major", "assignee": "Liubov Masiuk", "labels": [], "raised": "N/A", "created": "2025-02-11", "project": "PXCLD"}, {"key": "PXCLD-8119", "summary": "[MBE] Unable to delete stream targets with % or # in the title", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_PAPI"], "raised": "N/A", "created": "2025-02-11", "project": "PXCLD"}, {"key": "PXCLD-8103", "summary": "[PAPI] User is able to add stream target for an event, when stream targets are disabled for a club", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_PAPI"], "raised": "N/A", "created": "2025-02-10", "project": "PXCLD"}, {"key": "PXCLD-7890", "summary": "[ABE] Thumbnail image is broken in email  informing about new video upload", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE"], "raised": "N/A", "created": "2025-01-23", "project": "PXCLD"}, {"key": "PXCLD-7863", "summary": "[MBE] User is able to schedule a long event without \"Long Event\" extension via PAPI ", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_PAPI"], "raised": "N/A", "created": "2025-01-21", "project": "PXCLD"}, {"key": "PXCLD-7652", "summary": "[CMS] Session expirations for Firebase User", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2025-01-04", "project": "PXCLD"}, {"key": "PXCLD-8307", "summary": "[4.18.6] Event didn't start in time until the end of another event in another poly chain", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2024-12-29", "project": "PXCLD"}, {"key": "PXCLD-7188", "summary": "[CMS] Incorrect Graphics Type Assigned to All VOD Events", "severity": "Major", "assignee": "Shay Itzhak", "labels": ["support_driven"], "raised": "Production", "created": "2024-11-25", "project": "PXCLD"}, {"key": "PXCLD-8727", "summary": "[CMS] Event cannot be deleted as automation on it already started", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2024-11-15", "project": "PXCLD"}, {"key": "PXCLD-6819", "summary": "[PAPI] Players are not added to event via PAPI when updating teams", "severity": "Minor", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_PAPI"], "raised": "N/A", "created": "2024-10-21", "project": "PXCLD"}, {"key": "PXCLD-9079", "summary": "[DoublePlay] The unit streamed only the PANO feed to the Cloud", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2024-10-16", "project": "PXCLD"}, {"key": "PXCLD-7583", "summary": "One of the events in the poly-event chain didn't stream", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["support_driven"], "raised": "Production", "created": "2024-10-16", "project": "PXCLD"}, {"key": "PXCLD-6733", "summary": "Extensions Self-Managed Graphics Overlay Club Logo Bottom Left Logo - Unavailable to choice link in created event (VAS)", "severity": "Major", "assignee": "Iryna Byhar", "labels": [], "raised": "N/A", "created": "2024-10-13", "project": "PXCLD"}, {"key": "PXCLD-6406", "summary": "The event start date in mass event scheduler can't be changed if there are less than 15 minutes left before midnight", "severity": "Major", "assignee": "Iryna Byhar", "labels": ["support_driven"], "raised": "Production", "created": "2024-09-14", "project": "PXCLD"}, {"key": "PXCLD-6276", "summary": "No venue hls folder in bucket meanwhile the event was marked as uploaded on the venue side.", "severity": "Major", "assignee": "Iryna Byhar", "labels": ["support_driven"], "raised": "Production", "created": "2024-09-02", "project": "PXCLD"}, {"key": "PXCLD-5671", "summary": "[CMS] Incorrect system selection count and missing buttons after filtering", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_CMS"], "raised": "N/A", "created": "2024-07-05", "project": "PXCLD"}, {"key": "PXCLD-5329", "summary": "[ABE] 500 error received instead of 404 when invalid id is provided during subscription update", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["Cloud", "Cloud_ABE", "RedAutomation", "automation"], "raised": "N/A", "created": "2024-06-03", "project": "PXCLD"}, {"key": "PXCLD-4291", "summary": "Air. Live stream forwarding issue.", "severity": "Major", "assignee": "Yuval Dor", "labels": ["Air-Live", "Air1"], "raised": "N/A", "created": "2024-03-07", "project": "PXCLD"}, {"key": "PXCLD-3405", "summary": "[CMS] HD HQ Cannot be generated due to \"Connection not ready yet\" error", "severity": "Major", "assignee": "Iryna Byhar", "labels": ["support_driven"], "raised": "Production", "created": "2023-12-31", "project": "PXCLD"}, {"key": "PXCLD-3404", "summary": "[GAAS]Upgrade doesn't start after set the target version", "severity": "Major", "assignee": "Volodymyr Kalsih", "labels": ["support_driven"], "raised": "Production", "created": "2023-12-30", "project": "PXCLD"}, {"key": "PXCLD-2533", "summary": "Leaking Instance requests", "severity": "Major", "assignee": "Unassigned", "labels": ["PassedEscapingDefects"], "raised": "N/A", "created": "2023-11-12", "project": "PXCLD"}, {"key": "PXCLD-2162", "summary": "[CMS] 500 error is displayed when User attempts to create club with sport type that is not supported on YOU ", "severity": "Major", "assignee": "Liubov Masiuk", "labels": ["CMS"], "raised": "N/A", "created": "2023-10-23", "project": "PXCLD"}, {"key": "PXCLD-895", "summary": "portal-api: 500 on IDs with whitespaces", "severity": "Minor", "assignee": "Taras Drovaliuk", "labels": ["OTT"], "raised": "N/A", "created": "2023-08-09", "project": "PXCLD"}];
+const MIGRATED = [{"key": "DI-821", "summary": "Black stream via Zixi hd_2000 to SV Video Enhancer on event with advanced-gfx and live-director extensions", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-19", "project": "DI"}, {"key": "DI-820", "summary": "[MBE] Malformed tags Error on Post vodSettings API when tenant has boolean customerSettings", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-19", "project": "DI"}, {"key": "DI-819", "summary": "[VPUM] PIP.EXE Process not terminating after closing SB tab in VPUM", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "IN-Development", "created": "2026-03-19", "project": "DI"}, {"key": "DI-818", "summary": "[monitoring-helper] Fix Converted types fields for license monitoring \u2014 Zixi used/limit indexed as strings", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-19", "project": "DI"}, {"key": "DI-817", "summary": "Critical Severity | Upwind Configuration Finding | A Kubernetes deployment (EKS) with internet ingress has a critical exploitable CVE | abe-v2", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI"}, {"key": "DI-816", "summary": "[ABE] labels.isTest not included in MBE \u2192 ABE sync", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "IN-Development", "created": "2026-03-19", "project": "DI"}, {"key": "DI-815", "summary": "[ABE] Health Status and Venue Calibration missing in CSV export", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI"}, {"key": "DI-814", "summary": "[ABE][Subscription] 500 internal error is received instead of 400 when using invalid subscription id during update", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI"}, {"key": "DI-813", "summary": "[CMS] HD HQ Cannot be generated due to \"Connection not ready yet\" error", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-19", "project": "DI"}, {"key": "DI-812", "summary": "[CMS] Incorrect system selection count and missing buttons after filtering", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI"}, {"key": "DI-811", "summary": "[CMS] 500 error is displayed when User attempts to create club with sport type that is not supported on YOU", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Regression/Performance", "created": "2026-03-19", "project": "DI"}, {"key": "DI-741", "summary": "Venue is sending an incorrect scoreboard type.", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-17", "project": "DI"}, {"key": "DI-739", "summary": "Request to hide Air Monitoring toggle switch in prod CMS", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-17", "project": "DI"}, {"key": "DI-676", "summary": "[ABE] Health Status and Venue Calibration missing in CSV export for events on production", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-17", "project": "DI"}, {"key": "DI-645", "summary": "Events, which are deleted/hidden with bulk, are not removed/hidden from OTT as expected", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-644", "summary": "[OTT] The same highlight was added multiple times in OTT", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-643", "summary": "The event can't be played via CMS player due to corrupted ts file", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-642", "summary": "Problems with HD record(replacing the good version with a terrible one)", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-641", "summary": "Cloud recording is missing for the event", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-640", "summary": "[VAS] Hockeytech graphic disappears on events without overlaps", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-639", "summary": "[CMS] Unit shown as Reset in Inventory and Monitoring while actively streaming", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-637", "summary": "[5.13.8] Wrong system installation status in CMS", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-16", "project": "DI"}, {"key": "DI-610", "summary": "[CMS] \u2014 Event renaming fails with InvalidArgumentError on API-created events", "severity": "Critical", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-15", "project": "DI"}, {"key": "DI-606", "summary": "CMS - Login - Inactive user error not shown on login form", "severity": "Major", "assignee": "Moshe Derri", "raised": "IN-Development", "created": "2026-03-14", "project": "DI"}, {"key": "DI-554", "summary": "Highlights Clips Preview doesn't load on Safari", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-12", "project": "DI"}, {"key": "DI-615", "summary": "IPAC part is missing in the RTMP address after saving event", "severity": "Critical", "assignee": "Moshe Derri", "raised": "Production", "created": "2026-02-24", "project": "DI"}, {"key": "DI-616", "summary": "Clean up deleted CMS events still visible on OTT for a Colloseum tenant", "severity": "Major", "assignee": "Taras Tymovskyi", "raised": "IN-Development", "created": "2026-01-08", "project": "DI"}, {"key": "DI-617", "summary": "Events deleted by retention policy still remain on OTT", "severity": "Critical", "assignee": "Taras Drovaliuk", "raised": "Production", "created": "2025-12-31", "project": "DI"}];
+const PICKED = [{"key": "DI-818", "summary": "[monitoring-helper] Fix Converted types fields for license monitoring \u2014 Zixi used/limit indexed as strings", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "Production", "created": "2026-03-19", "project": "DI", "repository": "Pixellot/monitoring-helper"}, {"key": "DI-814", "summary": "[ABE][Subscription] 500 internal error is received instead of 400 when using invalid subscription id during update", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI", "repository": "Pixellot/Application-Backend"}, {"key": "DI-812", "summary": "[CMS] Incorrect system selection count and missing buttons after filtering", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "Alpha", "created": "2026-03-19", "project": "DI", "repository": "Pixellot/cms"}, {"key": "DI-742", "summary": "[MBE] OCR AI extension blocked for Soccer, Volleyball, and American Football sport types", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "IN-Development", "created": "2026-03-17", "project": "DI", "repository": "Pixellot/dashboard-backend"}, {"key": "DI-606", "summary": "CMS - Login - Inactive user error not shown on login form", "severity": "Major", "assignee": "Moshe Derri", "raised": "IN-Development", "created": "2026-03-14", "project": "DI", "repository": "Pixellot/cms"}];
+const FIXED = [{"key": "DI-818", "summary": "[monitoring-helper] Fix Converted types fields for license monitoring", "severity": "Major", "assignee": "Unassigned", "raised": "Production", "created": "2026-03-19", "status": "To Do", "project": "DI", "build_status": "Success"}, {"key": "DI-814", "summary": "[ABE][Subscription] 500 internal error is received instead of 400 when using invalid subscription id during update", "severity": "Minor", "assignee": "Liubov Masiuk", "raised": "N/A", "created": "2026-03-19", "status": "To Do", "project": "DI", "build_status": "Failed"}, {"key": "DI-812", "summary": "[CMS] Incorrect system selection count and missing buttons after filtering", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "N/A", "created": "2026-03-19", "status": "To Do", "project": "DI", "build_status": "Success"}, {"key": "DI-740", "summary": "[MBE] Extend OCR AI extension support to Soccer, Volleyball, and American Football", "severity": "Major", "assignee": "Unassigned", "raised": "N/A", "created": "2026-03-17", "status": "To Do", "project": "DI", "build_status": "Failed"}, {"key": "DI-606", "summary": "CMS - Login - Inactive user error not shown on login form", "severity": "Major", "assignee": "Moshe Derri", "raised": "Sprint", "created": "2026-03-14", "status": "In Review", "project": "DI", "build_status": "Success"}];
+
+
+const COMPLETED = [{"key": "DI-742", "summary": "[MBE] OCR AI extension blocked for Soccer, Volleyball, and American Football sport types", "severity": "Major", "assignee": "Liubov Masiuk", "raised": "IN-Development", "created": "2026-03-17", "project": "DI"}];
+const JIRA = 'https://pixellot.atlassian.net';
+
+const STAGES = [
+  {
+    id:'all', label:'All Bugs in PXCLD', color:'#4f46e5',
+    desc:'project = PXCLD · type = Bug · status = To Do',
+    tooltip:'All open bugs in the PXCLD project with status "To Do". This is the full backlog — every unresolved bug before any migration work begins.',
+    jql:'project = PXCLD AND issuetype = Bug AND status = "To Do" ORDER BY created DESC',
+    data:()=>filtered(PXCLD)
+  },
+  {
+    id:'migrated', label:'Migrated to DI', color:'#0891b2',
+    desc:'project = DI · CMS team · open statuses',
+    tooltip:'Bugs migrated from PXCLD into the DI project under the CMS team across all open statuses (To Do, In Progress, In Review, In Testing).',
+    jql:'project = DI AND issuetype = Bug AND status IN ("To Do", "In Progress", "In Review", "In Testing") AND team = CMS ORDER BY created DESC',
+    data:()=>filteredDI(MIGRATED)
+  },
+  {
+    id:'picked', label:'Picked by agent', color:'#d97706',
+    desc:'DI · CMS team · identified repositories',
+    tooltip:'Unique repositories identified with bugs assigned. Each repository represents a codebase where issues have been found and are being tracked.',
+    jql:'project = DI AND issuetype = Bug AND team = CMS AND "repository[dropdown]" IS NOT EMPTY ORDER BY created DESC',
+    data:()=>filteredDI(PICKED),
+    getRepoCount:()=>{
+      const repos = new Set(PICKED.map(b => b.repository).filter(Boolean));
+      return repos.size;
+    }
+  },
+  {
+    id:'fixed', label:'Resolution Status', color:'#059669',
+    desc:'DI · CMS team · ≥1 commit linked',
+    tooltip:'Bugs with at least one developer commit linked. Code has been pushed to a repository — the fix is in active development or has been merged.',
+    jql:'project = DI AND issuetype = Bug AND team = CMS AND "repository[dropdown]" IN ("Pixellot/Application-Backend", "Pixellot/dashboard-backend", "Pixellot/cms", "Pixellot/camera-monitoring", "Pixellot/monitoring-helper") ORDER BY created DESC',
+    data:()=>filteredDI(FIXED)
+  },
+  {
+    id:'completed', label:'FIXED (Moved to DONE)', color:'#0891b2',
+    desc:'DI · CMS team · status = DONE',
+    tooltip:'Bugs successfully resolved and moved to DONE status. Fully completed fixes deployed to production.',
+    jql:'project = DI AND issuetype = Bug AND status = DONE AND team = CMS ORDER BY updated DESC',
+    data:()=>filteredDI(COMPLETED)
+  },
+];
+
+let activeStage = null;
+
+(function(){
+  const names=[...new Set(PXCLD.map(b=>b.assignee))].sort();
+  const sel=document.getElementById('f-assignee');
+  names.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+})();
+
+const now = new Date(2026, 2, 19); // March 19, 2026
+const dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric'});
+document.getElementById('upd').textContent='Report generated: '+dateStr;
+
+function getFilters(){return{sev:document.getElementById('f-sev').value,raised:document.getElementById('f-raised').value,assignee:document.getElementById('f-assignee').value};}
+function resetFilters(){['f-sev','f-raised','f-assignee'].forEach(id=>document.getElementById(id).value='all');render();if(activeStage)showDetail(activeStage);}
+function filtered(bugs){const{sev,raised,assignee}=getFilters();return bugs.filter(b=>(sev==='all'||b.severity===sev)&&(raised==='all'||b.raised===raised)&&(assignee==='all'||b.assignee===assignee));}
+function filteredDI(bugs){const{sev}=getFilters();return bugs.filter(b=>sev==='all'||b.severity===sev);}
+
+function render(){
+  const counts=STAGES.map(s=>s.data().length);
+  const total=counts[0];
+  
+  // Calculate unique repositories in PICKED stage
+  const repoSet = new Set(PICKED.map(b => b.repository).filter(Boolean));
+  const repoCount = repoSet.size;
+
+  document.getElementById('stats').innerHTML=`
+    <div class="sc"><div class="sc-l">PXCLD open bugs</div><div class="sc-v" style="color:#4f46e5">${counts[0] || 0}</div><div class="sc-s">source of truth</div></div>
+    <a class="sc" href="https://pixellot.atlassian.net/issues?jql=project%20%3D%20DI%0AAND%20issuetype%20%3D%20Bug%0AAND%20status%20IN%20(%22To%20Do%22%2C%20%22In%20Progress%22%2C%20%22In%20Review%22%2C%20%22In%20Testing%22%2C%20Testing)%0AAND%20team%20%3D%20CMS%0AORDER%20BY%20created%20DESC" target="_blank" style="text-decoration:none;cursor:pointer"><div class="sc"><div class="sc-l">Migrated to DI</div><div class="sc-v" style="color:#0891b2">${counts[1] || 0}</div><div class="sc-s">moved to tracking ↗</div></div></a>
+    <div class="sc"><div class="sc-l">Picked by agent</div><div class="sc-v" style="color:#d97706">${PICKED.length}</div><div class="sc-s">repositories identified</div></div>
+    <div class="sc"><div class="sc-l">Resolution Status</div><div class="sc-v" style="color:#059669">${counts[3] || 0}</div><div class="sc-s">code in progress</div></div>
+    <div class="sc"><div class="sc-l">FIXED (Done)</div><div class="sc-v" style="color:#0891b2">${counts[4] || 0}</div></div>
+  `;
+
+  const wrap=document.getElementById('funnel');
+  wrap.innerHTML='';
+
+  // Width steps: stage 0 = 100%, others proportional, min 18%
+  // Each stage is narrower than the previous one.
+  // Taper: clip top-left & top-right inward by (100% - this_pct_of_prev) / 2
+  // We use a fixed taper of 5% per side per stage so it looks like ref image.
+  // Stage 0: clip 0% each side (full rectangle, slight taper at bottom)
+  // Stage i: top = prev bottom width, bottom = even narrower
+
+  const TAPER = 5; // % to cut from each side per stage (relative to element width)
+
+  STAGES.forEach((stage,i)=>{
+    const cnt=counts[i];
+    const pct=total>0?Math.round(cnt/total*100):0;
+
+    // Width of this bar as % of container, shrinking each step
+    const widthPct=Math.max(20, 100 - i*18);
+
+    // Inter-stage gap (drop badge hidden)
+    if(i>0){
+      const gap=document.createElement('div');
+      gap.className='f-gap';
+      gap.style.width=Math.max(20,100-(i-1)*18)+'%';
+      gap.style.margin='0 auto';
+      gap.innerHTML=`<div class="f-gap-line"></div>`;
+      wrap.appendChild(gap);
+    }
+
+    const outer=document.createElement('div');
+    outer.className='f-row-outer';
+    outer.style.width=widthPct+'%';
+    outer.style.margin='0 auto';
+
+    // clip-path: top is full width, bottom tapers in by TAPER% each side
+    const clipPath=`polygon(0% 0%, 100% 0%, ${100-TAPER}% 100%, ${TAPER}% 100%)`;
+
+    const trap=document.createElement('div');
+    trap.className='f-trap'+(activeStage===stage.id?' active':'');
+    trap.style.cssText=`width:100%;background:${stage.color};clip-path:${clipPath}`;
+
+    trap.innerHTML=`
+      <div class="f-left">
+        <div class="f-name">${stage.label}</div>
+        <div class="f-desc">${stage.desc}</div>
+      </div>
+      <div class="f-right">
+        <span class="f-count">${cnt}</span>
+      </div>
+    `;
+    trap.onclick=()=>{
+      activeStage=stage.id;
+      document.querySelectorAll('.f-trap').forEach(t=>t.classList.remove('active'));
+      trap.classList.add('active');
+      showDetail(stage.id);
+    };
+
+    const tooltip=document.createElement('div');
+    tooltip.className='f-tooltip';
+    let tooltipHTML=`<div class="f-tt-title">${stage.label}</div>${stage.tooltip}`;
+    
+    // Get the data for this stage
+    const stageData = stage.data();
+    
+    if(stageData.length > 0){
+      // Calculate severity breakdown
+      const severityBreakdown = {};
+      const raisedBreakdown = {};
+      const teamBreakdown = {};
+      const repoBreakdown = {};
+      
+      const buildStatusBreakdown = {};
+      
+      stageData.forEach(b => {
+        if(b.severity) severityBreakdown[b.severity] = (severityBreakdown[b.severity] || 0) + 1;
+        if(b.raised) raisedBreakdown[b.raised] = (raisedBreakdown[b.raised] || 0) + 1;
+        if(b.team) teamBreakdown[b.team] = (teamBreakdown[b.team] || 0) + 1;
+        if(b.repository) repoBreakdown[b.repository] = (repoBreakdown[b.repository] || 0) + 1;
+        if(b.build_status) buildStatusBreakdown[b.build_status] = (buildStatusBreakdown[b.build_status] || 0) + 1;
+      });
+      
+      // Repositories breakdown with donut (for picked stage)
+      if(stage.id === 'picked'){
+        const repoEntries = Object.entries(repoBreakdown);
+        if(repoEntries.length > 0){
+          tooltipHTML += `<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:#e5e7eb;margin-bottom:4px">Repositories</div>`;
+          tooltipHTML += `<div class="f-donut-container"><svg class="f-donut-svg" viewBox="0 0 36 36">`;
+          
+          const repoColors = ['#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6'];
+          let offset = 0;
+          repoEntries.forEach(([repo, cnt], idx) => {
+            const pct = (cnt / stageData.length) * 100;
+            const circumference = 2 * Math.PI * 15.915;
+            const strokeDash = circumference * pct / 100;
+            const color = repoColors[idx % repoColors.length];
+            tooltipHTML += `<circle cx="18" cy="18" r="15.915" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${strokeDash} ${circumference}" stroke-dashoffset="${-offset}" opacity="0.9"/>`;
+            offset += strokeDash;
+          });
+          tooltipHTML += `</svg></div>`;
+          tooltipHTML += `<div style="margin-top:6px;font-size:9px;line-height:1.4">`;
+          repoEntries.forEach(([repo, cnt], idx) => {
+            const color = repoColors[idx % repoColors.length];
+            const repoName = repo.split('/')[1] || repo;
+            tooltipHTML += `<div><span style="display:inline-block;width:6px;height:6px;background:${color};border-radius:50%;margin-right:4px;vertical-align:middle"></span><span style="color:#cbd5e1">${repoName}: ${cnt}</span></div>`;
+          });
+          tooltipHTML += `</div></div>`;
+        }
+      }
+      
+      // Severity breakdown with donut
+      const severityEntries = Object.entries(severityBreakdown);
+      if(severityEntries.length > 0){
+        tooltipHTML += `<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:#e5e7eb;margin-bottom:4px">Severity</div>`;
+        tooltipHTML += `<div class="f-donut-container"><svg class="f-donut-svg" viewBox="0 0 36 36">`;
+        
+        const severityColors = {'Critical':'#dc2626','Major':'#ea580c','Minor':'#2563eb','Trivial':'#64748b','Needs Triage':'#7c3aed','N/A':'#a1a1aa'};
+        let offset = 0;
+        severityEntries.forEach(([sev, cnt]) => {
+          const pct = (cnt / stageData.length) * 100;
+          const circumference = 2 * Math.PI * 15.915;
+          const strokeDash = circumference * pct / 100;
+          const color = severityColors[sev] || '#64748b';
+          tooltipHTML += `<circle cx="18" cy="18" r="15.915" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${strokeDash} ${circumference}" stroke-dashoffset="${-offset}" opacity="0.9"/>`;
+          offset += strokeDash;
+        });
+        tooltipHTML += `</svg></div>`;
+        tooltipHTML += `<div style="margin-top:6px;font-size:9px;line-height:1.4">`;
+        severityEntries.forEach(([sev, cnt]) => {
+          const color = severityColors[sev] || '#64748b';
+          tooltipHTML += `<div><span style="display:inline-block;width:6px;height:6px;background:${color};border-radius:50%;margin-right:4px;vertical-align:middle"></span><span style="color:#cbd5e1">${sev}: ${cnt}</span></div>`;
+        });
+        tooltipHTML += `</div></div>`;
+      }
+      
+      // Raised During breakdown with donut
+      const raisedEntries = Object.entries(raisedBreakdown);
+      if(raisedEntries.length > 0){
+        tooltipHTML += `<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:#e5e7eb;margin-bottom:4px">Raised During</div>`;
+        tooltipHTML += `<div class="f-donut-container"><svg class="f-donut-svg" viewBox="0 0 36 36">`;
+        
+        const raisedColors = {'Production':'#ef4444','Sprint':'#f97316','Regression':'#f59e0b','Exploratory':'#eab308','N/A':'#a1a1aa'};
+        let offset = 0;
+        raisedEntries.forEach(([raised, cnt]) => {
+          const pct = (cnt / stageData.length) * 100;
+          const circumference = 2 * Math.PI * 15.915;
+          const strokeDash = circumference * pct / 100;
+          const color = raisedColors[raised] || '#64748b';
+          tooltipHTML += `<circle cx="18" cy="18" r="15.915" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${strokeDash} ${circumference}" stroke-dashoffset="${-offset}" opacity="0.9"/>`;
+          offset += strokeDash;
+        });
+        tooltipHTML += `</svg></div>`;
+        tooltipHTML += `<div style="margin-top:6px;font-size:9px;line-height:1.4">`;
+        raisedEntries.forEach(([raised, cnt]) => {
+          const color = raisedColors[raised] || '#64748b';
+          tooltipHTML += `<div><span style="display:inline-block;width:6px;height:6px;background:${color};border-radius:50%;margin-right:4px;vertical-align:middle"></span><span style="color:#cbd5e1">${raised}: ${cnt}</span></div>`;
+        });
+        tooltipHTML += `</div></div>`;
+      }
+      
+      // Build Review breakdown with donut (for fixed/resolved stage)
+      if(stage.id === 'fixed'){
+        const buildEntries = Object.entries(buildStatusBreakdown);
+        if(buildEntries.length > 0){
+          tooltipHTML += `<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:#e5e7eb;margin-bottom:4px">Build Review</div>`;
+          tooltipHTML += `<div class="f-donut-container"><svg class="f-donut-svg" viewBox="0 0 36 36">`;
+          
+          const buildColors = {'Success':'#10b981','Failed':'#ef4444','Pending':'#f59e0b'};
+          let offset = 0;
+          buildEntries.forEach(([status, cnt]) => {
+            const pct = (cnt / stageData.length) * 100;
+            const circumference = 2 * Math.PI * 15.915;
+            const strokeDash = circumference * pct / 100;
+            const color = buildColors[status] || '#64748b';
+            tooltipHTML += `<circle cx="18" cy="18" r="15.915" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${strokeDash} ${circumference}" stroke-dashoffset="${-offset}" opacity="0.9"/>`;
+            offset += strokeDash;
+          });
+          tooltipHTML += `</svg></div>`;
+          tooltipHTML += `<div style="margin-top:6px;font-size:9px;line-height:1.4">`;
+          buildEntries.forEach(([status, cnt]) => {
+            const color = buildColors[status] || '#64748b';
+            tooltipHTML += `<div><span style="display:inline-block;width:6px;height:6px;background:${color};border-radius:50%;margin-right:4px;vertical-align:middle"></span><span style="color:#cbd5e1">${status}: ${cnt}</span></div>`;
+          });
+          tooltipHTML += `</div></div>`;
+        }
+      }
+      
+      if(teamBreakdown && Object.keys(teamBreakdown).length > 0){
+        const teamEntries = Object.entries(teamBreakdown);
+        if(teamEntries.length > 0){
+          tooltipHTML += `<div style="margin-top:10px"><div style="font-size:10px;font-weight:600;color:#e5e7eb;margin-bottom:4px">Teams</div>`;
+          tooltipHTML += `<div class="f-donut-container"><svg class="f-donut-svg" viewBox="0 0 36 36">`;
+          
+          const teamColors = {'CMS':'#0891b2','ABE':'#8b5cf6','PAPI':'#ec4899','Other':'#64748b'};
+          let offset = 0;
+          teamEntries.forEach(([team, cnt]) => {
+            const pct = (cnt / stageData.length) * 100;
+            const circumference = 2 * Math.PI * 15.915;
+            const strokeDash = circumference * pct / 100;
+            const color = teamColors[team] || '#64748b';
+            tooltipHTML += `<circle cx="18" cy="18" r="15.915" fill="none" stroke="${color}" stroke-width="4" stroke-dasharray="${strokeDash} ${circumference}" stroke-dashoffset="${-offset}" opacity="0.9"/>`;
+            offset += strokeDash;
+          });
+          tooltipHTML += `</svg></div>`;
+          tooltipHTML += `<div style="margin-top:6px;font-size:9px;line-height:1.4">`;
+          teamEntries.forEach(([team, cnt]) => {
+            const color = teamColors[team] || '#64748b';
+            tooltipHTML += `<div><span style="display:inline-block;width:6px;height:6px;background:${color};border-radius:50%;margin-right:4px;vertical-align:middle"></span><span style="color:#cbd5e1">${team}: ${cnt}</span></div>`;
+          });
+          tooltipHTML += `</div></div>`;
+        }
+      }
+    }
+    
+    tooltipHTML += `<div class="f-tt-jql">${stage.jql}</div>`;
+    tooltip.innerHTML = tooltipHTML;
+
+    outer.appendChild(trap);
+    outer.appendChild(tooltip);
+    wrap.appendChild(outer);
+  });
+
+  if(activeStage)showDetail(activeStage);
+}
+
+function sevClass(s){if(!s||s==='N/A')return'sev-na';return'sev-'+s.toLowerCase().replace(/\s+/g,'-');}
+
+function closeDetail(){
+  activeStage=null;
+  document.querySelectorAll('.f-trap').forEach(t=>t.classList.remove('active'));
+  document.getElementById('dp-title').textContent='Click a stage to inspect bugs';
+  document.getElementById('dp-title').style.color='#a1a1aa';
+  document.getElementById('dp-count').style.display='none';
+  document.getElementById('dp-jql').style.display='none';
+  document.getElementById('dp-body').innerHTML='<p class="dp-empty">Select a funnel stage above.</p>';
+}
+
+
+function createDonutHTML(data, title) {
+  const total = Object.values(data).reduce((a,b)=>a+b,0);
+  const items = Object.entries(data).map(([label, count]) => {
+    const pct = total > 0 ? Math.round(count/total*100) : 0;
+    return {label, count, pct};
+  }).sort((a,b) => b.count - a.count);
+  
+  let html = `<div style="margin: 12px 0;"><div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px">${title}</div>`;
+  items.forEach(item => {
+    html += `<div style="display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:4px">
+      <div style="width:12px;height:12px;background:#4f46e5;border-radius:50%"></div>
+      <span>${item.label}</span>
+      <span style="margin-left:auto;font-weight:600;color:#18181b">${item.count}</span>
+      <span style="color:#a1a1aa">${item.pct}%</span>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function getSeverityBreakdown(bugs) {
+  const breakdown = {Critical:0, Major:0, Minor:0};
+  bugs.forEach(b => breakdown[b.severity||'Minor'] = (breakdown[b.severity||'Minor']||0)+1);
+  return breakdown;
+}
+
+function getRaisedBreakdown(bugs) {
+  const breakdown = {};
+  bugs.forEach(b => {
+    const r = b.raised||'N/A';
+    breakdown[r] = (breakdown[r]||0)+1;
+  });
+  return breakdown;
+}
+
+function getSeverityBreakdown(bugs) {
+  const breakdown = {Critical:0, Major:0, Minor:0};
+  bugs.forEach(b => breakdown[b.severity||'Minor']++);
+  return breakdown;
+}
+
+function getRaisedBreakdown(bugs) {
+  const breakdown = {};
+  bugs.forEach(b => { const r = b.raised||'N/A'; breakdown[r] = (breakdown[r]||0)+1; });
+  return breakdown;
+}
+
+function makeDonutRow(label, count, total, color) {
+  const pct = total > 0 ? Math.round(count/total*100) : 0;
+  return `<div style="display:flex;align-items:center;gap:8px;font-size:11px;line-height:1.4;margin:3px 0">
+    <div style="width:8px;height:8px;background:${color};border-radius:50%;flex-shrink:0"></div>
+    <span>${label}</span><span style="margin-left:auto;font-weight:600;color:#fff">${count}</span>
+    <span style="color:rgba(255,255,255,.6);width:24px;text-align:right">${pct}%</span>
+  </div>`;
+}
+
+function getDonutsHTML(bugs) {
+  const total = bugs.length;
+  const sev = getSeverityBreakdown(bugs);
+  const raised = getRaisedBreakdown(bugs);
+  
+  let html = '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)">';
+  html += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.6);margin-bottom:8px">Severity</div>';
+  html += makeDonutRow('Critical', sev.Critical, total, '#dc2626');
+  html += makeDonutRow('Major', sev.Major, total, '#ea580c');
+  html += makeDonutRow('Minor', sev.Minor, total, '#2563eb');
+  
+  html += '<div style="margin-top:12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.6);margin-bottom:8px">Raised During</div>';
+  const sortedRaised = Object.entries(raised).sort((a,b)=>b[1]-a[1]);
+  sortedRaised.forEach(([label, count]) => {
+    const colors = {'Production':'#ef4444', 'Sprint':'#f97316', 'IN-Development':'#8b5cf6', 'Alpha':'#3b82f6', 'Regression/Performance':'#f59e0b', 'N/A':'#a1a1aa'};
+    html += makeDonutRow(label, count, total, colors[label]||'#a1a1aa');
+  });
+  html += '</div>';
+  return html;
+}
+function showDetail(stageId){
+  const stage=STAGES.find(s=>s.id===stageId);
+  const bugs=stage.data();
+  document.getElementById('dp').style.borderColor=stage.color;
+  const title=document.getElementById('dp-title');
+  title.textContent=stage.label;title.style.color=stage.color;
+  const countEl=document.getElementById('dp-count');
+  countEl.textContent=bugs.length+' bug'+(bugs.length!==1?'s':'');countEl.style.display='';
+  const jqlEl=document.getElementById('dp-jql');
+  jqlEl.style.display='';jqlEl.href=JIRA+'/issues/?jql='+encodeURIComponent(stage.jql);
+  const body=document.getElementById('dp-body');
+  if(!bugs.length){body.innerHTML='<p class="dp-empty">No bugs match current filters.</p>';return;}
+  body.innerHTML=`<table class="bt"><thead><tr>
+    <th>Key</th><th>Summary</th><th>Severity</th><th>Assignee</th><th>Raised</th>
+  </tr></thead><tbody>${bugs.map(b=>`<tr>
+    <td><a class="b-key" href="${JIRA}/browse/${b.key}" target="_blank">${b.key}</a></td>
+    <td class="b-sum">${b.summary}</td>
+    <td><span class="sev ${sevClass(b.severity)}">${b.severity||'N/A'}</span></td>
+    <td class="b-assignee">${b.assignee}</td>
+    <td class="b-raised">${b.raised}</td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+render();
+</script>
+</body>
+</html>
