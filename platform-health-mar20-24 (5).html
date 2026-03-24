@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Health — Mar 20–24, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131929;
+    --surface2: #1a2235;
+    --surface3: #1f2940;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --green: #22d37a;
+    --green-dim: rgba(34,211,122,0.12);
+    --yellow: #f5c842;
+    --yellow-dim: rgba(245,200,66,0.12);
+    --red: #f24c4c;
+    --red-dim: rgba(242,76,76,0.12);
+    --blue: #4c9cf2;
+    --blue-dim: rgba(76,156,242,0.12);
+    --orange: #f28c4c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: #fff;
+    line-height: 1;
+  }
+  .header h1 span { color: var(--green); }
+  .header-sub { color: var(--muted); font-size: 13px; margin-top: 8px; letter-spacing: 0.3px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--yellow-dim); border: 1px solid rgba(245,200,66,0.3);
+    padding: 8px 18px; border-radius: 30px;
+  }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 10px var(--yellow); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-pill span { font-size: 12px; color: var(--yellow); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 36px;
+    border-left: 4px solid var(--red);
+    background: linear-gradient(135deg, rgba(242,76,76,0.08) 0%, rgba(11,15,26,0) 60%);
+    border: 1px solid rgba(242,76,76,0.2);
+    border-left: 4px solid var(--red);
+  }
+  .summary-box p { font-size: 14px; color: var(--text); line-height: 1.8; }
+  .summary-box strong { color: #fff; font-weight: 600; }
+
+  /* SECTION */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: #fff;
+    margin: 40px 0 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; padding: 3px 10px; border-radius: 20px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 500;
+  }
+  .badge-red    { background: var(--red-dim);    color: var(--red);    }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  }
+  .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 36px; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+  .kpi::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; border-radius:14px 14px 0 0; }
+  .kpi.g::before { background:var(--green); }
+  .kpi.r::before { background:var(--red); }
+  .kpi.y::before { background:var(--yellow); }
+  .kpi.b::before { background:var(--blue); }
+  .kpi.o::before { background:var(--orange); }
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+  .kpi-val { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .kpi.g .kpi-val { color: var(--green); }
+  .kpi.r .kpi-val { color: var(--red); }
+  .kpi.y .kpi-val { color: var(--yellow); }
+  .kpi.b .kpi-val { color: var(--blue); }
+  .kpi.o .kpi-val { color: var(--orange); }
+  .kpi-sub { font-size: 11px; color: var(--muted); }
+
+  /* COMPARISON TABLE */
+  .compare-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 36px;
+  }
+  .compare-header {
+    display: grid; grid-template-columns: 220px 1fr 1fr;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .ch-cell {
+    padding: 14px 20px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ch-cell + .ch-cell { border-left: 1px solid var(--border); }
+  .ch-cell.curr { color: var(--green); font-weight: 600; }
+  .ch-cell.prev { color: var(--muted); }
+  .pd { width:8px;height:8px;border-radius:50%; }
+  .pd.g { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .pd.m { background:var(--muted); }
+
+  .compare-section-label {
+    padding: 10px 20px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .compare-row {
+    display: grid; grid-template-columns: 220px 1fr 1fr;
+    border-top: 1px solid var(--border);
+  }
+  .cr-metric {
+    padding: 16px 20px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .cr-metric strong { font-size: 13px; color: var(--text); font-weight: 500; }
+  .cr-metric span { font-size: 11px; color: var(--muted); }
+  .cr-prev, .cr-curr {
+    padding: 16px 20px;
+    border-left: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .cr-curr { background: rgba(34,211,122,0.03); }
+  .big { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .vsub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .trend {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+  }
+  .t-up-bad   { background:var(--red-dim);    color:var(--red);    }
+  .t-down-bad { background:var(--red-dim);    color:var(--red);    }
+  .t-up-good  { background:var(--green-dim);  color:var(--green);  }
+  .t-warn     { background:var(--yellow-dim); color:var(--yellow); }
+  .t-neutral  { background:rgba(107,122,153,.15); color:var(--muted); }
+
+  /* PROGRESS BARS */
+  .prog-wrap { display:flex; align-items:center; gap:10px; }
+  .prog-bar { flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; }
+  .prog-fill { height:100%; border-radius:3px; }
+  .prog-val { font-size:11px; color:var(--muted); min-width:40px; text-align:right; }
+  .prog-fill.g { background:var(--green); }
+  .prog-fill.y { background:var(--yellow); }
+  .prog-fill.r { background:var(--red); }
+  .prog-fill.b { background:var(--blue); }
+
+  /* VPU CRASH TABLE */
+  .crash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 36px;
+  }
+  .crash-table thead tr {
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .crash-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+  }
+  .crash-table tbody tr {
+    border-top: 1px solid var(--border);
+  }
+  .crash-table td {
+    padding: 14px 16px;
+    color: var(--text);
+  }
+  .ver-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .ver-badge.hot {
+    background: var(--red-dim);
+    border-color: rgba(242,76,76,0.3);
+    color: var(--red);
+  }
+  .crash-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .crash-mini {
+    height: 4px;
+    background: var(--red);
+    border-radius: 2px;
+  }
+  .crash-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ERROR LOGS */
+  .log-sources {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .log-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .log-source {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .log-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .log-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .log-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .log-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  /* ALERTS */
+  .alert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--border);
+  }
+  .alert-card.p1 { border-left-color: var(--red); }
+  .alert-card.p2 { border-left-color: var(--orange); }
+  .alert-card.p3 { border-left-color: var(--yellow); }
+  .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .p-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .p-badge.p1 { background: var(--red-dim); color: var(--red); }
+  .p-badge.p2 { background: var(--orange); color: #000; opacity: 0.8; }
+  .p-badge.p3 { background: var(--yellow-dim); color: var(--yellow); }
+  .alert-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .alert-tag {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .alert-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 40px;
+  }
+
+  /* ACTION LIST */
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .action-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .action-num {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .action-num.r { background: var(--red); }
+  .action-num.y { background: var(--yellow); color: #000; }
+  .action-num.b { background: var(--blue); }
+  .action-title {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .action-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .footer-brand {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .log-sources { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Platform Health <span>Report</span></h1>
+    <div class="header-sub">Mar 20–24, 2026</div>
+  </div>
+  <div class="status-pill">
+    <span class="status-dot"></span>
+    <span>⚠ Action Required</span>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <p><strong>Overview:</strong> This period shows intensified VPU hardware failures (S2 fleet), elevated error rates in GPU pipelines (+88% WoW), and persistent Kubernetes pod instability. Recording success remains below target. One P1 alert carries over unresolved. Critical 5.13.8 fleet decision still pending from previous week.</p>
+</div>
+
+<!-- KPI ROW -->
+<div class="kpi-row">
+  <div class="kpi r">
+    <div class="kpi-label">VPU Crashes (Total)</div>
+    <div class="kpi-val">8,780</div>
+    <div class="kpi-sub">S2: 3,429 fatal | ↑ 52% WoW</div>
+  </div>
+  <div class="kpi y">
+    <div class="kpi-label">Active Alerts</div>
+    <div class="kpi-val">22</div>
+    <div class="kpi-sub">3 Critical | 8 Error | 11 Warning</div>
+  </div>
+  <div class="kpi g">
+    <div class="kpi-label">Event Recording Avg</div>
+    <div class="kpi-val">83.5%</div>
+    <div class="kpi-sub">Cloud HD | ↓ from 88%</div>
+  </div>
+  <div class="kpi b">
+    <div class="kpi-label">Pod Status</div>
+    <div class="kpi-val">432</div>
+    <div class="kpi-sub">Running | 4 failed, 1 pending</div>
+  </div>
+  <div class="kpi o">
+    <div class="kpi-label">Error Rate (Prod)</div>
+    <div class="kpi-val">79%</div>
+    <div class="kpi-sub">X20 / X8.0 | Spike 03/21</div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section-title">Week-over-Week Comparison</div>
+<div class="compare-wrap">
+  <div class="compare-header">
+    <div class="ch-cell"></div>
+    <div class="ch-cell prev"><div class="pd m"></div> Mar 13–16</div>
+    <div class="ch-cell curr"><div class="pd g"></div> Mar 20–24</div>
+  </div>
+
+  <div class="compare-section-label">VPU Hardware</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Total VPU Crashes</strong><span>all systems combined</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">5,771</div><div class="vsub">baseline period</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">8,780</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +52%</span>
+        <span class="vsub">significant regression</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>S2 Fatal Crashes</strong><span>primary VPU fleet</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">2,265</div><div class="vsub">high concern</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">3,429</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +51%</span>
+        <span class="vsub">fleet deteriorating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>5.13.8 Crashes</strong><span>dominant problem version</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">2,850</div><div class="vsub">unresolved</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">4,195</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +47%</span>
+        <span class="vsub">still escalating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Recording & Availability</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Cloud HD Recording Avg</strong><span>primary metric</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">88.0%</div><div class="vsub">good threshold</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--yellow);">83.5%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -4.5%</span>
+        <span class="vsub">concerning dip</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Local HD Recording Avg</strong><span>secondary stream</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">85.0%</div><div class="vsub">acceptable</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--yellow);">81.3%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -3.7%</span>
+        <span class="vsub">also declining</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Pano Recording (Cloud)</strong><span>special format</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--muted);">—</div><div class="vsub">incomplete</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--muted);">—</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">○ No data</span>
+        <span class="vsub">encoder issue?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">MBE & ABE Performance</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>MBE LB Request Rate</strong><span>load balancer traffic</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">~2.0M</div><div class="vsub">baseline</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--green);">~1.9M</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ stable</span>
+        <span class="vsub">slight decrease</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>MBE Latency Average</strong><span>response time</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">~0.95 min</div><div class="vsub">normal</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--yellow);">~1.05 min</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-warn">↑ +10%</span>
+        <span class="vsub">minor increase</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>ABE Request Rate</strong><span>streaming requests</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--text);">~20 req/s avg</div><div class="vsub">baseline</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--text);">~18 req/s avg</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ stable</span>
+        <span class="vsub">occasional spikes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>ABE Latency p99</strong><span>99th percentile</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">~280ms</div><div class="vsub">elevated</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--orange);">~350ms</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +25%</span>
+        <span class="vsub">concerning trend</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Monitoring Infrastructure</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>RDS DB CPU</strong><span>database utilization</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">~8%</div><div class="vsub">normal</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--green);">~2.3%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-good">↓ Improved</span>
+        <span class="vsub">lower load</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>RDS Memory Free</strong><span>available RAM</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">~20.8 GiB</div><div class="vsub">moderate</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--orange);">21.0 GiB</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ stable</span>
+        <span class="vsub">capacity concern</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>RDS Disk Free</strong><span>storage available</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--muted);">~30.5 GiB</div><div class="vsub">near threshold</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--muted);">30.7 GiB</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ static</span>
+        <span class="vsub">monitor growth</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Monitoring Requests (2xx)</strong><span>successful calls</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">~1,200 avg</div><div class="vsub">healthy baseline</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--green);">~800 avg</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -33%</span>
+        <span class="vsub">reduced activity</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Recording Success Metrics</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Cloud HD Recording Avg</strong><span>primary metric</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">88.0%</div><div class="vsub">good threshold</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--yellow);">83.5%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -4.5%</span>
+        <span class="vsub">concerning dip</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Local HD Recording Avg</strong><span>secondary stream</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">85.0%</div><div class="vsub">acceptable</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--yellow);">81.3%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -3.7%</span>
+        <span class="vsub">also declining</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Cloud Pano Recording Avg</strong><span>panoramic format</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--muted);">~65%</div><div class="vsub">baseline (incomplete)</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--orange);">~60%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -5%</span>
+        <span class="vsub">encoder degradation</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Local Pano Recording Avg</strong><span>panoramic format</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--muted);">~62%</div><div class="vsub">baseline (incomplete)</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--orange);">~58%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-down-bad">↓ -4%</span>
+        <span class="vsub">consistent gap vs HD</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Error & Alert Trends</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Error Log Volume (Prod)</strong><span>total error messages</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">2.85M</div><div class="vsub">already high</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">6.20M</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +117%</span>
+        <span class="vsub">dramatic spike</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Active P1/P2 Alerts</strong><span>critical + high priority</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--orange);">6</div><div class="vsub">ongoing</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">11</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-bad">↑ +83%</span>
+        <span class="vsub">more unresolved</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Kubernetes Infrastructure</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Failed/Pending Pods</strong><span>scheduling or crash issues</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--yellow);">14</div><div class="vsub">12 pending, 2 failed</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--red);">5</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-warn">~ Shifted</span>
+        <span class="vsub">4 failed, 1 pending (worse type)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-section-label">Event Distribution by Sport</div>
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Total Events</strong><span>all sports combined</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">3,241</div><div class="vsub">prior period</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--green);">4,092</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-good">↑ +26%</span>
+        <span class="vsub">higher activity</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Unique Venues</strong><span>total distinct locations</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--green);">1,549</div><div class="vsub">prior period</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--green);">1,725</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-up-good">↑ +11%</span>
+        <span class="vsub">more venue coverage</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Top Sport: Soccer</strong><span>% of total events</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--text);">28.1%</div><div class="vsub">~911 events</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--text);">29.8%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ stable</span>
+        <span class="vsub">1,218 events (+33%)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Top Sport: Lacrosse</strong><span>% of total events</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--text);">25.2%</div><div class="vsub">~817 events</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--text);">24.8%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ stable</span>
+        <span class="vsub">1,014 events (+24%)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-row">
+    <div class="cr-metric"><strong>Baseball Activity</strong><span>% of total events</span></div>
+    <div class="cr-prev"><div class="big" style="color:var(--text);">18.3%</div><div class="vsub">~593 events</div></div>
+    <div class="cr-curr">
+      <div class="big" style="color:var(--text);">17.5%</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <span class="trend t-neutral">≈ slight dip</span>
+        <span class="vsub">717 events (+21%)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VPU CRASH BY SYSTEM TYPE -->
+<div class="section-title">VPU Crashes by System Type <span class="badge badge-red">S2 fleet critical</span></div>
+<div style="margin-bottom:36px;">
+  <table class="crash-table">
+    <thead>
+      <tr>
+        <th>System Type</th>
+        <th>Events w/ Crashes</th>
+        <th>Fatal Crashes</th>
+        <th>Normal Restarts</th>
+        <th>Total VPU Crashes</th>
+        <th>Crash %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background: rgba(242,76,76,0.05);">
+        <td><span class="ver-badge hot">S2</span></td>
+        <td style="color:var(--text);">210</td>
+        <td style="color:var(--red);font-weight:600;">3,429</td>
+        <td style="color:var(--text);">5,351</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:100%;"></div>
+            <span class="crash-num" style="color:var(--red);">8,780</span>
+          </div>
+        </td>
+        <td style="color:var(--red);font-family:'DM Mono',monospace;font-weight:600;">100%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge hot">S2S</span></td>
+        <td style="color:var(--text);">66</td>
+        <td style="color:var(--orange);">822</td>
+        <td style="color:var(--text);">1,860</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:31%;background:var(--orange);"></div>
+            <span class="crash-num" style="color:var(--orange);">2,682</span>
+          </div>
+        </td>
+        <td style="color:var(--orange);font-family:'DM Mono',monospace;">30.5%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">S3</span></td>
+        <td style="color:var(--text);">64</td>
+        <td style="color:var(--yellow);">356</td>
+        <td style="color:var(--text);">1,121</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:17%;background:var(--yellow);"></div>
+            <span class="crash-num" style="color:var(--yellow);">1,477</span>
+          </div>
+        </td>
+        <td style="color:var(--yellow);font-family:'DM Mono',monospace;">16.8%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">S</span></td>
+        <td style="color:var(--muted);">7</td>
+        <td style="color:var(--muted);">0</td>
+        <td style="color:var(--muted);">11</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:0.1%;background:var(--green);"></div>
+            <span class="crash-num" style="color:var(--muted);">11</span>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">0.1%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- VPU CRASH BY SOFTWARE VERSION -->
+<div class="section-title">VPU Crashes by Software Version <span class="badge badge-red">5.13.8 critical</span></div>
+<div style="margin-bottom:36px;">
+  <table class="crash-table">
+    <thead>
+      <tr>
+        <th>SW Version</th>
+        <th>Events w/ Crashes</th>
+        <th>Fatal Crashes</th>
+        <th>Normal Restarts</th>
+        <th>Total VPU Crashes</th>
+        <th>Crash %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background: rgba(242,76,76,0.05);">
+        <td><span class="ver-badge hot">5.13.8</span></td>
+        <td style="color:var(--text);">289</td>
+        <td style="color:var(--red);font-weight:600;">4,195</td>
+        <td style="color:var(--text);">6,649</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:100%;"></div>
+            <span class="crash-num" style="color:var(--red);">10,844</span>
+          </div>
+        </td>
+        <td style="color:var(--red);font-family:'DM Mono',monospace;font-weight:600;">100%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge hot">5.21.6</span></td>
+        <td style="color:var(--text);">36</td>
+        <td style="color:var(--orange);">128</td>
+        <td style="color:var(--text);">1,314</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:13%;background:var(--orange);"></div>
+            <span class="crash-num" style="color:var(--orange);">1,442</span>
+          </div>
+        </td>
+        <td style="color:var(--orange);font-family:'DM Mono',monospace;">13.3%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.13.6</span></td>
+        <td style="color:var(--text);">9</td>
+        <td style="color:var(--yellow);">172</td>
+        <td style="color:var(--text);">248</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:4%;background:var(--yellow);"></div>
+            <span class="crash-num" style="color:var(--yellow);">420</span>
+          </div>
+        </td>
+        <td style="color:var(--yellow);font-family:'DM Mono',monospace;">3.9%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.2.15</span></td>
+        <td style="color:var(--text);">7</td>
+        <td style="color:var(--yellow);">62</td>
+        <td style="color:var(--text);">71</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:1.2%;background:var(--yellow);"></div>
+            <span class="crash-num" style="color:var(--yellow);">133</span>
+          </div>
+        </td>
+        <td style="color:var(--yellow);font-family:'DM Mono',monospace;">1.2%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.21.8</span></td>
+        <td style="color:var(--muted);">3</td>
+        <td style="color:var(--muted);">24</td>
+        <td style="color:var(--muted);">31</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-mini" style="width:0.5%;background:var(--muted);"></div>
+            <span class="crash-num" style="color:var(--muted);">55</span>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">0.5%</td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">4.22.8 & Others</span></td>
+        <td style="color:var(--muted);">3</td>
+        <td style="color:var(--muted);">26</td>
+        <td style="color:var(--muted);">59</td>
+        <td>
+          <div class="crash-bar-wrap">
+            <div class="crash-num" style="color:var(--muted);">~450 combined</span>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-family:'DM Mono',monospace;">4.1%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- MONITORING INFRASTRUCTURE -->
+<div class="section-title">Monitoring Infrastructure Status</div>
+<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:14px; margin-bottom:36px;">
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; border-left:4px solid var(--red);">
+    <div style="font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin-bottom:10px;">Logs</div>
+    <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--red); margin-bottom:4px;">205.35M</div>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">Total logs collected</div>
+    <div style="font-size:12px; color:var(--red); font-weight:600;">2.22M High Severity</div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; border-left:4px solid var(--yellow);">
+    <div style="font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin-bottom:10px;">Metrics</div>
+    <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--yellow); margin-bottom:4px;">3.2 GB</div>
+    <div style="font-size:11px; color:var(--muted);">Metric data sent</div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; border-left:4px solid var(--blue);">
+    <div style="font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin-bottom:10px;">Tracing</div>
+    <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--blue); margin-bottom:4px;">0</div>
+    <div style="font-size:11px; color:var(--muted);">Error traces</div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; border-left:4px solid var(--muted);">
+    <div style="font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin-bottom:10px;">Security</div>
+    <div style="font-family:'Playfair Display',serif; font-size:14px; font-weight:700; color:var(--muted); margin-bottom:4px;">—</div>
+    <div style="font-size:10px; color:var(--muted);">No security data available</div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; border-left:4px solid var(--red);">
+    <div style="font-size:11px; text-transform:uppercase; color:var(--muted); letter-spacing:1px; margin-bottom:10px;">Active Alerts</div>
+    <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--red); margin-bottom:4px;">8</div>
+    <div style="font-size:11px; color:var(--muted);">4 Error, 2 Critical, 1 Info, 1 Warning</div>
+  </div>
+</div>
+
+<!-- RECORDING BY SW VERSION -->
+<div class="section-title">Recording Success by Software Version</div>
+<div style="margin-bottom:36px;">
+  <table class="crash-table">
+    <thead>
+      <tr>
+        <th>SW Version</th>
+        <th>HD Cloud Events</th>
+        <th>HD Cloud Success %</th>
+        <th>Pano Cloud Events</th>
+        <th>Pano Cloud Success %</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background: rgba(34,211,122,0.05);">
+        <td><span class="ver-badge">5.2.71</span></td>
+        <td style="color:var(--text);">4,200+</td>
+        <td style="color:var(--green);font-weight:600;">~95%</td>
+        <td style="color:var(--text);">1,400+</td>
+        <td style="color:var(--green);font-weight:600;">~90%</td>
+        <td><span class="badge badge-green">STABLE</span></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.2.18</span></td>
+        <td style="color:var(--text);">4,100+</td>
+        <td style="color:var(--green);font-weight:600;">~92%</td>
+        <td style="color:var(--text);">1,100+</td>
+        <td style="color:var(--yellow);font-weight:600;">~75%</td>
+        <td><span class="badge badge-green">GOOD</span></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.2.16</span></td>
+        <td style="color:var(--text);">4,050+</td>
+        <td style="color:var(--green);font-weight:600;">~88%</td>
+        <td style="color:var(--text);">350+</td>
+        <td style="color:var(--yellow);font-weight:600;">~50%</td>
+        <td><span class="badge badge-yellow">MODERATE</span></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge hot">5.2.10</span></td>
+        <td style="color:var(--text);">3,800+</td>
+        <td style="color:var(--yellow);font-weight:600;">~78%</td>
+        <td style="color:var(--text);">980+</td>
+        <td style="color:var(--yellow);font-weight:600;">~65%</td>
+        <td><span class="badge badge-yellow">WARNING</span></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">5.13.8</span></td>
+        <td style="color:var(--text);">3,200+</td>
+        <td style="color:var(--orange);font-weight:600;">~65%</td>
+        <td style="color:var(--text);">900+</td>
+        <td style="color:var(--orange);font-weight:600;">~55%</td>
+        <td><span class="badge badge-yellow">DEGRADED</span></td>
+      </tr>
+      <tr>
+        <td><span class="ver-badge">4.22.8</span></td>
+        <td style="color:var(--text);">2,800+</td>
+        <td style="color:var(--yellow);font-weight:600;">~72%</td>
+        <td style="color:var(--text);">1,000+</td>
+        <td style="color:var(--yellow);font-weight:600;">~68%</td>
+        <td><span class="badge badge-yellow">MODERATE</span></td>
+      </tr>
+      <tr style="background:rgba(242,76,76,0.05);">
+        <td><span class="ver-badge">2.x–3.x</span></td>
+        <td style="color:var(--muted);">~600</td>
+        <td style="color:var(--orange);font-weight:600;">~55%</td>
+        <td style="color:var(--muted);">~200</td>
+        <td style="color:var(--red);font-weight:600;">~30%</td>
+        <td><span class="badge badge-red">LEGACY</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="background:linear-gradient(135deg, rgba(242,76,76,0.12) 0%, rgba(242,76,76,0.04) 100%); border:1px solid rgba(242,76,76,0.25); border-radius:14px; padding:16px; margin-top:12px; border-left:4px solid var(--red);">
+    <div style="font-size:12px; color:var(--red); font-weight:600; margin-bottom:4px;">🔴 Pano Encoder Issue</div>
+    <div style="font-size:11px; color:var(--text);">Pano cloud recording consistently 15–25% below HD across all versions. Encoder pipeline degradation or buffer management issue suspected.</div>
+  </div>
+</div>
+
+<!-- ERROR DISTRIBUTION -->
+<div class="section-title">Error Distribution by Application & Subsystem</div>
+<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; margin-bottom:36px;">
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:12px; color:var(--text);">prod-eks</div>
+    <div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--red); margin-bottom:12px;">2.05M Errors</div>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">Application: prod | Subsystem: prod-eks</div>
+    <div style="background:rgba(255,255,255,0.03); border-radius:8px; padding:12px; font-size:10px; color:var(--muted);">
+      <div style="margin-bottom:8px;"><strong style="color:var(--text);">60% from 3 templates:</strong></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--yellow); height:6px; border-radius:3px;"></span><span>21%</span></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--orange); height:6px; border-radius:3px;"></span><span>19%</span></div>
+      <div style="display:flex; gap:8px;"><span style="width:40px; background:var(--muted); height:6px; border-radius:3px; opacity:0.5;"></span><span>Other: 20%</span></div>
+    </div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:12px; color:var(--text);">venice-prod</div>
+    <div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--orange); margin-bottom:12px;">859.35K Errors</div>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">Application: prod | Subsystem: venice-prod</div>
+    <div style="background:rgba(255,255,255,0.03); border-radius:8px; padding:12px; font-size:10px; color:var(--muted);">
+      <div style="margin-bottom:8px;"><strong style="color:var(--text);">78% from 3 templates:</strong></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--red); height:6px; border-radius:3px;"></span><span>44%</span></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--orange); height:6px; border-radius:3px;"></span><span>22%</span></div>
+      <div style="display:flex; gap:8px;"><span style="width:40px; background:var(--yellow); height:6px; border-radius:3px;"></span><span>12%</span></div>
+    </div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:12px; color:var(--text);">vidswap-prod</div>
+    <div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--orange); margin-bottom:12px;">259.65K Errors</div>
+    <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">Application: prod | Subsystem: vidswap-prod</div>
+    <div style="background:rgba(255,255,255,0.03); border-radius:8px; padding:12px; font-size:10px; color:var(--muted);">
+      <div style="margin-bottom:8px;"><strong style="color:var(--text);">84% from 3 templates:</strong></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--red); height:6px; border-radius:3px;"></span><span>52%</span></div>
+      <div style="display:flex; gap:8px; margin-bottom:4px;"><span style="width:40px; background:var(--orange); height:6px; border-radius:3px;"></span><span>22%</span></div>
+      <div style="display:flex; gap:8px;"><span style="width:40px; background:var(--muted); height:6px; border-radius:3px; opacity:0.5;"></span><span>Other: 10%</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP ABNORMAL ERRORS -->
+<div class="section-title">Top Abnormal Error Codes & Error Rate Subsystems</div>
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:36px;">
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; border-left:4px solid var(--red);">
+    <div style="font-size:13px; font-weight:600; margin-bottom:16px; color:var(--text);">🔴 Top 3 Abnormal Errors (Above Normal)</div>
+    <div style="margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="background:var(--red-dim); border:1px solid rgba(242,76,76,0.3); border-radius:6px; padding:6px 12px; font-family:'DM Mono',monospace; font-size:11px; font-weight:600; color:var(--red);">ERROR</div>
+        <span style="font-weight:600; color:var(--text);">X20</span>
+        <span style="font-size:11px; color:var(--muted);">Kubernetes container hash mismatch</span>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="background:var(--red-dim); border:1px solid rgba(242,76,76,0.3); border-radius:6px; padding:6px 12px; font-family:'DM Mono',monospace; font-size:11px; font-weight:600; color:var(--red);">ERROR</div>
+        <span style="font-weight:600; color:var(--text);">X8.0</span>
+        <span style="font-size:11px; color:var(--muted);">ML orchestrator pod hash mismatch (2× occurrence)</span>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; border-left:4px solid var(--red);">
+    <div style="font-size:13px; font-weight:600; margin-bottom:16px; color:var(--text);">Error Rate by Subsystem</div>
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:12px; color:var(--text);">prod-eks</span>
+        <span style="font-family:'DM Mono',monospace; font-weight:600; color:var(--red);">6%</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:4px; height:8px; overflow:hidden;">
+        <div style="height:100%; width:6%; background:var(--red); border-radius:4px;"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:12px; color:var(--text);">content-v2</span>
+        <span style="font-family:'DM Mono',monospace; font-weight:600; color:var(--orange);">5%</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:4px; height:8px; overflow:hidden;">
+        <div style="height:100%; width:5%; background:var(--orange); border-radius:4px;"></div>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:12px; color:var(--text);">venice-prod</span>
+        <span style="font-family:'DM Mono',monospace; font-weight:600; color:var(--yellow);">3%</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:4px; height:8px; overflow:hidden;">
+        <div style="height:100%; width:3%; background:var(--yellow); border-radius:4px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ERROR LOGS -->
+<div class="section-title">Error Log Analysis <span class="badge badge-red">+117% WoW</span></div>
+<div class="log-sources" style="margin-bottom:36px;">
+  <div class="log-card">
+    <div class="log-source">prod-eks &nbsp;<span style="color:var(--red);font-size:10px;font-weight:600;">⚠ NEW SURGE</span></div>
+    <div class="log-num" style="color:var(--red);">3.44M</div>
+    <div class="log-note">Data API + LMI errors · New failure templates · ×88% increase from Mar 13–16</div>
+    <div class="log-bar"><div class="log-fill" style="width:100%;background:var(--red);"></div></div>
+  </div>
+  <div class="log-card">
+    <div class="log-source">vidswap-prod</div>
+    <div class="log-num" style="color:var(--orange);">1.76M</div>
+    <div class="log-note">GPU encoding pipeline · Processing errors · ×60% above baseline</div>
+    <div class="log-bar"><div class="log-fill" style="width:51%;background:var(--orange);"></div></div>
+  </div>
+  <div class="log-card">
+    <div class="log-source">stage-eks</div>
+    <div class="log-num" style="color:var(--yellow);">1.00M</div>
+    <div class="log-note">VAS error spike · Clipping service logs · New issue pattern</div>
+    <div class="log-bar"><div class="log-fill" style="width:29%;background:var(--yellow);"></div></div>
+  </div>
+</div>
+
+<!-- SPORT TYPE DISTRIBUTION -->
+<div class="section-title">Top Sports by Event Volume <span class="badge badge-green">4,092 events</span></div>
+<div style="margin-bottom:36px;">
+  <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:20px;">
+    <div style="background:linear-gradient(135deg, rgba(242,76,76,0.15) 0%, rgba(242,76,76,0.05) 100%); border:1px solid rgba(242,76,76,0.3); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">⚽</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Soccer <span style="color:var(--red);font-family:'DM Mono',monospace;font-size:14px;">#1</span></div>
+      <div style="font-size:12px; color:var(--muted);">1,218 events (29.8%)</div>
+    </div>
+    <div style="background:linear-gradient(135deg, rgba(242,76,76,0.15) 0%, rgba(242,76,76,0.05) 100%); border:1px solid rgba(242,76,76,0.3); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🏀</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Basketball <span style="color:var(--red);font-family:'DM Mono',monospace;font-size:14px;">#2</span></div>
+      <div style="font-size:12px; color:var(--muted);">162 events (4.0%)</div>
+    </div>
+    <div style="background:rgba(76,156,242,0.08); border:1px solid rgba(76,156,242,0.2); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🥍</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Lacrosse <span style="color:var(--blue);font-family:'DM Mono',monospace;font-size:14px;">#3</span></div>
+      <div style="font-size:12px; color:var(--muted);">1,014 events (24.8%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🏐</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Volleyball <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#4</span></div>
+      <div style="font-size:12px; color:var(--muted);">507 events (12.4%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">⚾</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Baseball <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#5</span></div>
+      <div style="font-size:12px; color:var(--muted);">717 events (17.5%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🏒</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Ice Hockey <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#6</span></div>
+      <div style="font-size:12px; color:var(--muted);">~84 events (2.1%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🥎</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Softball <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#7</span></div>
+      <div style="font-size:12px; color:var(--muted);">274 events (6.7%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🏑</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Field Hockey <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#8</span></div>
+      <div style="font-size:12px; color:var(--muted);">~42 events (1.0%)</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:14px; padding:16px; text-align:center;">
+      <div style="font-size:24px; margin-bottom:8px;">🏈</div>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:4px;">Amer. Football <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:14px;">#9</span></div>
+      <div style="font-size:12px; color:var(--muted);">67 events (1.6%)</div>
+    </div>
+  </div>
+  <div style="background:linear-gradient(135deg, rgba(242,76,76,0.12) 0%, rgba(242,76,76,0.04) 100%); border:1px solid rgba(242,76,76,0.25); border-radius:14px; padding:20px; border-left:4px solid var(--red);">
+    <div style="display:flex; align-items:flex-start; gap:12px;">
+      <div style="font-size:20px; flex-shrink:0;">⚠</div>
+      <div>
+        <div style="font-weight:600; color:var(--red); margin-bottom:6px; font-size:14px;">Highest customer impact risk:</div>
+        <div style="font-size:13px; color:var(--text); line-height:1.6;">Soccer &amp; Basketball (#1 &amp; #2) have the highest event volume exposed to the current 12–28% recording failure rate. Elevated support tickets expected.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVE ALERTS -->
+<div class="section-title">Active Alerts <span class="badge badge-red">22 total · 3× P1/P2</span></div>
+<div style="margin-bottom:36px;">
+  <div class="alert-card p1">
+    <div class="alert-header">
+      <span class="p-badge p1">P1</span>
+      <span class="alert-name">[PROD]-[VS]-FATAL ERROR — vidswap-prod</span>
+      <span class="alert-tag">23/03/2026 15:50</span>
+    </div>
+    <div class="alert-sub">Unresolved 2 consecutive periods. Fatal video streaming errors. No RCA. Requires immediate owner assignment.</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">[Data API] Stats Validation</span>
+      <span class="alert-tag">prod-eks · NEW</span>
+    </div>
+    <div class="alert-sub">24/03/2026 06:15 · New this period · Correlate with deployment drift after Mar 16</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">[STAGE]-[CS]-VAS Error</span>
+      <span class="alert-tag">stage-eks</span>
+    </div>
+    <div class="alert-sub">23/03/2026 16:34 · Clipping service validation failures · Spike on 21–22</div>
+  </div>
+  <div class="alert-card p2">
+    <div class="alert-header">
+      <span class="p-badge p2">P2</span>
+      <span class="alert-name">[DEV]-[CS]-Unhandled Exception</span>
+      <span class="alert-tag">cloud-dev-eks · NEW</span>
+    </div>
+    <div class="alert-sub">24/03/2026 00:34 · New development environment issue</div>
+  </div>
+  <div class="alert-card p3">
+    <div class="alert-header">
+      <span class="p-badge p3">P3</span>
+      <span class="alert-name">[AIR] Processing Alert & [PROD] SES BOUNCE</span>
+      <span class="alert-tag">multiple</span>
+    </div>
+    <div class="alert-sub">23/03–24/03 · Email + AIR service warnings · Low urgency</div>
+  </div>
+</div>
+
+<!-- PRIORITY ACTIONS -->
+<div class="section-title">Priority Actions</div>
+<div class="action-list" style="margin-bottom:36px;">
+  <div class="action-item">
+    <div class="action-num r">1</div>
+    <div><div class="action-title">RCA + Fix: 5.13.8 VPU Crash Epidemic (+47% WoW)</div><div class="action-desc">Version accounts for 47.8% of all crashes (4,195 events). Still unresolved from Mar 13–16. Immediate decision required: fix, rollback, or fleet isolation. S2 hardware at critical failure rate.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num r">2</div>
+    <div><div class="action-title">Investigate prod-eks Error Explosion (+117% WoW)</div><div class="action-desc">3.44M errors this week vs 1.59M last week. Data API + LMI failures. Correlate with Mar 16 deployments and Kubernetes cluster state changes.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num r">3</div>
+    <div><div class="action-title">Resolve unresolved P1: [PROD]-[VS] FATAL ERROR</div><div class="action-desc">Now in 2nd consecutive period without RCA. Video streaming failures affecting production. Assign owner and deadline today.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">4</div>
+    <div><div class="action-title">Debug Recording Success Regression (Cloud HD -4.5%)</div><div class="action-desc">Dropped from 88% to 83.5%. Investigate encoder health, buffer management, and network latency spike on 03/21.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">5</div>
+    <div><div class="action-title">Triage Pod Failures (4 failed, 1 pending)</div><div class="action-desc">Failed pods shifted from pending to crashed state. Investigate vs-web, prometheus, and clipping pod root causes. Prometheus failure impacts monitoring.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num y">6</div>
+    <div><div class="action-title">Stabilize vidswap-prod GPU Pipeline (1.76M errors)</div><div class="action-desc">Processing errors in encoding chain. Secondary issue after prod-eks. Correlate with GPU resource utilization.</div></div>
+  </div>
+  <div class="action-item">
+    <div class="action-num b">●</div>
+    <div><div class="action-title">Ongoing monitoring (daily)</div><div class="action-desc">Recording success (target: 90% Cloud HD + Pano) · Pano encoder status · S2S/S3 crash rate trend · K8s pod stability · Error log new patterns</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-note">Data: Grafana (MBE/ABE/Clipping/VPU) · Coralogix (Logs/Alerts) · Datadog (K8s) · Screenshots Mar 24, 2026 · Comparison: Mar 13–16, 2026</div>
+  <div class="footer-brand">Pixellot · Platform QA</div>
+</div>
+
+</body>
+</html>
