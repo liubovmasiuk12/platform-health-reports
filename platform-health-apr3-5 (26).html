@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Health — Apr 3–5, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --surface: #131929;
+    --surface2: #1a2235;
+    --surface3: #1f2940;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --green: #22d37a;
+    --green-dim: rgba(34,211,122,0.12);
+    --yellow: #f5c842;
+    --yellow-dim: rgba(245,200,66,0.12);
+    --red: #f24c4c;
+    --red-dim: rgba(242,76,76,0.12);
+    --blue: #4c9cf2;
+    --blue-dim: rgba(76,156,242,0.12);
+    --orange: #f28c4c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 48px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: #fff;
+    line-height: 1;
+  }
+  .header h1 span { color: var(--red); }
+  .header-sub { color: var(--muted); font-size: 13px; margin-top: 8px; letter-spacing: 0.3px; }
+  .status-pill {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--red-dim); border: 1px solid rgba(242,76,76,0.3);
+    padding: 8px 18px; border-radius: 30px;
+  }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); box-shadow: 0 0 10px var(--red); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-pill span { font-size: 12px; color: var(--red); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* SUMMARY BOX */
+  .summary-box {
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 36px;
+    background: linear-gradient(135deg, rgba(242,76,76,0.08) 0%, rgba(11,15,26,0) 60%);
+    border: 1px solid rgba(242,76,76,0.2);
+  }
+  .summary-box p { font-size: 14px; color: var(--text); line-height: 1.8; margin-bottom: 8px; }
+  .summary-box p:last-child { margin-bottom: 0; }
+  .summary-box strong { color: #fff; font-weight: 600; }
+
+  /* SECTION */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700; color: #fff;
+    margin: 40px 0 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; padding: 3px 10px; border-radius: 20px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 500;
+  }
+  .badge-red    { background: var(--red-dim);    color: var(--red);    }
+  .badge-green  { background: var(--green-dim);  color: var(--green);  }
+  .badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+  .badge-blue   { background: var(--blue-dim);   color: var(--blue);   }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 36px; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; border-radius:14px 14px 0 0; }
+  .kpi.g::before { background:var(--green); }
+  .kpi.r::before { background:var(--red); }
+  .kpi.y::before { background:var(--yellow); }
+  .kpi.b::before { background:var(--blue); }
+  .kpi.o::before { background:var(--orange); }
+  .kpi-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
+  .kpi-val { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+  .kpi.g .kpi-val { color: var(--green); }
+  .kpi.r .kpi-val { color: var(--red); }
+  .kpi.y .kpi-val { color: var(--yellow); }
+  .kpi.b .kpi-val { color: var(--blue); }
+  .kpi.o .kpi-val { color: var(--orange); }
+  .kpi-sub { font-size: 11px; color: var(--muted); }
+
+  /* GAUGE SECTION */
+  .gauge-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 36px; }
+  .gauge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .gauge-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 20px; }
+  .gauge-wrap { position: relative; width: 160px; height: 90px; margin-bottom: 16px; }
+  .gauge-wrap svg { overflow: visible; }
+  .gauge-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .gauge-sub { font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* DATA TABLE */
+  .data-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .data-table-title {
+    padding: 14px 20px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table thead tr { border-bottom: 1px solid var(--border); }
+  .data-table th {
+    padding: 12px 20px; text-align: left;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 600;
+  }
+  .data-table th.right, .data-table td.right { text-align: right; }
+  .data-table tbody tr { border-top: 1px solid var(--border); }
+  .data-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .data-table td { padding: 13px 20px; color: var(--text); }
+  .data-table tr.total-row td { color: var(--muted); font-size: 11px; }
+  .bar-cell { display: flex; align-items: center; gap: 10px; }
+  .bar-fill { height: 4px; background: var(--blue); border-radius: 2px; min-width: 2px; }
+  .bar-fill.red { background: var(--red); }
+  .bar-fill.green { background: var(--green); }
+  .bar-fill.orange { background: var(--orange); }
+  .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .ver-badge {
+    display: inline-block; padding: 3px 10px;
+    background: var(--surface2); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+  }
+  .ver-badge.hot { background: var(--red-dim); border-color: rgba(242,76,76,0.3); color: var(--red); }
+  .sys-badge {
+    display: inline-block; padding: 3px 9px;
+    border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+  }
+  .sys-s2  { background: rgba(76,156,242,0.15); color: var(--blue); }
+  .sys-s2s { background: rgba(242,140,76,0.15); color: var(--orange); }
+  .sys-s3  { background: rgba(34,211,122,0.15); color: var(--green); }
+  .sys-s   { background: rgba(107,122,153,0.15); color: var(--muted); }
+
+  /* THREE-COL GRID for tables */
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 36px; }
+  .two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 36px; }
+
+  /* CRASH TABLE big */
+  .crash-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 36px;
+  }
+  .crash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .crash-table thead tr { background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+  .crash-table th {
+    padding: 12px 14px; text-align: left;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 600;
+  }
+  .crash-table th.right, .crash-table td.right { text-align: right; }
+  .crash-table tbody tr { border-top: 1px solid var(--border); }
+  .crash-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .crash-table td { padding: 12px 14px; color: var(--text); }
+  .rank-num { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--muted); }
+  .rank-num.top { color: var(--red); }
+  .venue-name { font-size: 12px; color: var(--text); font-weight: 500; }
+  .venue-id { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
+  .crash-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .crash-mini { height: 4px; background: var(--red); border-radius: 2px; }
+  .crash-num { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; color: var(--red); }
+  .pct-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .cum-val { font-family: 'DM Mono', monospace; font-size: 11px; }
+
+  /* MBE SECTION */
+  .mbe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 36px; }
+  .mbe-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .mbe-card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; font-weight: 600; }
+  .mbe-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .mbe-stat-row:last-child { border-bottom: none; }
+  .mbe-stat-label { font-size: 12px; color: var(--muted); }
+  .mbe-stat-val { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; }
+
+  /* ALERT INCIDENT CARD */
+  .incident-card {
+    background: var(--surface);
+    border: 1px solid rgba(242,76,76,0.25);
+    border-left: 4px solid var(--red);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    background: linear-gradient(90deg, rgba(242,76,76,0.06) 0%, transparent 100%);
+  }
+  .incident-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .incident-badge {
+    font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 10px;
+    border-radius: 4px; font-weight: 600; text-transform: uppercase;
+    background: rgba(242,76,76,0.2); color: var(--red);
+  }
+  .incident-name { color: #fff; font-weight: 600; font-size: 14px; }
+  .incident-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-left: auto; }
+  .incident-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* COMPARISON TABLE */
+  .compare-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .compare-header {
+    display: grid;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .ch-cell {
+    padding: 14px 20px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ch-cell + .ch-cell { border-left: 1px solid var(--border); }
+  .ch-cell.curr { color: var(--green); font-weight: 600; }
+  .ch-cell.prev { color: var(--muted); }
+  .pd { width:8px; height:8px; border-radius:50%; }
+  .pd.g { background:var(--green); box-shadow:0 0 6px var(--green); }
+  .pd.m { background:var(--muted); }
+  .compare-section-label {
+    padding: 10px 20px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+  .compare-row {
+    display: grid;
+    border-top: 1px solid var(--border);
+  }
+  .cr-metric {
+    padding: 16px 20px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .cr-metric strong { font-size: 13px; color: var(--text); font-weight: 500; }
+  .cr-metric span { font-size: 11px; color: var(--muted); }
+
+  /* TOOLTIP */
+  [data-tip] { position: relative; cursor: help; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: #1f2940;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    max-width: 280px;
+    white-space: normal;
+    width: max-content;
+    max-width: 260px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  [data-tip]:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .cr-prev, .cr-curr {
+    padding: 16px 20px;
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .cr-prev { background: rgba(11,15,26,0.3); }
+  .cr-curr { background: rgba(34,211,122,0.03); }
+  .big { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; line-height: 1; }
+  .vsub { font-size: 11px; color: var(--muted); }
+
+  /* SPORTS GRID */
+  .sports-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 36px; }
+  .sport-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 14px; text-align: center;
+  }
+  .sport-icon { font-size: 22px; margin-bottom: 8px; }
+  .sport-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+  .sport-count { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--text); }
+  .sport-pct { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 60px; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted);
+  }
+  .footer-note { flex: 1; }
+  .footer-brand { text-align: right; color: var(--text); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Platform Health <span>Apr 3–5</span></h1>
+    <div class="header-sub">Pixellot Production · Weekly Status Report · 2026</div>
+  </div>
+  <div class="status-pill">
+    <div class="status-dot"></div>
+    <span>Critical Issues</span>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-box">
+  <p><strong>Period Overview:</strong> <strong>1,775 events</strong> recorded across S2, S2S, S3 and other system types — soccer (595, 33.5%) and lacrosse (356, 20.1%) leading by volume. Fleet is dominated by <strong>v5.21.8</strong> (86.6% of events). Recording success remained below the 90% target: Cloud HD <strong>88.6%</strong>, Local HD <strong>87.0%</strong>.</p>
+  <p><strong>VPU crashes:</strong> <strong>208 fatal</strong> resets across 92 events; <strong>465 non-fatal</strong> resets total. All fatal crashes attributed to v5.21.8. <strong>S2</strong> fleet accounts for 69.7% of fatal crashes (145), S2S for 30.3% (63). Top 3 crash events alone account for <strong>92.3%</strong> of all fatals — both Georgia Military sessions (69 + 68) and West Linn (55) — all on Apr 2–3. Pareto by venue: Georgia Military #1 at 65.9% cumulative.</p>
+  <p><strong>Alerts:</strong> <strong>15 active</strong> — 6 Critical, 7 Error, 1 Warning, 1 Info. Top abnormal errors: X42, X34, X20 — all venue-metrics-consumer / prod-eks.</p>
+</div>
+
+<!-- KPI ROW -->
+<div style="margin-bottom:14px;">
+  <a href="https://grafana.prod.pixellot.tv/d/a20899ef-d040-46b8-8e5c-3b77409f5500/liubov-dashboard-copy-copy-copy-copy?orgId=1&var-tenant=playOnPoly&var-lifecycleStatus=Installed&var-systemType=All&var-swVersion=All"
+     target="_blank"
+     style="display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);border:1px solid rgba(76,156,242,0.3);background:rgba(76,156,242,0.08);padding:7px 16px;border-radius:20px;text-decoration:none;letter-spacing:0.5px;transition:background 0.15s;"
+     onmouseover="this.style.background='rgba(76,156,242,0.18)'"
+     onmouseout="this.style.background='rgba(76,156,242,0.08)'">
+    ↗ Grafana — Platform Overview Dashboard
+  </a>
+</div>
+<div class="kpi-row">
+  <div class="kpi r">
+    <div class="kpi-label" data-tip="VPU (Video Processing Unit) crash that requires full restart. Causes recording gaps and event data loss.">VPU Fatal Crashes</div>
+    <div class="kpi-val">208</div>
+    <div class="kpi-sub">92 events affected</div>
+  </div>
+  <div class="kpi r">
+    <div class="kpi-label" data-tip="VPU reset that recovers automatically without recording loss. Still indicates hardware instability.">VPU Non-Fatal Resets</div>
+    <div class="kpi-val">465</div>
+    <div class="kpi-sub">S2 dominant (272)</div>
+  </div>
+  <div class="kpi y">
+    <div class="kpi-label" data-tip="Percentage of events where cloud HD stream was recorded successfully. Target ≥90%.">Cloud HD Recording</div>
+    <div class="kpi-val">88.6%</div>
+    <div class="kpi-sub">Target ≥90% · below</div>
+  </div>
+  <div class="kpi y">
+    <div class="kpi-label" data-tip="Percentage of events where local HD stream was recorded successfully. Target ≥90%.">Local HD Recording</div>
+    <div class="kpi-val">87.0%</div>
+    <div class="kpi-sub">Target ≥90% · below</div>
+  </div>
+  <div class="kpi b">
+    <div class="kpi-label" data-tip="Total number of sporting events processed by the platform during this period.">Total Events</div>
+    <div class="kpi-val">1,775</div>
+    <div class="kpi-sub">Soccer leads (595)</div>
+  </div>
+</div>
+
+<!-- INCIDENT -->
+
+<!-- RECORDING SUCCESS -->
+<div class="section-title">Event Recording Success <span class="badge badge-yellow">Below Target</span></div>
+<div class="gauge-row">
+  <div class="gauge-card">
+    <div class="gauge-label">Average Cloud HD</div>
+    <div class="gauge-wrap" style="width:200px;height:110px;">
+      <svg viewBox="0 0 200 110" width="200" height="110">
+        <!-- grey track -->
+        <path d="M 20 105 A 80 80 0 0 1 180 105"
+              fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="16" stroke-linecap="butt"/>
+        <!-- red filled: 88.6% = 222.7px of 251.3px total -->
+        <path d="M 20 105 A 80 80 0 0 1 180 105"
+              fill="none" stroke="#f24c4c" stroke-width="16" stroke-linecap="butt"
+              stroke-dasharray="222.7 28.6"/>
+        <text x="100" y="92" text-anchor="middle"
+              font-family="Playfair Display,serif" font-size="30" font-weight="700" fill="#f24c4c">88.6%</text>
+      </svg>
+    </div>
+    <div class="gauge-sub" style="color:var(--yellow);">Below 90% target</div>
+  </div>
+  <div class="gauge-card">
+    <div class="gauge-label">Average Local HD</div>
+    <div class="gauge-wrap" style="width:200px;height:110px;">
+      <svg viewBox="0 0 200 110" width="200" height="110">
+        <!-- grey track -->
+        <path d="M 20 105 A 80 80 0 0 1 180 105"
+              fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="16" stroke-linecap="butt"/>
+        <!-- red filled: 87.0% = 218.6px of 251.3px total -->
+        <path d="M 20 105 A 80 80 0 0 1 180 105"
+              fill="none" stroke="#f24c4c" stroke-width="16" stroke-linecap="butt"
+              stroke-dasharray="218.6 32.7"/>
+        <text x="100" y="92" text-anchor="middle"
+              font-family="Playfair Display,serif" font-size="30" font-weight="700" fill="#f24c4c">87.0%</text>
+      </svg>
+    </div>
+    <div class="gauge-sub" style="color:var(--yellow);">Below 90% target</div>
+  </div>
+</div>
+
+<!-- EVENTS BREAKDOWN -->
+<div class="section-title">Event Volume Breakdown <span class="badge badge-blue">1,775 Total</span></div>
+
+<!-- Sports grid -->
+<div class="sports-grid">
+  <div class="sport-card">
+    <div class="sport-icon">⚽</div>
+    <div class="sport-name">Soccer</div>
+    <div class="sport-count">595</div>
+    <div class="sport-pct">33.5%</div>
+  </div>
+  <div class="sport-card">
+    <div class="sport-icon">🥍</div>
+    <div class="sport-name">Lacrosse</div>
+    <div class="sport-count">356</div>
+    <div class="sport-pct">20.1%</div>
+  </div>
+  <div class="sport-card">
+    <div class="sport-icon">⚾</div>
+    <div class="sport-name">Baseball</div>
+    <div class="sport-count">313</div>
+    <div class="sport-pct">17.6%</div>
+  </div>
+  <div class="sport-card">
+    <div class="sport-icon">🏐</div>
+    <div class="sport-name">Volleyball</div>
+    <div class="sport-count">254</div>
+    <div class="sport-pct">14.3%</div>
+  </div>
+  <div class="sport-card">
+    <div class="sport-icon">🥎</div>
+    <div class="sport-name">Softball</div>
+    <div class="sport-count">148</div>
+    <div class="sport-pct">8.3%</div>
+  </div>
+  <div class="sport-card">
+    <div class="sport-icon">🏟️</div>
+    <div class="sport-name">Other</div>
+    <div class="sport-count">109</div>
+    <div class="sport-pct">6.1%</div>
+  </div>
+</div>
+
+<div class="three-col">
+  <!-- Events by system type -->
+  <div class="data-table-wrap">
+    <div class="data-table-title">Events per System Type</div>
+    <table class="data-table">
+      <thead><tr>
+        <th>System Type</th>
+        <th class="right">Events</th>
+        <th class="right">Share</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="sys-badge sys-s2">S2</span></td>
+          <td class="right mono">1,212</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:68px;background:var(--blue)"></div><span class="mono">68.3%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s2s">S2S</span></td>
+          <td class="right mono">367</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:21px;background:var(--orange)"></div><span class="mono">20.7%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s3">S3</span></td>
+          <td class="right mono">160</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:9px;background:var(--green)"></div><span class="mono">9.0%</span></div></td>
+        </tr>
+        <tr>
+          <td>Double Play</td>
+          <td class="right mono">20</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1.1%</span></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s">S</span></td>
+          <td class="right mono">10</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">0.6%</span></td>
+        </tr>
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right mono" style="color:var(--text);">1,775</td>
+          <td class="right"><span class="mono">100%</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Events by SW version -->
+  <div class="data-table-wrap">
+    <div class="data-table-title">Events per SW Version</div>
+    <table class="data-table">
+      <thead><tr>
+        <th>SW Version</th>
+        <th class="right">Events</th>
+        <th class="right">Share</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="ver-badge hot">5.21.8</span></td>
+          <td class="right mono">1,538</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:88px;background:var(--red)"></div><span class="mono">86.6%</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">2.66.15</span></td>
+          <td class="right mono">26</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1.5%</span></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">5.13.8</span></td>
+          <td class="right mono">24</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1.4%</span></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">4.22.8</span></td>
+          <td class="right mono">21</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1.2%</span></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">5.2.15</span></td>
+          <td class="right mono">18</td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1.0%</span></td>
+        </tr>
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right mono" style="color:var(--text);">1,775</td>
+          <td class="right"><span class="mono">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Events by sport full -->
+  <div class="data-table-wrap">
+    <div class="data-table-title">Events by Sport (Top 5)</div>
+    <table class="data-table">
+      <thead><tr>
+        <th>Sport</th>
+        <th class="right">Events</th>
+        <th class="right">Share</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Soccer</td>
+          <td class="right mono">595</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:60px;background:var(--green)"></div><span class="mono">33.5%</span></div></td>
+        </tr>
+        <tr>
+          <td>Lacrosse</td>
+          <td class="right mono">356</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:36px;background:var(--green)"></div><span class="mono">20.1%</span></div></td>
+        </tr>
+        <tr>
+          <td>Baseball</td>
+          <td class="right mono">313</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:31px;background:var(--blue)"></div><span class="mono">17.6%</span></div></td>
+        </tr>
+        <tr>
+          <td>Volleyball</td>
+          <td class="right mono">254</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:25px;background:var(--blue)"></div><span class="mono">14.3%</span></div></td>
+        </tr>
+        <tr>
+          <td>Softball</td>
+          <td class="right mono">148</td>
+          <td class="right"><div class="bar-cell" style="justify-content:flex-end"><div class="bar-fill" style="width:15px;background:var(--orange)"></div><span class="mono">8.3%</span></div></td>
+        </tr>
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right mono" style="color:var(--text);">1,775</td>
+          <td class="right"><span class="mono">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- VPU CRASHES -->
+<div class="section-title">VPU Crash Analysis <span class="badge badge-red">208 Fatal · 465 Non-Fatal</span></div>
+
+<!-- Fatal crashes donut -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;display:flex;gap:40px;align-items:center;margin-bottom:20px;max-width:580px;">
+  <div style="flex-shrink:0;">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:18px;">Fatal Crashes by System Type</div>
+    <svg viewBox="0 0 140 140" width="140" height="140">
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#f24c4c" stroke-width="22"
+        stroke-dasharray="229.9 329.9" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#f28c4c" stroke-width="22"
+        stroke-dasharray="100.0 329.9" stroke-dashoffset="-229.9" transform="rotate(-90 70 70)"/>
+      <text x="70" y="65" text-anchor="middle" font-family="Playfair Display,serif" font-size="22" font-weight="700" fill="#f24c4c">208</text>
+      <text x="70" y="82" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#6b7a99">fatal</text>
+    </svg>
+  </div>
+  <div style="font-size:12px;line-height:2.4;flex:1;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:11px;height:11px;border-radius:2px;background:#f24c4c;flex-shrink:0;"></div><span style="color:var(--text);">S2</span></div>
+      <div style="display:flex;gap:16px;"><span style="font-family:'DM Mono',monospace;color:var(--text);">145</span><span style="font-family:'DM Mono',monospace;color:var(--red);font-weight:600;">69.7%</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:11px;height:11px;border-radius:2px;background:#f28c4c;flex-shrink:0;"></div><span style="color:var(--text);">S2S</span></div>
+      <div style="display:flex;gap:16px;"><span style="font-family:'DM Mono',monospace;color:var(--text);">63</span><span style="font-family:'DM Mono',monospace;color:var(--orange);font-weight:600;">30.3%</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:11px;height:11px;border-radius:2px;background:#6b7a99;flex-shrink:0;"></div><span style="color:var(--muted);">S3</span></div>
+      <div style="display:flex;gap:16px;"><span style="font-family:'DM Mono',monospace;color:var(--muted);">0</span><span style="font-family:'DM Mono',monospace;color:var(--muted);">0%</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:11px;height:11px;border-radius:2px;background:#6b7a99;flex-shrink:0;"></div><span style="color:var(--muted);">Double Play</span></div>
+      <div style="display:flex;gap:16px;"><span style="font-family:'DM Mono',monospace;color:var(--muted);">0</span><span style="font-family:'DM Mono',monospace;color:var(--muted);">0%</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:11px;height:11px;border-radius:2px;background:#6b7a99;flex-shrink:0;"></div><span style="color:var(--muted);">S</span></div>
+      <div style="display:flex;gap:16px;"><span style="font-family:'DM Mono',monospace;color:var(--muted);">0</span><span style="font-family:'DM Mono',monospace;color:var(--muted);">0%</span></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="two-col">
+  <!-- VPU by system type -->
+  <div class="data-table-wrap">
+    <div class="data-table-title">VPU Crashes per System Type</div>
+    <table class="data-table">
+      <thead><tr>
+        <th>System</th>
+        <th class="right" data-tip="Crashes requiring full VPU restart. Causes recording loss.">Fatal</th>
+        <th class="right" data-tip="Recoverable resets. No recording loss but signals instability.">Non-Fatal</th>
+        <th class="right" data-tip="Number of distinct events that experienced at least one VPU reset.">Events w/ Resets</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="sys-badge sys-s2">S2</span></td>
+          <td class="right"><span class="mono" style="color:var(--red)">145</span></td>
+          <td class="right"><span class="mono" style="color:var(--orange)">272</span></td>
+          <td class="right"><span class="mono">52</span></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s2s">S2S</span></td>
+          <td class="right"><span class="mono" style="color:var(--red)">63</span></td>
+          <td class="right"><span class="mono" style="color:var(--orange)">118</span></td>
+          <td class="right"><span class="mono">25</span></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s3">S3</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">0</span></td>
+          <td class="right"><span class="mono" style="color:var(--yellow)">64</span></td>
+          <td class="right"><span class="mono">14</span></td>
+        </tr>
+        <tr>
+          <td><span class="sys-badge sys-s">S</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">0</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">11</span></td>
+          <td class="right"><span class="mono">1</span></td>
+        </tr>
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right"><span class="mono" style="color:var(--text);">208</span></td>
+          <td class="right"><span class="mono" style="color:var(--text);">465</span></td>
+          <td class="right"><span class="mono" style="color:var(--text);">92</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- VPU by SW version -->
+  <div class="data-table-wrap">
+    <div class="data-table-title">VPU Crashes per SW Version</div>
+    <table class="data-table">
+      <thead><tr>
+        <th>Version</th>
+        <th class="right" data-tip="Crashes requiring full VPU restart. Causes recording loss.">Fatal</th>
+        <th class="right" data-tip="Recoverable resets. No recording loss but signals instability.">Non-Fatal</th>
+        <th class="right" data-tip="Number of distinct events that experienced at least one VPU reset.">Events w/ Resets</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="ver-badge hot">5.21.8</span></td>
+          <td class="right"><span class="mono" style="color:var(--red)">208</span></td>
+          <td class="right"><span class="mono" style="color:var(--orange)">453</span></td>
+          <td class="right"><span class="mono">90</span></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">5.2.18</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">0</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">1</span></td>
+          <td class="right"><span class="mono">1</span></td>
+        </tr>
+        <tr>
+          <td><span class="ver-badge">5.2.11</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">0</span></td>
+          <td class="right"><span class="mono" style="color:var(--muted)">11</span></td>
+          <td class="right"><span class="mono">1</span></td>
+        </tr>
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right"><span class="mono" style="color:var(--text);">208</span></td>
+          <td class="right"><span class="mono" style="color:var(--text);">465</span></td>
+          <td class="right"><span class="mono" style="color:var(--text);">92</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PARETO TABLE -->
+<div class="section-title">VPU Fatal Crashes — Pareto by Venue <span class="badge badge-red">Top 9 = 100% of Total</span></div>
+<div class="crash-table-wrap">
+  <table class="crash-table">
+    <thead>
+      <tr>
+        <th style="width:40px">Rank</th>
+        <th>Venue</th>
+        <th>System</th>
+        <th>SW Version</th>
+        <th class="right">Events</th>
+        <th class="right" data-tip="Total fatal VPU crashes attributed to this venue historically.">Fatal Crashes</th>
+        <th class="right" data-tip="This venue's share of all fatal crashes across the fleet.">% of Total</th>
+        <th class="right" data-tip="Running total — how much of all crashes the top N venues account for.">Cumulative %</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="rank-num top">1</span></td>
+        <td><div class="venue-name">Georgia Military (GA) Soccer</div><div class="venue-id">PXLS2_17938 · 60a4b1db97129b4111b6f904</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">2</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:90px"></div><span class="crash-num">137</span></div></td>
+        <td class="right"><span class="pct-val">65.9%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--red)">65.9%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num top">2</span></td>
+        <td><div class="venue-name">West Linn (OR) Field</div><div class="venue-id">PXLS2S_70792 · 63a02f02035a692081d2ec0e</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">2</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:38px"></div><span class="crash-num">58</span></div></td>
+        <td class="right"><span class="pct-val">27.9%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--red)">93.8%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">3</span></td>
+        <td><div class="venue-name">Yough (PA) Field</div><div class="venue-id">PXLS2_11962 · 5f7afbf97c47ca5536ea12e6</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:3px"></div><span class="crash-num">4</span></div></td>
+        <td class="right"><span class="pct-val">1.90%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--orange)">95.7%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">4</span></td>
+        <td><div class="venue-name">Hephzibah (GA) Stadium</div><div class="venue-id">PXLS2_30642 · 619dce9dfe9c3cae6d84d016</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:2px"></div><span class="crash-num">3</span></div></td>
+        <td class="right"><span class="pct-val">1.40%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--yellow)">97.1%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">5</span></td>
+        <td><div class="venue-name">Illinois Valley Central (IL)</div><div class="venue-id">PXLS2S_20497 · 5fdad58b2b9b7717d8b5003d</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">2</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:1px"></div><span class="crash-num">2</span></div></td>
+        <td class="right"><span class="pct-val">1.00%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--yellow)">98.1%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">6</span></td>
+        <td><div class="venue-name">Berkmar (GA) Stadium</div><div class="venue-id">PXLS2_7257 · 5db5b192036cfd078b9438c1</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:1px"></div><span class="crash-num">1</span></div></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">98.6%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">7</span></td>
+        <td><div class="venue-name">Quitman (LA) Baseball Field</div><div class="venue-id">PXLS2S_19562 · 611a46c7122fc562ee208727</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:1px"></div><span class="crash-num">1</span></div></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">99.0%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">8</span></td>
+        <td><div class="venue-name">Denmark (GA) Baseball</div><div class="venue-id">PXLS2S_15716 · 6033eb24d0c7453c826bf8fc</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:1px"></div><span class="crash-num">1</span></div></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">99.5%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">9</span></td>
+        <td><div class="venue-name">Capuchino (CA) Baseball</div><div class="venue-id">PXLS2S_17113 · 60643d97dba9fcde4c814b29</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="right mono">1</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:1px"></div><span class="crash-num">1</span></div></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--green)">100%</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ACTIVE ALERTS -->
+<div class="section-title">Active Alerts &amp; Abnormal Errors
+  <span class="badge badge-red">15 Total · 6 Critical · 7 Error</span>
+  <a href="https://cloud.app.coralogix.us/#/dashboard" target="_blank"
+     style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);border:1px solid rgba(76,156,242,0.3);background:rgba(76,156,242,0.08);padding:3px 10px;border-radius:20px;text-decoration:none;letter-spacing:0.5px;white-space:nowrap;transition:background 0.15s;"
+     onmouseover="this.style.background='rgba(76,156,242,0.18)'" onmouseout="this.style.background='rgba(76,156,242,0.08)'">↗ Coralogix Dashboard</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 220px;gap:14px;margin-bottom:24px;">
+  <!-- Alert table -->
+  <div class="crash-table-wrap" style="margin-bottom:0;">
+    <table class="crash-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Alert Definition</th>
+          <th>Priority</th>
+          <th>Subsystem</th>
+          <th>Appeared</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">09/04 00:34:43</span></td>
+          <td style="color:var(--text);font-size:12px;">[PROD] - [AIR] - Processing Alert</td>
+          <td><span style="background:rgba(242,140,76,0.2);color:var(--orange);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P3</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">venice-prod</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">08/04 19:21:21</span></td>
+          <td style="color:var(--text);font-size:12px;">[PROD]-[VS]-FATAL ERROR</td>
+          <td><span style="background:rgba(242,76,76,0.2);color:var(--red);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P1</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">vidswap-prod</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">08/04 18:54:01</span></td>
+          <td style="color:var(--text);font-size:12px;">[PROD] [Data API] - Stats Validation</td>
+          <td><span style="background:rgba(242,76,76,0.2);color:var(--red);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P2</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">prod-eks</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">08/04 21:43:21</span></td>
+          <td style="color:var(--text);font-size:12px;">LMI Host Update Error</td>
+          <td><span style="background:rgba(242,76,76,0.2);color:var(--red);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P2</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">prod-eks</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">06/04 14:16:25</span></td>
+          <td style="color:var(--text);font-size:12px;">[B2C]-NEW ORDERS</td>
+          <td><span style="background:rgba(245,200,66,0.2);color:var(--yellow);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P5</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">venice-prod</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono" style="color:var(--muted);font-size:11px;">08/04 10:50:55</span></td>
+          <td style="color:var(--text);font-size:12px;">[PROD]-[VIENNA]-Errors MC</td>
+          <td><span style="background:rgba(242,76,76,0.2);color:var(--red);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;">P2</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">multiple</span></td>
+          <td><span class="mono" style="font-size:11px;color:var(--muted);">1×</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Donut chart -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;align-self:flex-start;">Alerts</div>
+    <svg viewBox="0 0 120 120" width="140" height="140">
+      <!-- Error 47% -->
+      <circle cx="60" cy="60" r="46" fill="none" stroke="#f24c4c" stroke-width="16"
+        stroke-dasharray="135.7 289.0" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+      <!-- Critical 40% -->
+      <circle cx="60" cy="60" r="46" fill="none" stroke="rgba(242,76,76,0.45)" stroke-width="16"
+        stroke-dasharray="115.5 289.0" stroke-dashoffset="-135.7" transform="rotate(-90 60 60)"/>
+      <!-- Warning 7% -->
+      <circle cx="60" cy="60" r="46" fill="none" stroke="var(--orange)" stroke-width="16"
+        stroke-dasharray="20.2 289.0" stroke-dashoffset="-251.2" transform="rotate(-90 60 60)"/>
+      <!-- Info 7% -->
+      <circle cx="60" cy="60" r="46" fill="none" stroke="var(--yellow)" stroke-width="16"
+        stroke-dasharray="20.2 289.0" stroke-dashoffset="-271.4" transform="rotate(-90 60 60)"/>
+      <text x="60" y="65" text-anchor="middle" font-family="Playfair Display,serif" font-size="28" font-weight="700" fill="white">15</text>
+    </svg>
+    <div style="font-size:11px;line-height:2;color:var(--text);width:100%;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:var(--yellow);flex-shrink:0;"></div><span>Info <strong>1</strong> <span style="color:var(--muted);">7%</span></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:var(--orange);flex-shrink:0;"></div><span>Warning <strong>1</strong> <span style="color:var(--muted);">7%</span></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:rgba(242,76,76,0.5);flex-shrink:0;"></div><span>Critical <strong>6</strong> <span style="color:var(--muted);">40%</span></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:10px;height:10px;border-radius:2px;background:var(--red);flex-shrink:0;"></div><span>Error <strong>7</strong> <span style="color:var(--muted);">47%</span></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PARETO BY EVENT -->
+<div class="section-title">VPU Fatal Crashes — Pareto by Event <span class="badge badge-red">12 Events · Top 3 = 92.3%</span></div>
+
+<div style="background:linear-gradient(135deg,rgba(76,156,242,0.08) 0%,rgba(11,15,26,0) 60%);border:1px solid rgba(76,156,242,0.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;border-left:4px solid var(--blue);">
+  <div style="font-size:12px;color:var(--text);line-height:1.7;">
+    <strong style="color:#fff;">What this Pareto shows:</strong> While the <em>by-venue</em> Pareto above shows cumulative historical crash counts per physical location, this table ranks individual <strong>event sessions</strong> by fatal crashes within the current period (Apr 3–5). It reveals which specific games — not just which venues — drove the most failures. A highly concentrated result (top 3 events = 92.3%) means the crash burden is tied to a small number of specific sessions, not spread evenly across many events.
+  </div>
+</div>
+
+<div class="crash-table-wrap" style="margin-bottom:36px;">
+  <table class="crash-table">
+    <thead>
+      <tr>
+        <th style="width:36px">Rank</th>
+        <th>Event / Venue</th>
+        <th>System</th>
+        <th>SW Ver</th>
+        <th>Start</th>
+        <th>End</th>
+        <th class="right">Fatal</th>
+        <th class="right">% of Total</th>
+        <th class="right">Cumulative</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="rank-num top">1</span></td>
+        <td><div class="venue-name">Georgia Military (GA) Soccer</div><div class="venue-id">PXLS2_17938 · 69c43c396e967ff8ace...</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 21:29</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 00:30</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:90px"></div><span class="crash-num">69</span></div></td>
+        <td class="right"><span class="pct-val">33.2%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--red)">33.2%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num top">2</span></td>
+        <td><div class="venue-name">Georgia Military (GA) Soccer</div><div class="venue-id">PXLS2_17938 · 6994a091df59f725f92...</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 23:29</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 02:30</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:88px"></div><span class="crash-num">68</span></div></td>
+        <td class="right"><span class="pct-val">32.7%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--red)">65.9%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num top">3</span></td>
+        <td><div class="venue-name">West Linn (OR) Field</div><div class="venue-id">PXLS2S_70792 · 69cde6276e967ff8ace...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 23:44</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 01:45</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:72px"></div><span class="crash-num">55</span></div></td>
+        <td class="right"><span class="pct-val">26.4%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--orange)">92.3%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">4</span></td>
+        <td><div class="venue-name">Yough (PA) Field</div><div class="venue-id">PXLS2_11962 · 69c710281d79d4f7276...</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 20:59</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 00:00</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:5px"></div><span class="crash-num">4</span></div></td>
+        <td class="right"><span class="pct-val">1.90%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--yellow)">94.2%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">5</span></td>
+        <td><div class="venue-name">Hephzibah (GA) Stadium</div><div class="venue-id">PXLS2_30642 · 698b3645a0b025c0f5...</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 21:29</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 01:30</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:4px"></div><span class="crash-num">3</span></div></td>
+        <td class="right"><span class="pct-val">1.40%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--yellow)">95.7%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">6</span></td>
+        <td><div class="venue-name">West Linn (OR) Field</div><div class="venue-id">PXLS2S_70792 · 69cde6ab615cb75092...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 01:44</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 04:45</td>
+        <td class="right"><div class="crash-bar-wrap" style="justify-content:flex-end"><div class="crash-mini" style="width:4px"></div><span class="crash-num">3</span></div></td>
+        <td class="right"><span class="pct-val">1.40%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">97.1%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">7</span></td>
+        <td><div class="venue-name">Illinois Valley Central (IL)</div><div class="venue-id">PXLS2S_20497 · 695a9e083ae1557848...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 15:59</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 19:00</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">97.6%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">8</span></td>
+        <td><div class="venue-name">Illinois Valley Central (IL)</div><div class="venue-id">PXLS2S_20497 · 694b0212c057dc04e5...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 17:59</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 21:00</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">98.1%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">9</span></td>
+        <td><div class="venue-name">Denmark (GA) Baseball</div><div class="venue-id">PXLS2S_15716 · 6967bf79528bb13603...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 20:59</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 00:00</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">98.6%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">10</span></td>
+        <td><div class="venue-name">Berkmar (GA) Stadium</div><div class="venue-id">PXLS2_7257 · 699dc6bdd775b12350...</div></td>
+        <td><span class="sys-badge sys-s2">S2</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 23:29</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 02:30</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">99.0%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">11</span></td>
+        <td><div class="venue-name">Quitman (LA) Baseball Field</div><div class="venue-id">PXLS2S_19562 · 6982445a120b0ec308...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/02 22:44</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/03 01:45</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--muted)">99.5%</span></td>
+      </tr>
+      <tr>
+        <td><span class="rank-num">12</span></td>
+        <td><div class="venue-name">Capuchino (CA) Baseball</div><div class="venue-id">PXLS2S_17113 · 68bf1e41e17c0a990c6...</div></td>
+        <td><span class="sys-badge sys-s2s">S2S</span></td>
+        <td><span class="ver-badge hot">5.21.8</span></td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 00:59</td>
+        <td class="mono" style="font-size:11px;color:var(--muted);">04/04 04:00</td>
+        <td class="right"><span class="crash-num">1</span></td>
+        <td class="right"><span class="pct-val">0.50%</span></td>
+        <td class="right"><span class="cum-val" style="color:var(--green)">100%</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-note">Data sources: Grafana · Redshift — Period: Apr 3–5, 2026 · All times UTC<br>VPU Pareto reflects historical cumulative crash distribution per venue.</div>
+  <div class="footer-brand">Pixellot Platform Health<br>QA / Cloud Infra</div>
+</div>
+
+</body>
+</html>
