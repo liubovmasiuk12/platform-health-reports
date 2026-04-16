@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMS Test Quality Report — April 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+  .header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 32px 40px; }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .header .meta { font-size: 14px; opacity: 0.8; }
+  .badge { display:inline-block; background:rgba(255,255,255,0.2); padding:2px 10px; border-radius:9999px; font-size:12px; margin-left:8px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:32px; }
+  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .card h2 { font-size:16px; font-weight:600; color:#374151; margin-bottom:16px; border-bottom:1px solid #f3f4f6; padding-bottom:12px; }
+  .metric-card { background:white; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); text-align:center; }
+  .metric-label { font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+  .metric-value { font-size:36px; font-weight:800; margin-bottom:4px; }
+  .metric-sub { font-size:12px; color:#9ca3af; }
+  .gauge-ring { position:relative; width:100px; height:100px; margin:0 auto 12px; }
+  .gauge-ring svg { transform:rotate(-90deg); }
+  .gauge-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:18px; font-weight:800; }
+  .alert { background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:#92400e; }
+  .alert strong { color:#78350f; }
+  table { width:100%; border-collapse:collapse; }
+  th { padding:10px 12px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; background:#f9fafb; border-bottom:2px solid #e5e7eb; }
+  .section-title { font-size:20px; font-weight:700; color:#1e293b; margin-bottom:16px; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧪 CMS Test Quality Report
+    <span class="badge">Jest + Vue 2</span>
+    <span class="badge">April 2026</span>
+  </h1>
+  <div class="meta">Repository: github.com/Pixellot/cms &nbsp;|&nbsp; Analysis: runner+code-reading &nbsp;|&nbsp; 1734 tests ran · 1753 passed · 1 failed</div>
+</div>
+
+<div class="container">
+
+  <div class="alert">
+    ⚠️ <strong>1 failing test:</strong> helpers.spec.js › getDate › returns formatted date string — timezone offset issue in CI environment (returns "March 14" instead of "March 15" for UTC-offset systems). Not a logic bug — fix the test to use UTC dates.
+  </div>
+
+  <!-- Coverage gauges -->
+  <div class="grid-4">
+    <div class="metric-card">
+      <div class="metric-label">Statements</div>
+      <div class="gauge-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#f59e0b" stroke-width="10"
+            stroke-dasharray="130.6 263.9" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-text" style="color:#f59e0b">49%</div>
+      </div>
+      <div class="metric-sub">31,270 / 63,181 stmts</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Branches</div>
+      <div class="gauge-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#10b981" stroke-width="10"
+            stroke-dasharray="214.2 263.9" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-text" style="color:#10b981">81%</div>
+      </div>
+      <div class="metric-sub">2,676 / 3,297 branches</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Functions</div>
+      <div class="gauge-ring">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#f59e0b" stroke-width="10"
+            stroke-dasharray="159.8 263.9" stroke-linecap="round"/>
+        </svg>
+        <div class="gauge-text" style="color:#f59e0b">61%</div>
+      </div>
+      <div class="metric-sub">1,408 / 2,325 functions</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Test / Source ratio</div>
+      <div class="metric-value" style="color:#2563eb;">0.41</div>
+      <div class="metric-sub">26,049 test lines / 63,202 src lines</div>
+      <div style="margin-top:8px;">
+        <span style="font-size:12px;color:#6b7280;">1734 tests · 314 source files · 232 test files</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test breakdown + distribution -->
+  <div class="grid-2">
+    <div class="card">
+      <h2>Test Composition</h2>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:14px;font-weight:600;">Unit Tests</span>
+            <span style="font-size:14px;font-weight:700;color:#2563eb;">1,587 (92%)</span>
+          </div>
+          <div style="background:#e5e7eb;border-radius:4px;height:10px;">
+            <div style="width:92%;background:#2563eb;border-radius:4px;height:10px;"></div>
+          </div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Isolated tests with mocked collaborators</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:14px;font-weight:600;">Component Tests</span>
+            <span style="font-size:14px;font-weight:700;color:#8b5cf6;">147 (8%)</span>
+          </div>
+          <div style="background:#e5e7eb;border-radius:4px;height:10px;">
+            <div style="width:8%;background:#8b5cf6;border-radius:4px;height:10px;"></div>
+          </div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Vue component render tests with real collaborators</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:14px;font-weight:600;">Integration (Jest)</span>
+            <span style="font-size:14px;font-weight:700;color:#6b7280;">0 (0%)</span>
+          </div>
+          <div style="background:#e5e7eb;border-radius:4px;height:10px;"></div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">No integration tests run via Jest</div>
+        </div>
+        <div style="padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">
+          <div style="font-size:13px;font-weight:600;color:#166534;">🔗 Playwright E2E</div>
+          <div style="font-size:12px;color:#166534;margin-top:2px;">1 test file in tests/integration/ — requires live app; run via <code>npm run test:integration</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Coverage Distribution (by statements)</h2>
+      <div style="display:flex;align-items:flex-end;gap:12px;height:160px;padding-bottom:28px;">
+        
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">49</div>
+          <div style="width:48px;height:120px;background:#dc2626;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">0%</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">4</div>
+          <div style="width:48px;height:9px;background:#ef4444;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">1-25%</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">13</div>
+          <div style="width:48px;height:31px;background:#f97316;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">26-50%</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">14</div>
+          <div style="width:48px;height:34px;background:#f59e0b;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">51-75%</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">0</div>
+          <div style="width:48px;height:4px;background:#84cc16;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">76-99%</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;">0</div>
+          <div style="width:48px;height:4px;background:#10b981;border-radius:4px 4px 0 0;"></div>
+          <div style="font-size:11px;color:#6b7280;text-align:center;">100%</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:#f9fafb;border-radius:8px;">
+        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">Key observation</div>
+        <div style="font-size:12px;color:#6b7280;">54 files have 0% statement coverage. 95 files have 100% coverage. The bimodal pattern suggests focused test investment on specific modules while others (event forms, utility mappers) are largely untested.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gaps table -->
+  <div style="margin-bottom:32px;">
+    <div class="section-title">🚨 Critical Coverage Gaps (Top 25)</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Criticality</th>
+            <th>Stmts %</th>
+            <th>Recommendation</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">edit.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/accounts/pages/_id/edit.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for edit.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventTableStreams.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/EventTableStreams.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventTableStreams.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventGraphics.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/header/EventGraphics.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventGraphics.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">index.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/header/index.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.js — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventInfo.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventInfo.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventInfo.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventSections.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventSections.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventSections.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventVas.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventVas.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventVas.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">index.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/index.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.js — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventForm.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/forms/EventForm.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventForm.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">VodEventForm.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/forms/VodEventForm.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for VodEventForm.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">EventFormModal.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/modals/EventFormModal.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventFormModal.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">HighlightFormModal.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/modals/HighlightFormModal.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for HighlightFormModal.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">create-bulk.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/create-bulk.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for create-bulk.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">index.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/index.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">monitoring.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/monitoring.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for monitoring.vue — event management is the core business flow</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">TestEventFormModal.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/components/modals/TestEventFormModal.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for TestEventFormModal.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">ScoreBoardCanvas.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for ScoreBoardCanvas.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">index.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/pages/systems/index.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for index.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">scoreboard.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/pages/systems/_id/scoreboard.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for scoreboard.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">index.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/users/pages/index.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for index.vue — currently 0% covered</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">bulkValidator.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/utils/validation/bulkValidator.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in bulkValidator.js — these validators protect data integrity</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">clubValidator.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/utils/validation/clubValidator.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in clubValidator.js — these validators protect data integrity</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">eventValidator.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/utils/validation/eventValidator.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in eventValidator.js — these validators protect data integrity</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">systemValidator.js</div>
+            <div style="color:#6b7280;font-size:11px;">src/utils/validation/systemValidator.js</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in systemValidator.js — these validators protect data integrity</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
+            <div style="font-weight:600;font-size:13px;">edit.vue</div>
+            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/_id/edit.vue</div>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
+          </td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#f59e0b;">25.8%</td>
+          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for edit.vue — event management is the core business flow</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- File coverage table -->
+  <div style="margin-bottom:32px;">
+    <div class="section-title">📊 Worst-Covered Files (30 lowest)</div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Criticality</th>
+            <th>Statements</th>
+            <th>Branches</th>
+            <th>Functions</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">App.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/App.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">WidgetPlayer.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/WidgetPlayer.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">DatePicker.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DatePicker.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">DateRangePicker.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DateRangePicker.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">DropdownCheckbox.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DropdownCheckbox.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">PixellotPlayer.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/shared/PixellotPlayer.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.js</div>
+            <div style="color:#9ca3af;font-size:10px;">src/components/shared/index.js</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">admin.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/layouts/admin.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">edit.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/accounts/pages/_id/edit.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/clubs/pages/index.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventTableStreams.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/EventTableStreams.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventGraphics.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/header/EventGraphics.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.js</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/header/index.js</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventInfo.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventInfo.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventSections.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventSections.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventVas.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventVas.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.js</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/index.js</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventForm.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/forms/EventForm.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">VodEventForm.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/forms/VodEventForm.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">EventFormModal.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/modals/EventFormModal.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">HighlightFormModal.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/modals/HighlightFormModal.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">create-bulk.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/create-bulk.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/index.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">monitoring.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/monitoring.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">TestEventFormModal.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/components/modals/TestEventFormModal.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">ScoreBoardCanvas.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">index.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/pages/systems/index.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">scoreboard.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/pages/systems/_id/scoreboard.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">ClubImageFormModal.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/media/components/modals/ClubImageFormModal.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
+            <div style="font-weight:600">ClubPreRollFormModal.vue</div>
+            <div style="color:#9ca3af;font-size:10px;">src/modules/media/components/modals/ClubPreRollFormModal.vue</div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
+                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
+            </div>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Key insights -->
+  <div class="card" style="margin-bottom:32px;">
+    <h2>🎯 Key Findings & Recommendations</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div style="padding:16px;background:#fef2f2;border-radius:8px;border-left:4px solid #dc2626;">
+        <div style="font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 High Priority</div>
+        <div style="font-size:13px;color:#7f1d1d;line-height:1.6;">
+          <strong>Validation utilities</strong> (bulkValidator, clubValidator, eventValidator, systemValidator) have 0% coverage despite being called on every form submission. Add unit tests for each validator — these are pure functions and easy to test.<br><br>
+          <strong>Event module</strong> has 0% coverage on core files: EventForm.vue, VodEventForm.vue, EventFormModal.vue. Events are the primary business entity.
+        </div>
+      </div>
+      <div style="padding:16px;background:#fffbeb;border-radius:8px;border-left:4px solid #f59e0b;">
+        <div style="font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Medium Priority</div>
+        <div style="font-size:13px;color:#78350f;line-height:1.6;">
+          <strong>Utility mappers</strong> (systems/mappers.js at 0%, virtualAds/mappers.js at 5%, events/mappers.js at 14%) transform raw API data into app models. Mapper bugs cause silent wrong display data throughout the UI.<br><br>
+          <strong>Axios layer</strong> (src/api/axios/index.js at 44%) handles auth headers and error interception for all HTTP calls — low branch coverage here is risky.
+        </div>
+      </div>
+      <div style="padding:16px;background:#f0fdf4;border-radius:8px;border-left:4px solid #10b981;">
+        <div style="font-weight:700;color:#065f46;margin-bottom:8px;">✅ Strengths</div>
+        <div style="font-size:13px;color:#064e3b;line-height:1.6;">
+          <strong>Branch coverage (81%)</strong> is the standout metric — the codebase has excellent conditional path coverage even where statement coverage lags.<br><br>
+          <strong>API layer</strong> is well-tested: 8 of 14 API files are at 80%+. UsersApi (98%), AccountSettingsApi, InstallerApi, PackagesApi, VPUApi all at 100%.<br><br>
+          <strong>232 test files</strong> covering a Vue 2 + Webpack app shows solid baseline test culture.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module coverage breakdown -->
+  <div style="margin-bottom:32px;">
+    <div class="section-title">📦 Module Coverage Breakdown (16 modules)</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #059669;text-align:center;">
+        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Total Modules</div>
+        <div style="font-size:32px;font-weight:800;color:#059669;">16</div>
+        <div style="font-size:11px;color:#9ca3af;">in src/modules/</div>
+      </div>
+      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #059669;text-align:center;">
+        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade A (≥85%)</div>
+        <div style="font-size:32px;font-weight:800;color:#059669;">5</div>
+        <div style="font-size:11px;color:#9ca3af;">admin, auth, airMonitoring, mixins, router</div>
+      </div>
+      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #f59e0b;text-align:center;">
+        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade B–C (50–84%)</div>
+        <div style="font-size:32px;font-weight:800;color:#f59e0b;">7</div>
+        <div style="font-size:11px;color:#9ca3af;">marketplace, tools, teams, ottSettings, clubs, virtualAds, store</div>
+      </div>
+      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #dc2626;text-align:center;">
+        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade D–F (&lt;50%)</div>
+        <div style="font-size:32px;font-weight:800;color:#dc2626;">4</div>
+        <div style="font-size:11px;color:#9ca3af;">inventory, accounts, users, media, events, plugins</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">#</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Module</th>
+            <th style="padding:10px 16px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Grade</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Statements</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Branches</th>
+            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Functions</th>
+            <th style="padding:10px 16px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Files</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Grade A -->
+          <tr><td colspan="7" style="padding:6px 16px;background:#f0fdf4;font-size:11px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:0.05em;">🟢 Grade A — Excellent (≥85%)</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">1</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">router</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">4</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">2</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/mixins</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">1</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">3</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/admin</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:98.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">98.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82.4%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:80%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">80.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">3</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">4</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/auth</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:94.9%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">94.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.8%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:86.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">86.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">10</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">5</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/airMonitoring</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:89.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">89.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:84.6%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">84.6%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:72.7%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">72.7%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">3</td></tr>
+          <!-- Grade B -->
+          <tr><td colspan="7" style="padding:6px 16px;background:#eff6ff;font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.05em;">🔵 Grade B — Good (70–84%)</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">6</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/marketplace</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82.3%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:75%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">75.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.3%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">5</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">7</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/tools</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.8%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:59.4%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">59.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">12</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">8</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/teams</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:76%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">76.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:76.5%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">76.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:53.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">53.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">9</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">9</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">api</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:71.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">71.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.1%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.2%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.2%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">24</td></tr>
+          <!-- Grade C -->
+          <tr><td colspan="7" style="padding:6px 16px;background:#fffbeb;font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.05em;">🟡 Grade C — Fair (50–69%)</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">10</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">store</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:62.7%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">62.7%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:91.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">91.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:89.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">89.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">5</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">11</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/ottSettings</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:59.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">59.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:77%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">77.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:61.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">61.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">23</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">12</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/clubs</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:57.5%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">57.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:68.8%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">68.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:38.4%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">38.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">9</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">13</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/virtualAds</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:51.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">51.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:93.8%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">93.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:71%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">71.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">6</td></tr>
+          <!-- Grade D -->
+          <tr><td colspan="7" style="padding:6px 16px;background:#fff7ed;font-size:11px;font-weight:700;color:#9a3412;text-transform:uppercase;letter-spacing:0.05em;">🟠 Grade D — Poor (30–49%)</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">14</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/inventory</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:44.9%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">44.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:85.1%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">85.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:61.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">61.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">29</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">15</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/accounts</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:39.3%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">39.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:81.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">81.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:54%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">54.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">6</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">16</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/media</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:36.1%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">36.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:73.1%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">73.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:50%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">50.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">7</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">17</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/users</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:34.9%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">34.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:63.6%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">63.6%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">7</td></tr>
+          <!-- Grade F -->
+          <tr><td colspan="7" style="padding:6px 16px;background:#fef2f2;font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:0.05em;">🔴 Grade F — Critical (&lt;30%)</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">18</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/events</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">F</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:27.3%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">27.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:74.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">74.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:56.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">56.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">50</td></tr>
+          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">19</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">plugins</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">F</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:16.3%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">16.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:40%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">40.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:17.4%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">17.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">11</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:12px;color:#9ca3af;padding:16px 0;">
+    Generated by repo-quality-metrics · CMS v2.122.0 · Jest 27 · April 15, 2026
+  </div>
+</div>
+</body>
+</html>
