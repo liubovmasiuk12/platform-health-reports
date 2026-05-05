@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Health Report — Apr 28 – May 4, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f12;
+    --bg2: #13161b;
+    --bg3: #1a1e26;
+    --border: #252a35;
+    --border2: #2e3444;
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #5a5f70;
+    --accent: #4f8ef7;
+    --accent2: #7c5cbf;
+    --green: #3dba7e;
+    --orange: #f5a623;
+    --red: #e8435a;
+    --yellow: #f0c940;
+    --teal: #2ec4b6;
+    --card-radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0d0f12 0%, #141928 50%, #0d0f12 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 36px 48px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .report-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header h1 span { color: var(--accent); }
+  .period-badge {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .period-badge .period-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .period-badge .period-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .header-meta {
+    margin-top: 14px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .meta-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  .main { padding: 32px 48px; max-width: 1600px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    display: block;
+    width: 3px; height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px 20px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .kpi-card:hover { border-color: var(--border2); }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+  }
+  .kpi-card.blue::after  { background: var(--accent); }
+  .kpi-card.green::after { background: var(--green); }
+  .kpi-card.orange::after{ background: var(--orange); }
+  .kpi-card.red::after   { background: var(--red); }
+  .kpi-card.teal::after  { background: var(--teal); }
+  .kpi-card.purple::after{ background: var(--accent2); }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin-bottom: 10px;
+  }
+  .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-card.blue   .kpi-value { color: var(--accent); }
+  .kpi-card.green  .kpi-value { color: var(--green); }
+  .kpi-card.orange .kpi-value { color: var(--orange); }
+  .kpi-card.red    .kpi-value { color: var(--red); }
+  .kpi-card.teal   .kpi-value { color: var(--teal); }
+  .kpi-card.purple .kpi-value { color: var(--accent2); }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .gauge-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .gauge-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .gauge-title {
+    font-size: 12px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    align-self: flex-start;
+  }
+  .gauge-wrap {
+    position: relative;
+    width: 180px;
+    height: 100px;
+  }
+  .gauge-wrap svg { overflow: visible; }
+  .gauge-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--orange);
+    text-align: center;
+  }
+  .gauge-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: center;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .table-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+  }
+  .table-card-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .table-card-header .badge {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    padding: 9px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  th.num { text-align: right; }
+  td {
+    padding: 9px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  td.num {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+  td.mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  tr.total-row td {
+    color: var(--text);
+    font-weight: 600;
+    background: var(--bg3);
+    border-top: 1px solid var(--border2);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .bar-chart-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+  }
+  .bar-chart-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .bar-chart-body { padding: 16px 20px 20px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 9px;
+  }
+  .bar-name {
+    font-size: 12px;
+    color: var(--text2);
+    width: 120px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-track {
+    flex: 1;
+    height: 16px;
+    background: var(--bg3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .bar-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    width: 44px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .donut-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .donut-header {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .donut-body {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex: 1;
+  }
+  .donut-legend { flex: 1; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-name { font-size: 12px; color: var(--text2); flex: 1; }
+  .legend-val  { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+
+  .reset-highlight {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+  }
+  .reset-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .reset-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .reset-stat {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .reset-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .reset-stat-label { font-size: 11px; color: var(--text3); }
+
+  .pareto-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+  }
+  .pareto-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rank-badge {
+    display: inline-block;
+    width: 22px; height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .rank-1 { background: #b8972a; }
+  .rank-2 { background: #808080; }
+  .rank-3 { background: #8b5a2b; }
+  .rank-n { background: var(--bg3); color: var(--text3); }
+
+  .pct-bar { display: flex; align-items: center; gap: 6px; }
+  .pct-mini { height: 6px; border-radius: 3px; background: var(--red); opacity: 0.7; }
+  .pct-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    white-space: nowrap;
+  }
+  .cum-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  /* Alerts section */
+  .alerts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .alert-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-priority {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .p1 { background: rgba(232,67,90,0.25); color: #e8435a; }
+  .p2 { background: rgba(232,67,90,0.15); color: #e8856a; }
+  .p3 { background: rgba(245,166,35,0.2); color: var(--orange); }
+  .p4 { background: rgba(245,166,35,0.12); color: #c8a050; }
+  .alert-content { flex: 1; }
+  .alert-name { font-size: 13px; color: var(--text); margin-bottom: 3px; }
+  .alert-meta { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+  .alert-donut-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .alert-donut-header {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    align-self: flex-start;
+  }
+
+  /* Coralogix errors section */
+  .errors-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .error-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .error-item:last-child { margin-bottom: 0; }
+  .error-badge {
+    display: inline-block;
+    background: rgba(232,67,90,0.2);
+    color: var(--red);
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+  .error-label {
+    font-size: 10px;
+    color: var(--orange);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 4px;
+  }
+  .error-text {
+    font-size: 11px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+    word-break: break-all;
+    line-height: 1.5;
+  }
+  .error-tags { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .error-tag {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .error-rate-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+  }
+  .error-rate-header {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .error-rate-items { display: flex; gap: 16px; flex-wrap: wrap; }
+  .error-rate-item {
+    flex: 1;
+    min-width: 100px;
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .error-rate-gauge {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+  .error-rate-sub { font-size: 10px; color: var(--text3); font-family: 'DM Mono', monospace; line-height: 1.4; }
+
+  .footer {
+    margin-top: 48px;
+    padding: 24px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .footer-left { display: flex; gap: 4px; flex-direction: column; }
+  .footer-brand { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--text2); }
+
+  .table-scroll { max-height: 400px; overflow-y: auto; }
+  .table-scroll::-webkit-scrollbar { width: 4px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .section { margin-bottom: 40px; }
+
+  .kpi-wow {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .kpi-wow .wow-prev { color: var(--text3); font-family: 'DM Mono', monospace; }
+  .kpi-wow .wow-delta {
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .wow-delta.up   { color: var(--green);  background: rgba(61,186,126,0.1); }
+  .wow-delta.down { color: var(--red);    background: rgba(232,67,90,0.1); }
+  .wow-delta.neutral { color: var(--text3); background: var(--bg3); }
+  .wow-delta.up-bad   { color: var(--red);    background: rgba(232,67,90,0.1); }
+  .wow-delta.down-good { color: var(--green);  background: rgba(61,186,126,0.1); }
+
+  .wow-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+  .wow-pill .pill-delta { font-weight: 600; }
+  .wow-pill .pill-delta.good { color: var(--green); }
+  .wow-pill .pill-delta.bad  { color: var(--red); }
+
+  .wow-banner {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text3);
+    flex-wrap: wrap;
+  }
+  .wow-banner-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-right: 12px;
+    border-right: 1px solid var(--border2);
+  }
+  .wow-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-right: 1px solid var(--border);
+  }
+  .wow-stat:last-child { border-right: none; }
+  .wow-stat-name { color: var(--text3); font-size: 11px; }
+  .wow-stat-vals { display: flex; align-items: center; gap: 4px; font-family: 'DM Mono', monospace; font-size: 11px; }
+  .wow-stat-now  { color: var(--text2); }
+  .wow-stat-arr  { color: var(--text3); }
+  .wow-stat-prev { color: var(--text3); text-decoration: line-through; font-size: 10px; }
+  .wow-stat-chg  { font-weight: 600; font-size: 11px; }
+  .wow-stat-chg.good { color: var(--green); }
+  .wow-stat-chg.bad  { color: var(--red); }
+  .wow-stat-chg.warn { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="report-label">Platform Health Report</div>
+      <h1>Pixellot</h1>
+    </div>
+    <div class="period-badge">
+      <div class="period-label">Reporting Period</div>
+      <div class="period-value">Apr 28 – May 4, 2026</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-item"><span class="meta-dot" style="background:var(--green)"></span>Last week</div>
+    <div class="meta-item"><span class="meta-dot" style="background:var(--accent)"></span>Source: Grafana / Redshift / Coralogix</div>
+    <div class="meta-item"><span class="meta-dot" style="background:var(--text3)"></span>Generated: May 4, 2026</div>
+  </div>
+  <div style="margin-top:16px;">
+    <a href="https://grafana.prod.pixellot.tv/d/db1fcff5-2fca-4e9f-acda-8579f1287a87/liubov-dashboard?orgId=1&from=1777593600000&to=1777852799000" target="_blank"
+      style="display:inline-flex;align-items:center;gap:8px;background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.35);border-radius:8px;padding:9px 18px;color:var(--accent);text-decoration:none;font-size:13px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:0.03em;transition:background 0.2s;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Open in Grafana — May 1 – May 3, 2026
+    </a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- KPI ROW -->
+  <div class="section">
+    <div class="section-title">Key Metrics Overview</div>
+
+    <!-- WoW Summary Banner -->
+    <div class="wow-banner">
+      <div class="wow-banner-label">vs Apr 14–28</div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Events</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">2,577</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">2,863</span>
+          <span class="wow-stat-chg good">−10.0%</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Fatal VPU</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">31</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">198</span>
+          <span class="wow-stat-chg good">−84.3% ✓</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Non-Fatal</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">1,039</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">1,256</span>
+          <span class="wow-stat-chg good">−17.3%</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Events w/ Resets</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">138</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">182</span>
+          <span class="wow-stat-chg good">−24.2%</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Cloud HD</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">83.8%</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">84.8%</span>
+          <span class="wow-stat-chg bad">−1.0pp</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Local HD</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">84.5%</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">84.1%</span>
+          <span class="wow-stat-chg good">+0.4pp</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card blue">
+        <div class="kpi-label">Total Events</div>
+        <div class="kpi-value">2,577</div>
+        <div class="kpi-sub">Across all system types</div>
+        <div class="kpi-wow">
+          <span class="wow-prev">prev: 2,863</span>
+          <span class="wow-delta down-good">−10.0%</span>
+        </div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Top SW Version</div>
+        <div class="kpi-value" style="font-size:24px;padding-top:5px;">5.21.8</div>
+        <div class="kpi-sub">2,315 events (89.8%)</div>
+        <div class="kpi-wow">
+          <span class="wow-prev">prev: 2,591 (90.5%)</span>
+          <span class="wow-delta down-good">−0.7pp share</span>
+        </div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Fatal VPU Resets</div>
+        <div class="kpi-value">31</div>
+        <div class="kpi-sub">138 events affected</div>
+        <div class="kpi-wow">
+          <span class="wow-prev">prev: 198</span>
+          <span class="wow-delta down-good">−84.3% ✓</span>
+        </div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Non-Fatal Resets</div>
+        <div class="kpi-value">1,039</div>
+        <div class="kpi-sub">All system types</div>
+        <div class="kpi-wow">
+          <span class="wow-prev">prev: 1,256</span>
+          <span class="wow-delta down-good">−17.3%</span>
+        </div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Avg Cloud HD</div>
+        <div class="kpi-value">83.8%</div>
+        <div class="kpi-sub">Avg Local HD: 84.5%</div>
+        <div class="kpi-wow">
+          <span class="wow-prev">prev: 84.8% / 84.1%</span>
+          <span class="wow-delta down">−1.0pp / +0.4pp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT RECORDINGS -->
+  <div class="section">
+    <div class="section-title">Event Recordings Quality</div>
+    <div class="gauge-row">
+      <div class="gauge-card">
+        <div class="gauge-title">Average Cloud HD</div>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 180 100" width="180" height="100">
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#1a1e26" stroke-width="14" stroke-linecap="round"/>
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#3dba7e" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="0" opacity="0.3"/>
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#e8435a" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="165" opacity="0.25"/>
+            <!-- fill 83.8%: 235.6*(1-0.838)=38.2 -->
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#f5a623" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="235.6" stroke-dashoffset="38.2"/>
+          </svg>
+        </div>
+        <div class="gauge-pct">83.8%</div>
+        <div class="gauge-label">average cloud hd</div>
+        <div class="wow-pill">prev period <span class="pill-delta bad">84.8%</span> · Δ <span class="pill-delta bad">−1.0pp</span></div>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-title">Average Local HD</div>
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 180 100" width="180" height="100">
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#1a1e26" stroke-width="14" stroke-linecap="round"/>
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#3dba7e" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="0" opacity="0.3"/>
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#e8435a" stroke-width="14" stroke-linecap="round" stroke-dasharray="235.6" stroke-dashoffset="165" opacity="0.25"/>
+            <!-- fill 84.5%: 235.6*(1-0.845)=36.5 -->
+            <path d="M15,95 A75,75 0 0,1 165,95" fill="none" stroke="#f5a623" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="235.6" stroke-dashoffset="36.5"/>
+          </svg>
+        </div>
+        <div class="gauge-pct">84.5%</div>
+        <div class="gauge-label">average local hd</div>
+        <div class="wow-pill">prev period <span class="pill-delta good">84.1%</span> · Δ <span class="pill-delta good">+0.4pp</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS BY SYSTEM TYPE & SPORT -->
+  <div class="section">
+    <div class="section-title">Events Distribution</div>
+    <div class="grid-2">
+
+      <!-- By System Type donut -->
+      <!-- Total 2577: S2=1871(72.6%), S3=371(14.4%), S2S=304(11.8%), DP=16(0.62%), S=12(0.47%), PxS2S=2, PxS2=1 -->
+      <div class="donut-card">
+        <div class="donut-header">Events per System Type</div>
+        <div class="donut-body">
+          <svg viewBox="0 0 140 140" width="140" height="140" style="flex-shrink:0">
+            <!-- circumference = 2*pi*50 = 314.16 -->
+            <!-- S2: 72.6% = 228.1, offset 78.54 -->
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#4f8ef7" stroke-width="22"
+              stroke-dasharray="228.1 86.06" stroke-dashoffset="78.54" transform="rotate(-90,70,70)"/>
+            <!-- S3: 14.4% = 45.2, offset after S2 -->
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#2ec4b6" stroke-width="22"
+              stroke-dasharray="45.2 268.96" stroke-dashoffset="-149.56" transform="rotate(-90,70,70)"/>
+            <!-- S2S: 11.8% = 37.1 -->
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#7c5cbf" stroke-width="22"
+              stroke-dasharray="37.1 277.06" stroke-dashoffset="-194.76" transform="rotate(-90,70,70)"/>
+            <!-- rest: ~1.7% = 5.3 -->
+            <circle cx="70" cy="70" r="50" fill="none" stroke="#5a5f70" stroke-width="22"
+              stroke-dasharray="8.56 305.6" stroke-dashoffset="-231.86" transform="rotate(-90,70,70)"/>
+            <circle cx="70" cy="70" r="38" fill="#13161b"/>
+            <text x="70" y="67" text-anchor="middle" font-family="Playfair Display,serif" font-size="18" fill="#e8eaf0" font-weight="700">2,577</text>
+            <text x="70" y="82" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a5f70">events</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#4f8ef7"></div>
+              <div class="legend-name">S2</div>
+              <div class="legend-val">1,871</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#2ec4b6"></div>
+              <div class="legend-name">S3</div>
+              <div class="legend-val">371</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#7c5cbf"></div>
+              <div class="legend-name">S2S</div>
+              <div class="legend-val">304</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#f5a623"></div>
+              <div class="legend-name">Double Play</div>
+              <div class="legend-val">16</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#5a5f70"></div>
+              <div class="legend-name">S</div>
+              <div class="legend-val">12</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#3a3f4a"></div>
+              <div class="legend-name">Pixellot S2/S2S</div>
+              <div class="legend-val">3</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--text3)">
+          vs Apr 14–28:
+          <span style="font-family:'DM Mono',monospace;margin-left:8px;">S2 2,012→1,871 <span style="color:var(--green)">−7.0%</span></span>
+          <span style="font-family:'DM Mono',monospace;margin-left:8px;">S2S 452→304 <span style="color:var(--green)">−32.7%</span></span>
+          <span style="font-family:'DM Mono',monospace;margin-left:8px;">S3 353→371 <span style="color:var(--red)">+5.1%</span></span>
+        </div>
+      </div>
+
+      <!-- By Sport bar -->
+      <!-- Total 2577: soccer=822, lacrosse=809, volleyball=312, baseball=284, softball=144, other=108, americanFootball=48, basketball=44, waterpolo=5, wrestling=1 -->
+      <div class="bar-chart-card">
+        <div class="bar-chart-header">Total Events by Sport <span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-left:8px;">prev period in grey</span></div>
+        <div class="bar-chart-body">
+          <div class="bar-row">
+            <div class="bar-name">soccer</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#4f8ef7"></div></div>
+            <div class="bar-val">822</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓895 <span style="color:var(--green)">−8.2%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">lacrosse</div>
+            <div class="bar-track"><div class="bar-fill" style="width:98.4%;background:#7c5cbf"></div></div>
+            <div class="bar-val">809</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓827 <span style="color:var(--green)">−2.2%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">volleyball</div>
+            <div class="bar-track"><div class="bar-fill" style="width:38.0%;background:#2ec4b6"></div></div>
+            <div class="bar-val">312</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓334 <span style="color:var(--green)">−6.6%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">baseball</div>
+            <div class="bar-track"><div class="bar-fill" style="width:34.5%;background:#f5a623"></div></div>
+            <div class="bar-val">284</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓408 <span style="color:var(--green)">−30.4%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">softball</div>
+            <div class="bar-track"><div class="bar-fill" style="width:17.5%;background:#e8435a"></div></div>
+            <div class="bar-val">144</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓198 <span style="color:var(--green)">−27.3%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">other</div>
+            <div class="bar-track"><div class="bar-fill" style="width:13.1%;background:#5a5f70"></div></div>
+            <div class="bar-val">108</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↑82 <span style="color:var(--red)">+31.7%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">americanFootball</div>
+            <div class="bar-track"><div class="bar-fill" style="width:5.8%;background:#f0c940"></div></div>
+            <div class="bar-val">48</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↑44 <span style="color:var(--red)">+9.1%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">basketball</div>
+            <div class="bar-track"><div class="bar-fill" style="width:5.4%;background:#3dba7e"></div></div>
+            <div class="bar-val">44</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);width:70px;text-align:right;">↓66 <span style="color:var(--green)">−33.3%</span></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">waterpolo</div>
+            <div class="bar-track"><div class="bar-fill" style="width:0.6%;background:#4f8ef7;opacity:0.5"></div></div>
+            <div class="bar-val">5</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">wrestling</div>
+            <div class="bar-track"><div class="bar-fill" style="width:0.1%;background:#5a5f70;opacity:0.5"></div></div>
+            <div class="bar-val">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS BY SW VERSION -->
+  <div class="section">
+    <div class="section-title">Events — System Version</div>
+    <div class="table-card">
+      <div class="table-card-header">
+        SW Version distribution
+        <span class="badge">TOTAL 2,577</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>sw_version</th>
+              <th class="num">event_count</th>
+              <th class="num">% of total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="total-row"><td>TOTAL</td><td class="num">2,577</td><td class="num">100%</td></tr>
+            <tr><td class="mono">5.21.8</td><td class="num">2,315</td><td class="num" style="color:var(--accent)">89.8%</td></tr>
+            <tr><td class="mono">5.2.18</td><td class="num">48</td><td class="num">1.86%</td></tr>
+            <tr><td class="mono">2.66.15</td><td class="num">35</td><td class="num">1.36%</td></tr>
+            <tr><td class="mono">5.27.2</td><td class="num">23</td><td class="num">0.89%</td></tr>
+            <tr><td class="mono">4.22.8</td><td class="num">23</td><td class="num">0.89%</td></tr>
+            <tr><td class="mono">5.2.15</td><td class="num">20</td><td class="num">0.78%</td></tr>
+            <tr><td class="mono">5.13.6</td><td class="num">19</td><td class="num">0.74%</td></tr>
+            <tr><td class="mono">5.2.13</td><td class="num">15</td><td class="num">0.58%</td></tr>
+            <tr><td class="mono">5.13.8</td><td class="num">14</td><td class="num">0.54%</td></tr>
+            <tr><td class="mono">3.14.11</td><td class="num">12</td><td class="num">0.47%</td></tr>
+            <tr><td class="mono">4.2.22</td><td class="num">12</td><td class="num">0.47%</td></tr>
+            <tr><td class="mono">3.7.16</td><td class="num">8</td><td class="num">0.31%</td></tr>
+            <tr><td class="mono">2.64.4</td><td class="num">6</td><td class="num">0.23%</td></tr>
+            <tr><td class="mono">4.22.6</td><td class="num">4</td><td class="num">0.16%</td></tr>
+            <tr><td class="mono">4.14.9</td><td class="num">4</td><td class="num">0.16%</td></tr>
+            <tr><td class="mono">4.22.5</td><td class="num">2</td><td class="num">0.08%</td></tr>
+            <tr><td class="mono">2.61.12</td><td class="num">2</td><td class="num">0.08%</td></tr>
+            <tr><td class="mono">4.2.20</td><td class="num">2</td><td class="num">0.08%</td></tr>
+            <tr><td class="mono">5.13.7</td><td class="num">2</td><td class="num">0.08%</td></tr>
+            <tr><td class="mono">5.13.4</td><td class="num">2</td><td class="num">0.08%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VPU RESETS -->
+  <div class="section">
+    <div class="section-title">VPU Reset Analysis</div>
+
+    <!-- VPU WoW summary -->
+    <div class="wow-banner" style="margin-bottom:16px;">
+      <div class="wow-banner-label">vs Apr 14–28</div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Fatal total</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">31</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">198</span>
+          <span class="wow-stat-chg good">−84.3% ✓</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">S2S fatal</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">29</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">177</span>
+          <span class="wow-stat-chg good">−83.6% ✓</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">S2 fatal</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">2</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">14</span>
+          <span class="wow-stat-chg good">−85.7% ✓</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">S3 fatal</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">0</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">6</span>
+          <span class="wow-stat-chg good">−100% ✓</span>
+        </span>
+      </div>
+      <div class="wow-stat">
+        <span class="wow-stat-name">Non-fatal</span>
+        <span class="wow-stat-vals">
+          <span class="wow-stat-now">1,039</span>
+          <span class="wow-stat-arr">←</span>
+          <span class="wow-stat-prev">1,256</span>
+          <span class="wow-stat-chg good">−17.3%</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+
+      <!-- By system type -->
+      <div class="table-card">
+        <div class="table-card-header">VPU per System Type</div>
+        <table>
+          <thead>
+            <tr>
+              <th>systemtype</th>
+              <th class="num">fatal resets</th>
+              <th class="num">nonfatal resets</th>
+              <th class="num">events w/ resets</th>
+              <th class="num">fatal vs prev period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>S2S</td>
+              <td class="num" style="color:var(--orange)">29</td>
+              <td class="num">135</td>
+              <td class="num">20</td>
+              <td class="num" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px;">177→29 −83.6%</td>
+            </tr>
+            <tr>
+              <td>S2</td>
+              <td class="num">2</td>
+              <td class="num">202</td>
+              <td class="num">85</td>
+              <td class="num" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px;">14→2 −85.7%</td>
+            </tr>
+            <tr>
+              <td>S3</td>
+              <td class="num" style="color:var(--green)">0</td>
+              <td class="num">691</td>
+              <td class="num">30</td>
+              <td class="num" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px;">6→0 −100% ✓</td>
+            </tr>
+            <tr>
+              <td>S</td>
+              <td class="num">0</td>
+              <td class="num">2</td>
+              <td class="num">2</td>
+              <td class="num" style="color:var(--text3);font-family:'DM Mono',monospace;font-size:11px;">0→0 —</td>
+            </tr>
+            <tr>
+              <td>Double Play</td>
+              <td class="num">0</td>
+              <td class="num">9</td>
+              <td class="num">1</td>
+              <td class="num" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px;">1→0 ✓</td>
+            </tr>
+            <tr class="total-row">
+              <td>TOTAL</td>
+              <td class="num" style="color:var(--orange)">31</td>
+              <td class="num">1,039</td>
+              <td class="num">138</td>
+              <td class="num" style="color:var(--green);font-family:'DM Mono',monospace;font-size:11px;">198→31 −84.3%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- By sw version -->
+      <div class="table-card">
+        <div class="table-card-header">VPU Crashes per SW Version</div>
+        <table>
+          <thead>
+            <tr>
+              <th>sw_version</th>
+              <th class="num">fatal resets</th>
+              <th class="num">nonfatal resets</th>
+              <th class="num">events w/ resets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">5.21.8</td>
+              <td class="num" style="color:var(--orange)">31</td>
+              <td class="num">1,035</td>
+              <td class="num">135</td>
+            </tr>
+            <tr>
+              <td class="mono">5.2.18</td>
+              <td class="num">0</td>
+              <td class="num">2</td>
+              <td class="num">2</td>
+            </tr>
+            <tr>
+              <td class="mono">5.2.15</td>
+              <td class="num">0</td>
+              <td class="num">2</td>
+              <td class="num">1</td>
+            </tr>
+            <tr class="total-row">
+              <td>TOTAL</td>
+              <td class="num" style="color:var(--orange)">31</td>
+              <td class="num">1,039</td>
+              <td class="num">138</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VPU FATAL CRASHES PARETO -->
+  <div class="section">
+    <div class="section-title">VPU Fatal Crashes — Pareto Analysis by Venue</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">
+      Note: Pareto reflects <em>cumulative historical</em> crash distribution per venue. Top venue this period: Wauwatosa East (WI), S type, 5.21.8 — 366 fatal crashes (13.5% of total).
+      <span style="font-family:'DM Mono',monospace;color:var(--accent);">vs Apr 14–28:</span> total fatal crashes <span style="color:var(--green);font-family:'DM Mono',monospace;">198→31 (−84.3%)</span> · S2S dominant pattern continues.
+    </div>
+    <div class="pareto-card">
+      <div class="pareto-header">
+        Top venues by fatal crashes (cumulative %)
+        <span class="badge" style="font-family:'DM Mono',monospace;font-size:11px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;color:var(--text3)">Pareto view</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px">rank</th>
+              <th>venue_name</th>
+              <th>systemtype</th>
+              <th class="num">sw_version</th>
+              <th class="num">events</th>
+              <th class="num">fatal crashes</th>
+              <th class="num">% of total</th>
+              <th class="num">cumulative %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-1">1</span></td>
+              <td style="font-size:12px">PXLS1_30414 Wauwatosa East (WI) Field</td>
+              <td>S</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num" style="color:var(--red)">366</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:40px"></div><span class="pct-num">13.5%</span></div></td>
+              <td class="num"><span class="cum-chip">13.5%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-2">2</span></td>
+              <td style="font-size:12px">PXLS2_35211 Champlain Valley Union (V…)</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num" style="color:var(--red)">259</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:28px"></div><span class="pct-num">9.50%</span></div></td>
+              <td class="num"><span class="cum-chip">23.0%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-3">3</span></td>
+              <td style="font-size:12px">PXLS2S_17368 Illinois Valley Central (IL…)</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num" style="color:var(--red)">159</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:17px"></div><span class="pct-num">5.80%</span></div></td>
+              <td class="num"><span class="cum-chip">28.8%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">4</span></td>
+              <td style="font-size:12px">PXLS2L_71430 Ramsey (NJ) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">156</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:16px;background:var(--text3)"></div><span class="pct-num">5.70%</span></div></td>
+              <td class="num"><span class="cum-chip">34.6%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">5</span></td>
+              <td style="font-size:12px">PXLS2L_60790 North Raleigh Christian (…)</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">140</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:15px;background:var(--text3)"></div><span class="pct-num">5.10%</span></div></td>
+              <td class="num"><span class="cum-chip">39.7%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">6</span></td>
+              <td style="font-size:12px">PXLS2_17987 Richlands (VA) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">124</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:13px;background:var(--text3)"></div><span class="pct-num">4.60%</span></div></td>
+              <td class="num"><span class="cum-chip">44.3%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">7</span></td>
+              <td style="font-size:12px">PXLS2_15161 Smithfield (RI) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">95</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:10px;background:var(--text3)"></div><span class="pct-num">3.50%</span></div></td>
+              <td class="num"><span class="cum-chip">47.8%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">8</span></td>
+              <td style="font-size:12px">PXLS2L_70515 Bullard (CA) Gym</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">85</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:9px;background:var(--text3)"></div><span class="pct-num">3.10%</span></div></td>
+              <td class="num"><span class="cum-chip">50.9%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">9</span></td>
+              <td style="font-size:12px">PXLS2S_31579 Dover (DE) Baseball</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">83</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:9px;background:var(--text3)"></div><span class="pct-num">3.10%</span></div></td>
+              <td class="num"><span class="cum-chip">54.0%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">10</span></td>
+              <td style="font-size:12px">PXLS2_14470 Cheatham County Central …</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">82</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:9px;background:var(--text3)"></div><span class="pct-num">3.00%</span></div></td>
+              <td class="num"><span class="cum-chip">57.0%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">11</span></td>
+              <td style="font-size:12px">PXLS2L_32923 East Greenwich (RI) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">80</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.90%</span></div></td>
+              <td class="num"><span class="cum-chip">59.9%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">12</span></td>
+              <td style="font-size:12px">PXLS2L_34387 Gulf Breeze (FL) Gym</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">79</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.90%</span></div></td>
+              <td class="num"><span class="cum-chip">62.8%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">13</span></td>
+              <td style="font-size:12px">PXLS2S_14387 Providence Christian (GA…)</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">3</td>
+              <td class="num">76</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.80%</span></div></td>
+              <td class="num"><span class="cum-chip">65.6%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">14</span></td>
+              <td style="font-size:12px">PXLS2_6172 Owego Free (NY) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">75</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.80%</span></div></td>
+              <td class="num"><span class="cum-chip">68.4%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">15</span></td>
+              <td style="font-size:12px">PXLS2S_32631 Fayetteville-Manlius (NY…)</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">73</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.70%</span></div></td>
+              <td class="num"><span class="cum-chip">71.1%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">16</span></td>
+              <td style="font-size:12px">PXLS2L_37126 Moreau Catholic (CA) Ba…</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">71</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:8px;background:var(--text3)"></div><span class="pct-num">2.60%</span></div></td>
+              <td class="num"><span class="cum-chip">73.7%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">17</span></td>
+              <td style="font-size:12px">PXLS2_20553 North Florida Educational …</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">68</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:7px;background:var(--text3)"></div><span class="pct-num">2.50%</span></div></td>
+              <td class="num"><span class="cum-chip">76.2%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">18</span></td>
+              <td style="font-size:12px">PXLS3_70784 Abington Heights (PA) Sta…</td>
+              <td>S3</td><td class="num mono">5.21.8</td>
+              <td class="num">2</td>
+              <td class="num">65</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:7px;background:var(--text3)"></div><span class="pct-num">2.40%</span></div></td>
+              <td class="num"><span class="cum-chip">78.6%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">19</span></td>
+              <td style="font-size:12px">PXLS2_12018 Joliet West (IL) Stadium</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">63</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:7px;background:var(--text3)"></div><span class="pct-num">2.30%</span></div></td>
+              <td class="num"><span class="cum-chip">80.9%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">20</span></td>
+              <td style="font-size:12px">PXLS2_09232 Lafayette (KY) Field</td>
+              <td>S2</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">62</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:7px;background:var(--text3)"></div><span class="pct-num">2.30%</span></div></td>
+              <td class="num"><span class="cum-chip">83.2%</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-n">21</span></td>
+              <td style="font-size:12px">PXLS2S_31606 Lake Orion (MI) Softball</td>
+              <td>S2S</td><td class="num mono">5.21.8</td>
+              <td class="num">1</td>
+              <td class="num">60</td>
+              <td class="num"><div class="pct-bar"><div class="pct-mini" style="width:6px;background:var(--text3)"></div><span class="pct-num">2.20%</span></div></td>
+              <td class="num"><span class="cum-chip">85.4%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="section">
+    <div class="section-title">Alerts — Coralogix
+      <a href="https://cloud.app.coralogix.us/#/dashboard" target="_blank"
+        style="margin-left:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,191,0.12);border:1px solid rgba(124,92,191,0.35);border-radius:8px;padding:9px 18px;color:var(--accent2);text-decoration:none;font-size:13px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:0.03em;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open in Coralogix
+      </a>
+    </div>
+    <div class="alerts-grid">
+
+      <!-- Alert list -->
+      <div class="table-card">
+        <div class="table-card-header">
+          Recent Alerts (last 7 days)
+          <span class="badge">11 total</span>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p3">P3</span>
+          <div class="alert-content">
+            <div class="alert-name">[PROD] - [AIR] - Processing alert…</div>
+            <div class="alert-meta">03/05/2026 23:37:00 · Application: prod · Subsystem: venice-prod · 1 time</div>
+          </div>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p1">P1</span>
+          <div class="alert-content">
+            <div class="alert-name">[PROD]-[VS]-FATAL ERROR</div>
+            <div class="alert-meta">04/05/2026 22:57:41 · Application: prod · Subsystem: vidswap-prod · 1 time</div>
+          </div>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p2">P2</span>
+          <div class="alert-content">
+            <div class="alert-name">[PROD] [Data API] - Stats valid…</div>
+            <div class="alert-meta">04/05/2026 20:29:11 · Application: prod · Subsystem: prod-eks · 1 time</div>
+          </div>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p2">P2</span>
+          <div class="alert-content">
+            <div class="alert-name">LMI Host Update Error</div>
+            <div class="alert-meta">04/05/2026 22:28:10 · Application: prod · Subsystem: prod-eks · 1 time</div>
+          </div>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p2">P2</span>
+          <div class="alert-content">
+            <div class="alert-name">CONTENT TEAM: Retrying faile…</div>
+            <div class="alert-meta">03/05/2026 16:54:01 · Application: prod · Subsystem: content-v2-p… · 1 time</div>
+          </div>
+        </div>
+        <div class="alert-row">
+          <span class="alert-priority p1">P1</span>
+          <div class="alert-content">
+            <div class="alert-name">[PROD]-[CS]-FATAL ERROR</div>
+            <div class="alert-meta">04/05/2026 12:00:49 · Application: prod · Subsystem: prod-eks · 1 time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert donut -->
+      <div class="alert-donut-card">
+        <div class="alert-donut-header">Alerts by Severity</div>
+        <!-- 11 total: Warning 1 (9%), Critical 5 (45%), Error 5 (45%) -->
+        <svg viewBox="0 0 140 140" width="140" height="140">
+          <!-- circumference = 314.16 -->
+          <!-- Error 45% = 141.4, offset 78.54 -->
+          <circle cx="70" cy="70" r="50" fill="none" stroke="#e8435a" stroke-width="22"
+            stroke-dasharray="141.4 172.76" stroke-dashoffset="78.54" transform="rotate(-90,70,70)"/>
+          <!-- Critical 45% = 141.4 -->
+          <circle cx="70" cy="70" r="50" fill="none" stroke="#f5a623" stroke-width="22"
+            stroke-dasharray="141.4 172.76" stroke-dashoffset="-62.86" transform="rotate(-90,70,70)"/>
+          <!-- Warning 9% = 28.3 -->
+          <circle cx="70" cy="70" r="50" fill="none" stroke="#4f8ef7" stroke-width="22"
+            stroke-dasharray="28.3 285.86" stroke-dashoffset="-204.26" transform="rotate(-90,70,70)"/>
+          <circle cx="70" cy="70" r="38" fill="#13161b"/>
+          <text x="70" y="67" text-anchor="middle" font-family="Playfair Display,serif" font-size="18" fill="#e8eaf0" font-weight="700">11</text>
+          <text x="70" y="82" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a5f70">alerts</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#e8435a"></div>
+            <div class="legend-name">Error</div>
+            <div class="legend-val">5 (45%)</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#f5a623"></div>
+            <div class="legend-name">Critical</div>
+            <div class="legend-val">5 (45%)</div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#4f8ef7"></div>
+            <div class="legend-name">Warning</div>
+            <div class="legend-val">1 (9%)</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;background:rgba(232,67,90,0.08);border:1px solid rgba(232,67,90,0.2);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--red);font-family:'DM Mono',monospace;">
+          ⚠ 2×P1 ACTIVE: [VS]-FATAL ERROR · [CS]-FATAL ERROR
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORALOGIX ERRORS -->
+  <div class="section">
+    <div class="section-title">Coralogix — Top Errors &amp; Error Rates</div>
+    <div class="errors-grid">
+
+      <!-- Top abnormal errors -->
+      <div>
+        <div class="table-card-header" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--card-radius) var(--card-radius) 0 0;margin-bottom:0;">
+          Top 3 Abnormal Errors <span style="font-size:11px;color:var(--text3);margin-left:6px;">Above Normal · prod</span>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--card-radius) var(--card-radius);padding:14px;">
+          <div class="error-item">
+            <div class="error-badge">ERROR &gt;×100 Above Normal</div>
+            <div class="error-text">{ otelcol_component_kind: exporter kubernetes: { container_name: opentelemetry-cluster-collector docker_id: e6f853d82040…</div>
+            <div class="error-tags">
+              <span class="error-tag">Application: prod</span>
+              <span class="error-tag">Subsystem: content-v2-prod</span>
+            </div>
+          </div>
+          <div class="error-item">
+            <div class="error-badge">ERROR &gt;×100 Above Normal</div>
+            <div class="error-text">{ otelcol_component_kind: exporter kubernetes: { pod_name: coralogix-opentelemetry-collector-584c99d56d-hmhj7 namespace_…</div>
+            <div class="error-tags">
+              <span class="error-tag">Application: prod</span>
+              <span class="error-tag">Subsystem: venice-prod-gpu</span>
+            </div>
+          </div>
+          <div class="error-item">
+            <div class="error-badge">ERROR &gt;×100 Above Normal</div>
+            <div class="error-text">{ otelcol_component_kind: exporter kubernetes: { host: ip-10-62-27-84.ec2.internal docker_id: a040296d9128867406f34407bb…</div>
+            <div class="error-tags">
+              <span class="error-tag">Application: prod</span>
+              <span class="error-tag">Subsystem: venice-prod-gpu</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top error rate subsystems -->
+      <div class="error-rate-card">
+        <div class="error-rate-header">Top Error Rate Subsystems</div>
+        <div class="error-rate-items">
+          <div class="error-rate-item">
+            <div class="error-rate-gauge" style="color:var(--orange)">27%</div>
+            <div class="error-rate-sub">ERROR RATE<br/>prod<br/>prod-eks</div>
+          </div>
+          <div class="error-rate-item">
+            <div class="error-rate-gauge" style="color:var(--yellow)">20%</div>
+            <div class="error-rate-sub">ERROR RATE<br/>prod<br/>ott-us-eas…</div>
+          </div>
+          <div class="error-rate-item">
+            <div class="error-rate-gauge" style="color:var(--yellow)">19%</div>
+            <div class="error-rate-sub">ERROR RATE<br/>prod<br/>vidswap-p…</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:12px;">
+          All top errors from <span style="color:var(--accent);font-family:'DM Mono',monospace">prod</span> environment — OpenTelemetry exporter dropping items in <span style="color:var(--accent);font-family:'DM Mono',monospace">content-v2-prod</span> and <span style="color:var(--accent);font-family:'DM Mono',monospace">venice-prod-gpu</span>. Highest error rate: <span style="color:var(--orange);font-family:'DM Mono',monospace">prod-eks 27%</span>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-left">
+    <div class="footer-brand">Pixellot Platform Health</div>
+    <div>Apr 28 – May 4, 2026 · Cloud Infra Team · Generated May 4, 2026</div>
+  </div>
+  <div>Source: Grafana · Redshift · Coralogix · WoW vs Apr 14–28, 2026 · <a href="https://grafana.prod.pixellot.tv/d/db1fcff5-2fca-4e9f-acda-8579f1287a87/liubov-dashboard?orgId=1&from=1777593600000&to=1777852799000" target="_blank" style="color:var(--accent);text-decoration:none;">↗ Open in Grafana</a></div>
+</div>
+
+</body>
+</html>
