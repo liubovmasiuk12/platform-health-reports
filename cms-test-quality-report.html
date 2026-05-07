@@ -3,1112 +3,556 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMS Test Quality Report — April 2026</title>
+<title>CMS Test Quality Report — May 2026</title>
 <style>
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #1c2230; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e; --link: #58a6ff;
+    --green: #3fb950; --blue: #58a6ff; --yellow: #d29922; --orange: #f0883e; --red: #f85149; --purple: #bc8cff;
+    --grade-a: #3fb950; --grade-b: #58a6ff; --grade-c: #d29922; --grade-d: #f0883e; --grade-f: #f85149;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
-  .header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 32px 40px; }
-  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
-  .header .meta { font-size: 14px; opacity: 0.8; }
-  .badge { display:inline-block; background:rgba(255,255,255,0.2); padding:2px 10px; border-radius:9999px; font-size:12px; margin-left:8px; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
-  .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
-  .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:32px; }
-  .card { background:white; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-  .card h2 { font-size:16px; font-weight:600; color:#374151; margin-bottom:16px; border-bottom:1px solid #f3f4f6; padding-bottom:12px; }
-  .metric-card { background:white; border-radius:12px; padding:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); text-align:center; }
-  .metric-label { font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
-  .metric-value { font-size:36px; font-weight:800; margin-bottom:4px; }
-  .metric-sub { font-size:12px; color:#9ca3af; }
-  .gauge-ring { position:relative; width:100px; height:100px; margin:0 auto 12px; }
-  .gauge-ring svg { transform:rotate(-90deg); }
-  .gauge-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:18px; font-weight:800; }
-  .alert { background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:#92400e; }
-  .alert strong { color:#78350f; }
-  table { width:100%; border-collapse:collapse; }
-  th { padding:10px 12px; text-align:left; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; background:#f9fafb; border-bottom:2px solid #e5e7eb; }
-  .section-title { font-size:20px; font-weight:700; color:#1e293b; margin-bottom:16px; }
-  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+  /* Layout */
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  .report-header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px; }
+  .report-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .report-meta { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .report-meta a { color: var(--link); text-decoration: none; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid; }
+  .pill-js { color: #f7df1e; border-color: #f7df1e55; background: #f7df1e11; }
+  .pill-vue { color: #41b883; border-color: #41b88355; background: #41b88311; }
+  .pill-jest { color: #c21f3d; border-color: #c21f3d55; background: #c21f3d11; }
+  .pill-pw { color: #2ead33; border-color: #2ead3355; background: #2ead3311; }
+  .pill-method { color: var(--blue); border-color: #58a6ff55; background: #58a6ff11; }
+  .test-summary-bar { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .test-summary-bar strong { color: var(--text); }
+  .dot-sep { color: var(--border); margin: 0 4px; }
+  .pass { color: var(--green); font-weight: 600; }
+  .fail { color: var(--red); font-weight: 600; }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-header { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .section-header .icon { font-size: 16px; }
+
+  /* KPI Grid */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  @media(max-width:700px){ .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+  .kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .kpi-sub { font-size: 11px; color: var(--muted); }
+  .kv-green { color: var(--green); }
+  .kv-yellow { color: var(--yellow); }
+  .kv-red { color: var(--red); }
+  .kv-blue { color: var(--blue); }
+  .kv-orange { color: var(--orange); }
+  .kv-purple { color: var(--purple); }
+
+  /* Coverage bars */
+  .cov-row { margin-bottom: 12px; }
+  .cov-label-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; }
+  .cov-label-row span:first-child { color: var(--text); }
+  .cov-bar-bg { background: var(--bg3); border-radius: 99px; height: 8px; overflow: hidden; }
+  .cov-bar { height: 100%; border-radius: 99px; }
+
+  /* Test composition */
+  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media(max-width:600px){ .comp-grid { grid-template-columns: 1fr; } }
+  .comp-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .comp-type { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .comp-count { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
+  .comp-pct { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .comp-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* Histogram */
+  .histogram { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .hist-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .hist-label { font-size: 12px; color: var(--muted); width: 52px; text-align: right; flex-shrink: 0; font-family: monospace; }
+  .hist-bar-wrap { flex: 1; background: var(--bg3); border-radius: 4px; height: 22px; overflow: hidden; display: flex; align-items: center; }
+  .hist-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 600; color: #fff; min-width: 2px; white-space: nowrap; }
+  .hist-count { font-size: 12px; color: var(--muted); width: 32px; flex-shrink: 0; font-family: monospace; }
+  .hist-note { margin-top: 12px; font-size: 12px; color: var(--muted); line-height: 1.6; padding: var(--bg3); }
+
+  /* Tables */
+  .tbl-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: var(--bg2); text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg2); }
+  .mono { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; color: var(--link); }
+  .num { font-family: monospace; }
+
+  /* Grades */
+  .grade { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; font-weight: 700; font-size: 14px; }
+  .grade-A { background: #3fb95022; color: var(--grade-a); border: 1px solid #3fb95055; }
+  .grade-B { background: #58a6ff22; color: var(--grade-b); border: 1px solid #58a6ff55; }
+  .grade-C { background: #d2992222; color: var(--grade-c); border: 1px solid #d2992255; }
+  .grade-D { background: #f0883e22; color: var(--grade-d); border: 1px solid #f0883e55; }
+  .grade-F { background: #f8514922; color: var(--grade-f); border: 1px solid #f8514955; }
+
+  /* Criticality badges */
+  .crit { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .crit-high { background: #f8514922; color: #f87171; border: 1px solid #f8514944; }
+  .crit-medium { background: #d2992222; color: #fbbf24; border: 1px solid #d2992244; }
+  .crit-low { background: #3fb95022; color: #4ade80; border: 1px solid #3fb95044; }
+
+  /* Priority sections */
+  .priority-block { margin-bottom: 24px; }
+  .priority-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .priority-item { display: flex; gap: 10px; margin-bottom: 8px; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; border-left: 3px solid; }
+  .priority-item.high { border-left-color: var(--red); }
+  .priority-item.medium { border-left-color: var(--yellow); }
+  .priority-item.strength { border-left-color: var(--green); }
+  .priority-item .pi-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .priority-item .pi-body { flex: 1; }
+  .priority-item .pi-file { font-family: monospace; font-size: 11px; color: var(--blue); margin-bottom: 3px; }
+  .priority-item .pi-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .priority-item .pi-rec { font-size: 12px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+  .priority-item .pi-rec::before { content: "→ "; color: var(--blue); }
+
+  /* Warn / info box */
+  .warn-box { background: #f0883e11; border: 1px solid #f0883e33; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #fdba74; margin-bottom: 20px; line-height: 1.5; }
+  .info-box { background: #58a6ff11; border: 1px solid #58a6ff33; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #93c5fd; margin-bottom: 16px; line-height: 1.5; }
+
+  /* Footer */
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--muted); }
+
+  /* Pct colors */
+  .p0   { color: var(--red); font-weight: 600; }
+  .plow { color: var(--orange); }
+  .pmid { color: var(--yellow); }
+  .pgood{ color: var(--green); }
+
+  /* two col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width:680px){ .two-col { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="header">
-  <h1>🧪 CMS Test Quality Report
-    <span class="badge">Jest + Vue 2</span>
-    <span class="badge">April 2026</span>
-  </h1>
-  <div class="meta">Repository: github.com/Pixellot/cms &nbsp;|&nbsp; Analysis: runner+code-reading &nbsp;|&nbsp; 1734 tests ran · 1753 passed · 1 failed</div>
-</div>
-
-<div class="container">
-
-  <div class="alert">
-    ⚠️ <strong>1 failing test:</strong> helpers.spec.js › getDate › returns formatted date string — timezone offset issue in CI environment (returns "March 14" instead of "March 15" for UTC-offset systems). Not a logic bug — fix the test to use UTC dates.
-  </div>
-
-  <!-- Coverage gauges -->
-  <div class="grid-4">
-    <div class="metric-card">
-      <div class="metric-label">Statements</div>
-      <div class="gauge-ring">
-        <svg width="100" height="100" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#f59e0b" stroke-width="10"
-            stroke-dasharray="130.6 263.9" stroke-linecap="round"/>
-        </svg>
-        <div class="gauge-text" style="color:#f59e0b">49%</div>
-      </div>
-      <div class="metric-sub">31,270 / 63,181 stmts</div>
+  <!-- HEADER -->
+  <div class="report-header">
+    <div class="report-title">
+      CMS Test Quality Report
+      <span class="pill pill-js">JavaScript</span>
+      <span class="pill pill-vue">Vue 2</span>
+      <span class="pill pill-jest">Jest 27</span>
+      <span class="pill pill-pw">Playwright</span>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Branches</div>
-      <div class="gauge-ring">
-        <svg width="100" height="100" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#10b981" stroke-width="10"
-            stroke-dasharray="214.2 263.9" stroke-linecap="round"/>
-        </svg>
-        <div class="gauge-text" style="color:#10b981">81%</div>
-      </div>
-      <div class="metric-sub">2,676 / 3,297 branches</div>
+    <div class="report-meta">
+      May 2026 &nbsp;·&nbsp;
+      <span class="pill pill-method">runner+code-reading</span>
+      &nbsp;·&nbsp; CMS v2.122.0 &nbsp;·&nbsp; Node 20.11.0 (project requires 14)
     </div>
-    <div class="metric-card">
-      <div class="metric-label">Functions</div>
-      <div class="gauge-ring">
-        <svg width="100" height="100" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" stroke-width="10"/>
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#f59e0b" stroke-width="10"
-            stroke-dasharray="159.8 263.9" stroke-linecap="round"/>
-        </svg>
-        <div class="gauge-text" style="color:#f59e0b">61%</div>
-      </div>
-      <div class="metric-sub">1,408 / 2,325 functions</div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">Test / Source ratio</div>
-      <div class="metric-value" style="color:#2563eb;">0.41</div>
-      <div class="metric-sub">26,049 test lines / 63,202 src lines</div>
-      <div style="margin-top:8px;">
-        <span style="font-size:12px;color:#6b7280;">1734 tests · 314 source files · 232 test files</span>
-      </div>
+    <div class="test-summary-bar">
+      <strong>1,753</strong> tests ran
+      <span class="dot-sep">·</span>
+      <span class="pass">1,752 passed</span>
+      <span class="dot-sep">·</span>
+      <span class="fail">1 failed</span>
+      <span class="dot-sep">·</span>
+      <strong>231</strong> test suites
+      <span class="dot-sep">·</span>
+      <strong>314</strong> source files
+      <span class="dot-sep">·</span>
+      🔗 <strong>6</strong> Playwright E2E (not run — requires live app)
     </div>
   </div>
 
-  <!-- Test breakdown + distribution -->
-  <div class="grid-2">
-    <div class="card">
-      <h2>Test Composition</h2>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:14px;font-weight:600;">Unit Tests</span>
-            <span style="font-size:14px;font-weight:700;color:#2563eb;">1,587 (92%)</span>
-          </div>
-          <div style="background:#e5e7eb;border-radius:4px;height:10px;">
-            <div style="width:92%;background:#2563eb;border-radius:4px;height:10px;"></div>
-          </div>
-          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Isolated tests with mocked collaborators</div>
-        </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:14px;font-weight:600;">Component Tests</span>
-            <span style="font-size:14px;font-weight:700;color:#8b5cf6;">147 (8%)</span>
-          </div>
-          <div style="background:#e5e7eb;border-radius:4px;height:10px;">
-            <div style="width:8%;background:#8b5cf6;border-radius:4px;height:10px;"></div>
-          </div>
-          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Vue component render tests with real collaborators</div>
-        </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:14px;font-weight:600;">Integration (Jest)</span>
-            <span style="font-size:14px;font-weight:700;color:#6b7280;">0 (0%)</span>
-          </div>
-          <div style="background:#e5e7eb;border-radius:4px;height:10px;"></div>
-          <div style="font-size:11px;color:#9ca3af;margin-top:2px;">No integration tests run via Jest</div>
-        </div>
-        <div style="padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;">
-          <div style="font-size:13px;font-weight:600;color:#166534;">🔗 Playwright E2E</div>
-          <div style="font-size:12px;color:#166534;margin-top:2px;">1 test file in tests/integration/ — requires live app; run via <code>npm run test:integration</code></div>
-        </div>
+  <div class="warn-box">
+    ⚠️ <strong>Runner note:</strong> 1 test failed — <code>helpers › getDate › returns formatted date string</code>.
+    Root cause: Node version mismatch (Node 20 vs required Node 14 changes <code>Intl</code> locale output). Not a production bug. Coverage numbers are accurate.
+  </div>
+
+  <!-- COVERAGE DASHBOARD -->
+  <div class="section">
+    <div class="section-header"><span class="icon">📊</span> Coverage Dashboard</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Statements</div>
+        <div class="kpi-value kv-yellow">49.4%</div>
+        <div class="kpi-sub">31,338 / 63,375 covered</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Branches</div>
+        <div class="kpi-value kv-green">80.7%</div>
+        <div class="kpi-sub">Best metric in the suite</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Functions</div>
+        <div class="kpi-value kv-yellow">60.6%</div>
+        <div class="kpi-sub">1,416 / 2,335 covered</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Test / Source Ratio</div>
+        <div class="kpi-value kv-blue">0.40</div>
+        <div class="kpi-sub">26,419 test / 66,153 src lines</div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Coverage Distribution (by statements)</h2>
-      <div style="display:flex;align-items:flex-end;gap:12px;height:160px;padding-bottom:28px;">
-        
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">49</div>
-          <div style="width:48px;height:120px;background:#dc2626;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">0%</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">4</div>
-          <div style="width:48px;height:9px;background:#ef4444;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">1-25%</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">13</div>
-          <div style="width:48px;height:31px;background:#f97316;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">26-50%</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">14</div>
-          <div style="width:48px;height:34px;background:#f59e0b;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">51-75%</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">0</div>
-          <div style="width:48px;height:4px;background:#84cc16;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">76-99%</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;">0</div>
-          <div style="width:48px;height:4px;background:#10b981;border-radius:4px 4px 0 0;"></div>
-          <div style="font-size:11px;color:#6b7280;text-align:center;">100%</div>
-        </div>
+    <div style="margin-bottom:12px;">
+      <div class="cov-row">
+        <div class="cov-label-row"><span>Statements</span><span class="kv-yellow">49.4%</span></div>
+        <div class="cov-bar-bg"><div class="cov-bar" style="width:49.4%;background:#d29922;"></div></div>
       </div>
-      <div style="margin-top:16px;padding:12px;background:#f9fafb;border-radius:8px;">
-        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">Key observation</div>
-        <div style="font-size:12px;color:#6b7280;">54 files have 0% statement coverage. 95 files have 100% coverage. The bimodal pattern suggests focused test investment on specific modules while others (event forms, utility mappers) are largely untested.</div>
+      <div class="cov-row">
+        <div class="cov-label-row"><span>Branches</span><span class="kv-green">80.7%</span></div>
+        <div class="cov-bar-bg"><div class="cov-bar" style="width:80.7%;background:#3fb950;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-label-row"><span>Functions</span><span class="kv-yellow">60.6%</span></div>
+        <div class="cov-bar-bg"><div class="cov-bar" style="width:60.6%;background:#d29922;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-label-row"><span>Lines</span><span class="kv-yellow">49.4%</span></div>
+        <div class="cov-bar-bg"><div class="cov-bar" style="width:49.4%;background:#d29922;"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- Gaps table -->
-  <div style="margin-bottom:32px;">
-    <div class="section-title">🚨 Critical Coverage Gaps (Top 25)</div>
-    <div class="card" style="padding:0;overflow:hidden;">
+  <!-- TEST COMPOSITION -->
+  <div class="section">
+    <div class="section-header"><span class="icon">🧪</span> Test Composition</div>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-type" style="color:var(--blue);">Unit Tests</div>
+        <div class="comp-count kv-blue">407</div>
+        <div class="comp-pct">23.2% of total</div>
+        <div class="comp-desc">Isolated tests with mocked collaborators. Covers API modules, utils, Vuex store, router, and plugins.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-type" style="color:var(--purple);">Component Tests</div>
+        <div class="comp-count kv-purple">1,346</div>
+        <div class="comp-pct">76.8% of total</div>
+        <div class="comp-desc">Vue component render tests using @vue/test-utils with real Vue rendering but mocked API and store.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-type" style="color:var(--orange);">Integration (Jest)</div>
+        <div class="comp-count kv-orange">0</div>
+        <div class="comp-pct">No integration tests via Jest</div>
+        <div class="comp-desc">🔗 Playwright E2E: 6 tests (login, account settings, event form) — require a live CMS app, not run in default CI.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUTION HISTOGRAM -->
+  <div class="section">
+    <div class="section-header"><span class="icon">📈</span> Coverage Distribution</div>
+    <div class="two-col">
+      <div class="histogram">
+        <div class="hist-row">
+          <div class="hist-label">0%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:54%;background:#f85149;">53</div></div>
+          <div class="hist-count">53</div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-label">1–25%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:3%;background:#f0883e;">3</div></div>
+          <div class="hist-count">3</div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-label">26–50%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:14.2%;background:#d29922;">14</div></div>
+          <div class="hist-count">14</div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-label">51–75%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:54.6%;background:#58a6ff;">54</div></div>
+          <div class="hist-count">54</div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-label">76–99%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:93.9%;background:#3fb950;">93</div></div>
+          <div class="hist-count">93</div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-label">100%</div>
+          <div class="hist-bar-wrap"><div class="hist-bar" style="width:97.9%;background:#3fb950;">97</div></div>
+          <div class="hist-count">97</div>
+        </div>
+        <div class="hist-note">
+          ⚠️ Bimodal pattern: <strong style="color:var(--red);">53 files at 0%</strong> and <strong style="color:var(--green);">97 files at 100%</strong>. The middle is thin — test investment is polarized rather than evenly distributed.
+        </div>
+      </div>
+      <div>
+        <div class="kpi-card" style="margin-bottom:12px;">
+          <div class="kpi-label">Files at 0% coverage</div>
+          <div class="kpi-value kv-red">53</div>
+          <div class="kpi-sub">16.9% of all source files</div>
+        </div>
+        <div class="kpi-card" style="margin-bottom:12px;">
+          <div class="kpi-label">Files at 100% coverage</div>
+          <div class="kpi-value kv-green">97</div>
+          <div class="kpi-sub">30.9% of all source files</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Partially covered files</div>
+          <div class="kpi-value kv-yellow">164</div>
+          <div class="kpi-sub">52.2% of all source files</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP 25 CRITICAL GAPS TABLE -->
+  <div class="section">
+    <div class="section-header"><span class="icon">🚨</span> Top 25 Critical Coverage Gaps</div>
+    <div class="tbl-wrap">
       <table>
         <thead>
           <tr>
+            <th>#</th>
             <th>File</th>
             <th>Criticality</th>
-            <th>Stmts %</th>
+            <th>Statements</th>
             <th>Recommendation</th>
           </tr>
         </thead>
         <tbody>
-          
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">edit.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/accounts/pages/_id/edit.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for edit.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventTableStreams.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/EventTableStreams.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventTableStreams.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventGraphics.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/header/EventGraphics.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventGraphics.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">index.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/header/index.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.js — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventInfo.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventInfo.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventInfo.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventSections.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventSections.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventSections.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventVas.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/EventVas.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventVas.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">index.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/details/components/sections/index.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.js — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventForm.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/forms/EventForm.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventForm.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">VodEventForm.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/forms/VodEventForm.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for VodEventForm.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">EventFormModal.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/modals/EventFormModal.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for EventFormModal.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">HighlightFormModal.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/components/modals/HighlightFormModal.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for HighlightFormModal.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">create-bulk.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/create-bulk.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for create-bulk.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">index.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/index.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for index.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">monitoring.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/monitoring.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for monitoring.vue — event management is the core business flow</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">TestEventFormModal.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/components/modals/TestEventFormModal.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for TestEventFormModal.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">ScoreBoardCanvas.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for ScoreBoardCanvas.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">index.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/pages/systems/index.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for index.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">scoreboard.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/inventory/pages/systems/_id/scoreboard.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for scoreboard.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">index.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/users/pages/index.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add tests for index.vue — currently 0% covered</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">bulkValidator.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/utils/validation/bulkValidator.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in bulkValidator.js — these validators protect data integrity</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">clubValidator.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/utils/validation/clubValidator.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in clubValidator.js — these validators protect data integrity</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">eventValidator.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/utils/validation/eventValidator.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in eventValidator.js — these validators protect data integrity</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">systemValidator.js</div>
-            <div style="color:#6b7280;font-size:11px;">src/utils/validation/systemValidator.js</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#dc2626;">0.0%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add unit tests for validation logic in systemValidator.js — these validators protect data integrity</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;">
-            <div style="font-weight:600;font-size:13px;">edit.vue</div>
-            <div style="color:#6b7280;font-size:11px;">src/modules/events/pages/_id/edit.vue</div>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
-            <span style="background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span>
-          </td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center;font-weight:700;color:#f59e0b;">25.8%</td>
-          <td style="padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#374151;">Add component tests for edit.vue — event management is the core business flow</td>
-        </tr>
+          <tr><td>1</td><td class="mono">src/utils/validation/eventValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Add unit tests for all bulk-edit/delete validation scenarios — status mix, count limits, timing constraints</td></tr>
+          <tr><td>2</td><td class="mono">src/utils/validation/systemValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Cover all system bulk-op guard paths; follow commonValidator.spec.js as the model</td></tr>
+          <tr><td>3</td><td class="mono">src/utils/validation/clubValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Add unit tests for club bulk-action validation pipeline</td></tr>
+          <tr><td>4</td><td class="mono">src/utils/validation/bulkValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Base shared validator — unit tests will cover logic reused by all entity validators</td></tr>
+          <tr><td>5</td><td class="mono">src/plugins/firebase.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Add firebase.spec.js mocking firebase/app; test signIn, signOut, enrollMfa, getMfaResolver</td></tr>
+          <tr><td>6</td><td class="mono">src/utils/events/mappers.js</td><td><span class="crit crit-high">HIGH</span></td><td class="plow num">13.7%</td><td style="font-size:12px;color:var(--muted);">8 mapper functions are untested; start with mapEventToForm and mapEventFromForm (form round-trip fidelity)</td></tr>
+          <tr><td>7</td><td class="mono">src/store/modules/auth.js</td><td><span class="crit crit-high">HIGH</span></td><td class="plow num">29.9%</td><td style="font-size:12px;color:var(--muted);">Extend auth.spec.js: cover firebaseLogin, handleFirebaseError error-codes, resetMfaEnroll</td></tr>
+          <tr><td>8</td><td class="mono">src/api/DevicesApi.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="plow num">32.1%</td><td style="font-size:12px;color:var(--muted);">Extend DevicesApi.spec.js — only 1/4 functions covered; add tests for the 3 uncovered device calls</td></tr>
+          <tr><td>9</td><td class="mono">src/utils/virtualAds/mappers.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="plow num">5.2%</td><td style="font-size:12px;color:var(--muted);">Add unit tests for all 5 virtualAds mapper functions with fixture data</td></tr>
+          <tr><td>10</td><td class="mono">src/utils/ws.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">40.6%</td><td style="font-size:12px;color:var(--muted);">Mock ReconnectingWebSocket; test connect/disconnect lifecycle, subscribe/unsubscribe, error callbacks</td></tr>
+          <tr><td>11</td><td class="mono">src/modules/events/components/forms/EventForm.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Core event-management form — placeholder test only. Fix the Pug @submit.prevent issue to enable real tests</td></tr>
+          <tr><td>12</td><td class="mono">src/modules/events/pages/index.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Events list page with bulk operations — add component test covering table render, filter, bulk-select</td></tr>
+          <tr><td>13</td><td class="mono">src/modules/events/pages/monitoring.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Real-time monitoring view — add component test mocking WebSocket and asserting health indicator render</td></tr>
+          <tr><td>14</td><td class="mono">src/modules/events/components/EventTableStreams.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Stream status display — add tests for each stream state badge variant</td></tr>
+          <tr><td>15</td><td class="mono">src/modules/events/mixins/eventMixin.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">61.5%</td><td style="font-size:12px;color:var(--muted);">11/20 functions uncovered; extend eventMixin.spec.js focusing on action handlers and status helpers</td></tr>
+          <tr><td>16</td><td class="mono">src/api/SystemApi.js</td><td><span class="crit crit-high">HIGH</span></td><td class="pmid num">60.4%</td><td style="font-size:12px;color:var(--muted);">21/62 functions uncovered — extend SystemApi.spec.js; prioritize upgrade, VPU, and diagnostic calls</td></tr>
+          <tr><td>17</td><td class="mono">src/modules/inventory/mixins/inventoryMixin.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">55.9%</td><td style="font-size:12px;color:var(--muted);">13/25 functions uncovered; extend inventoryMixin.spec.js with system-action and upgrade-flow cases</td></tr>
+          <tr><td>18</td><td class="mono">src/plugins/modal/ (4 files)</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Add tests for modalMixin (confirm/cancel contracts) and ConfirmModal (slot render, emit on confirm)</td></tr>
+          <tr><td>19</td><td class="mono">src/modules/accounts/pages/_id/edit.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Account edit page — add tests for load, field render, and save action</td></tr>
+          <tr><td>20</td><td class="mono">src/modules/inventory/pages/systems/index.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Systems list — add component test; inventory is Grade D overall and this page has no coverage at all</td></tr>
+          <tr><td>21</td><td class="mono">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Canvas-based scoreboard renderer — add tests mocking canvas context and verifying draw calls</td></tr>
+          <tr><td>22</td><td class="mono">src/utils/errors.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">72.5%</td><td style="font-size:12px;color:var(--muted);">Low branch coverage (31.6%) — add edge-case tests for error-code mapping and fallback paths</td></tr>
+          <tr><td>23</td><td class="mono">src/modules/users/pages/index.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Users module is Grade D (34.9%) — add the missing page-level test</td></tr>
+          <tr><td>24</td><td class="mono">src/modules/media/pages/index.vue</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Media module Grade D (36.1%) — list page completely uncovered</td></tr>
+          <tr><td>25</td><td class="mono">src/utils/validation/index.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td style="font-size:12px;color:var(--muted);">Validation entry point — resolves once individual validators are tested</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- File coverage table -->
-  <div style="margin-bottom:32px;">
-    <div class="section-title">📊 Worst-Covered Files (30 lowest)</div>
-    <div class="card" style="padding:0;overflow:hidden;">
+  <!-- WORST COVERED FILES -->
+  <div class="section">
+    <div class="section-header"><span class="icon">📉</span> Worst-Covered Files (top 30)</div>
+    <div class="tbl-wrap">
       <table>
         <thead>
-          <tr>
-            <th>File</th>
-            <th>Criticality</th>
-            <th>Statements</th>
-            <th>Branches</th>
-            <th>Functions</th>
-          </tr>
+          <tr><th>File</th><th>Criticality</th><th>Statements</th><th>Branches</th><th>Functions</th></tr>
         </thead>
         <tbody>
-          
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">App.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/App.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">WidgetPlayer.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/WidgetPlayer.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">DatePicker.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DatePicker.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">DateRangePicker.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DateRangePicker.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">DropdownCheckbox.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/shared/DropdownCheckbox.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">PixellotPlayer.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/shared/PixellotPlayer.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.js</div>
-            <div style="color:#9ca3af;font-size:10px;">src/components/shared/index.js</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">admin.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/layouts/admin.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#6b7280;">LOW</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">edit.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/accounts/pages/_id/edit.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/clubs/pages/index.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventTableStreams.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/EventTableStreams.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventGraphics.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/header/EventGraphics.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.js</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/header/index.js</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventInfo.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventInfo.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventSections.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventSections.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventVas.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/EventVas.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.js</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/details/components/sections/index.js</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventForm.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/forms/EventForm.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">VodEventForm.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/forms/VodEventForm.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">EventFormModal.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/modals/EventFormModal.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">HighlightFormModal.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/components/modals/HighlightFormModal.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">create-bulk.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/create-bulk.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/index.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">monitoring.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/events/pages/monitoring.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">TestEventFormModal.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/components/modals/TestEventFormModal.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">ScoreBoardCanvas.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">index.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/pages/systems/index.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">scoreboard.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/inventory/pages/systems/_id/scoreboard.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#dc2626;">HIGH</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">ClubImageFormModal.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/media/components/modals/ClubImageFormModal.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
-        <tr>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;font-size:12px;">
-            <div style="font-weight:600">ClubPreRollFormModal.vue</div>
-            <div style="color:#9ca3af;font-size:10px;">src/modules/media/components/modals/ClubPreRollFormModal.vue</div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:11px;font-weight:600;color:#f59e0b;">MEDIUM</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;min-width:140px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;">
-                <div style="width:0%;background:#dc2626;border-radius:4px;height:8px;"></div>
-              </div>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">0.0%</span>
-            </div>
-          </td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #f3f4f6;text-align:center;font-size:12px;color:#6b7280;">0%</td>
-        </tr>
+          <tr><td class="mono">src/utils/virtualAds/mappers.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">5.2%</td><td class="pgood num">100%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/utils/events/mappers.js</td><td><span class="crit crit-high">HIGH</span></td><td class="plow num">13.7%</td><td class="pgood num">100%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/plugins/firebase.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/plugins/modal/modalMixin.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/utils/validation/eventValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/utils/validation/systemValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/utils/validation/clubValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/utils/validation/bulkValidator.js</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/components/forms/EventForm.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/pages/index.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/pages/monitoring.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/components/EventTableStreams.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/inventory/components/scoreboard/ScoreBoardCanvas.vue</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/accounts/pages/_id/edit.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/users/pages/index.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/media/pages/index.vue</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/App.vue</td><td><span class="crit crit-low">LOW</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/layouts/admin.vue</td><td><span class="crit crit-low">LOW</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/components/shared/DatePicker.vue</td><td><span class="crit crit-low">LOW</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/components/shared/DateRangePicker.vue</td><td><span class="crit crit-low">LOW</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/components/forms/VodEventForm.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/components/modals/EventFormModal.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/modules/events/pages/create-bulk.vue</td><td><span class="crit crit-high">HIGH</span></td><td class="p0 num">0%</td><td class="p0 num">0%</td><td class="p0 num">0%</td></tr>
+          <tr><td class="mono">src/store/modules/auth.js</td><td><span class="crit crit-high">HIGH</span></td><td class="plow num">29.9%</td><td class="pmid num">78.6%</td><td class="pmid num">66.7%</td></tr>
+          <tr><td class="mono">src/api/DevicesApi.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="plow num">32.1%</td><td class="pgood num">100%</td><td class="plow num">25%</td></tr>
+          <tr><td class="mono">src/utils/teams/mappers.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="plow num">28.9%</td><td class="plow num">14.3%</td><td class="pmid num">50%</td></tr>
+          <tr><td class="mono">src/utils/ws.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">40.6%</td><td class="pgood num">83.3%</td><td class="plow num">10%</td></tr>
+          <tr><td class="mono">src/api/FileApi.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">47.9%</td><td class="pgood num">100%</td><td class="pmid num">44.4%</td></tr>
+          <tr><td class="mono">src/api/LocationApi.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">51%</td><td class="pmid num">75%</td><td class="pmid num">44.4%</td></tr>
+          <tr><td class="mono">src/utils/clubs/mappers.js</td><td><span class="crit crit-medium">MEDIUM</span></td><td class="pmid num">67.8%</td><td class="pgood num">100%</td><td class="plow num">4.8%</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Key insights -->
-  <div class="card" style="margin-bottom:32px;">
-    <h2>🎯 Key Findings & Recommendations</h2>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
-      <div style="padding:16px;background:#fef2f2;border-radius:8px;border-left:4px solid #dc2626;">
-        <div style="font-weight:700;color:#991b1b;margin-bottom:8px;">🔴 High Priority</div>
-        <div style="font-size:13px;color:#7f1d1d;line-height:1.6;">
-          <strong>Validation utilities</strong> (bulkValidator, clubValidator, eventValidator, systemValidator) have 0% coverage despite being called on every form submission. Add unit tests for each validator — these are pure functions and easy to test.<br><br>
-          <strong>Event module</strong> has 0% coverage on core files: EventForm.vue, VodEventForm.vue, EventFormModal.vue. Events are the primary business entity.
+  <!-- KEY FINDINGS -->
+  <div class="section">
+    <div class="section-header"><span class="icon">🔍</span> Key Findings &amp; Recommendations</div>
+
+    <div class="priority-block">
+      <div class="priority-title"><span>🔴</span> High Priority</div>
+
+      <div class="priority-item high">
+        <div class="pi-icon">🚨</div>
+        <div class="pi-body">
+          <div class="pi-file">src/utils/validation/ (4 files)</div>
+          <div class="pi-text">All bulk-action validators have <strong>0% coverage</strong>. These guard every bulk edit/delete operation across events, systems, and clubs — invalid operations can silently proceed.</div>
+          <div class="pi-rec">Add unit tests for each validator's allowed/blocked scenarios (status mix, count limits, timing). Use commonValidator.spec.js as the template.</div>
         </div>
       </div>
-      <div style="padding:16px;background:#fffbeb;border-radius:8px;border-left:4px solid #f59e0b;">
-        <div style="font-weight:700;color:#92400e;margin-bottom:8px;">🟡 Medium Priority</div>
-        <div style="font-size:13px;color:#78350f;line-height:1.6;">
-          <strong>Utility mappers</strong> (systems/mappers.js at 0%, virtualAds/mappers.js at 5%, events/mappers.js at 14%) transform raw API data into app models. Mapper bugs cause silent wrong display data throughout the UI.<br><br>
-          <strong>Axios layer</strong> (src/api/axios/index.js at 44%) handles auth headers and error interception for all HTTP calls — low branch coverage here is risky.
+
+      <div class="priority-item high">
+        <div class="pi-icon">🚨</div>
+        <div class="pi-body">
+          <div class="pi-file">src/utils/events/mappers.js + src/plugins/firebase.js</div>
+          <div class="pi-text">Event data mappers (8 functions, 0% fn coverage) transform every API payload for the UI — bugs here cause silently wrong displays. Firebase auth module (0%) leaves the entire auth integration untested.</div>
+          <div class="pi-rec">Add mapper tests with fixture API objects. Extract firebase mock from auth.spec.js into a shared fixture and add firebase.spec.js covering each exported function.</div>
         </div>
       </div>
-      <div style="padding:16px;background:#f0fdf4;border-radius:8px;border-left:4px solid #10b981;">
-        <div style="font-weight:700;color:#065f46;margin-bottom:8px;">✅ Strengths</div>
-        <div style="font-size:13px;color:#064e3b;line-height:1.6;">
-          <strong>Branch coverage (81%)</strong> is the standout metric — the codebase has excellent conditional path coverage even where statement coverage lags.<br><br>
-          <strong>API layer</strong> is well-tested: 8 of 14 API files are at 80%+. UsersApi (98%), AccountSettingsApi, InstallerApi, PackagesApi, VPUApi all at 100%.<br><br>
-          <strong>232 test files</strong> covering a Vue 2 + Webpack app shows solid baseline test culture.
+
+      <div class="priority-item high">
+        <div class="pi-icon">🚨</div>
+        <div class="pi-body">
+          <div class="pi-file">src/store/modules/auth.js (29.9% stmts)</div>
+          <div class="pi-text">Firebase login path, MFA reset, and error-code mapping are entirely uncovered despite having a spec file. The spec only exercises the non-Firebase email/password path.</div>
+          <div class="pi-rec">Extend auth.spec.js: add cases for firebaseLogin (happy + error), handleFirebaseError with each error code, and resetMfaEnroll.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="priority-block">
+      <div class="priority-title"><span>🟡</span> Medium Priority</div>
+
+      <div class="priority-item medium">
+        <div class="pi-icon">⚠️</div>
+        <div class="pi-body">
+          <div class="pi-file">src/utils/ws.js (40.6% stmts, 10% functions)</div>
+          <div class="pi-text">WebSocket client used for real-time event monitoring — 9 of 10 functions untested including reconnect, subscribe, and message handler callbacks.</div>
+          <div class="pi-rec">Mock ReconnectingWebSocket and test lifecycle: connect/disconnect, subscribe/unsubscribe, message and error callbacks.</div>
+        </div>
+      </div>
+
+      <div class="priority-item medium">
+        <div class="pi-icon">⚠️</div>
+        <div class="pi-body">
+          <div class="pi-file">src/plugins/modal/ (0% coverage, 4 files)</div>
+          <div class="pi-text">Modal plugin used for all confirmation dialogs before destructive operations — no test verifies that confirm/cancel callbacks fire correctly.</div>
+          <div class="pi-rec">Add tests for modalMixin confirm/cancel contracts and ConfirmModal slot render + event emission.</div>
+        </div>
+      </div>
+
+      <div class="priority-item medium">
+        <div class="pi-icon">⚠️</div>
+        <div class="pi-body">
+          <div class="pi-file">Various mapper utils (clubs, teams, virtualAds, categories, systems)</div>
+          <div class="pi-text">Data transformation functions across multiple modules have very low or zero function coverage — mapper bugs cause silent wrong display data throughout the UI.</div>
+          <div class="pi-rec">Add unit tests with realistic API fixture objects for each mapper module. These are pure functions — easy to test in isolation.</div>
+        </div>
+      </div>
+
+      <div class="priority-item medium">
+        <div class="pi-icon">⚠️</div>
+        <div class="pi-body">
+          <div class="pi-file">src/utils/__tests__/helpers.spec.js — getDate() (1 failing test)</div>
+          <div class="pi-text">Locale-dependent date formatting fails under Node 20 vs the required Node 14. Not a production issue but breaks the CI signal.</div>
+          <div class="pi-rec">Replace regex <code>/March 15, 2024/</code> assertion with locale-stable checks (year, month, day separately via Date methods).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="priority-block">
+      <div class="priority-title"><span>✅</span> Strengths</div>
+
+      <div class="priority-item strength">
+        <div class="pi-icon">✅</div>
+        <div class="pi-body">
+          <div class="pi-text"><strong>Branch coverage is strong at 80.7%</strong> — where code is tested, conditional paths are well-exercised. This is the best metric in the suite.</div>
+        </div>
+      </div>
+
+      <div class="priority-item strength">
+        <div class="pi-icon">✅</div>
+        <div class="pi-body">
+          <div class="pi-text"><strong>API layer is well-tested</strong> — 22 API spec files with consistent axios-mock pattern. EventsApi.js (94.3% fn), AuthApi.js (100% fn), and PackagesApi.js (100%) are exemplary.</div>
+        </div>
+      </div>
+
+      <div class="priority-item strength">
+        <div class="pi-icon">✅</div>
+        <div class="pi-body">
+          <div class="pi-text"><strong>231 test suites, 1,753 tests</strong> — solid test file count with router, auth module, and admin pages all at Grade A (≥85% statements).</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Module coverage breakdown -->
-  <div style="margin-bottom:32px;">
-    <div class="section-title">📦 Module Coverage Breakdown (16 modules)</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
-      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #059669;text-align:center;">
-        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Total Modules</div>
-        <div style="font-size:32px;font-weight:800;color:#059669;">16</div>
-        <div style="font-size:11px;color:#9ca3af;">in src/modules/</div>
+  <!-- MODULE BREAKDOWN -->
+  <div class="section">
+    <div class="section-header"><span class="icon">📦</span> Module Coverage Breakdown</div>
+
+    <div class="kpi-grid" style="margin-bottom:20px;">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Modules</div>
+        <div class="kpi-value kv-blue">21</div>
       </div>
-      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #059669;text-align:center;">
-        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade A (≥85%)</div>
-        <div style="font-size:32px;font-weight:800;color:#059669;">5</div>
-        <div style="font-size:11px;color:#9ca3af;">admin, auth, airMonitoring, mixins, router</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Grade A–B (≥70%)</div>
+        <div class="kpi-value kv-green">8</div>
+        <div class="kpi-sub">router, mixins, admin, auth, airMonitoring, api, marketplace, tools, teams</div>
       </div>
-      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #f59e0b;text-align:center;">
-        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade B–C (50–84%)</div>
-        <div style="font-size:32px;font-weight:800;color:#f59e0b;">7</div>
-        <div style="font-size:11px;color:#9ca3af;">marketplace, tools, teams, ottSettings, clubs, virtualAds, store</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Grade C–D (25–69%)</div>
+        <div class="kpi-value kv-yellow">11</div>
+        <div class="kpi-sub">store, components, ottSettings, clubs, virtualAds, inventory, accounts, media, users, events, utils</div>
       </div>
-      <div style="background:white;border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);border-top:3px solid #dc2626;text-align:center;">
-        <div style="font-size:11px;color:#6b7280;text-transform:uppercase;font-weight:600;margin-bottom:4px;">Grade D–F (&lt;50%)</div>
-        <div style="font-size:32px;font-weight:800;color:#dc2626;">4</div>
-        <div style="font-size:11px;color:#9ca3af;">inventory, accounts, users, media, events, plugins</div>
+      <div class="kpi-card">
+        <div class="kpi-label">Grade F (&lt;25%)</div>
+        <div class="kpi-value kv-red">2</div>
+        <div class="kpi-sub">plugins (16.3%), events* (27.3%)</div>
       </div>
     </div>
 
-    <div class="card" style="padding:0;overflow:hidden;">
-      <table style="width:100%;border-collapse:collapse;">
+    <div class="tbl-wrap">
+      <table>
         <thead>
-          <tr>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">#</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Module</th>
-            <th style="padding:10px 16px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Grade</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Statements</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Branches</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Functions</th>
-            <th style="padding:10px 16px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;background:#f9fafb;border-bottom:2px solid #e5e7eb;">Files</th>
-          </tr>
+          <tr><th>#</th><th>Module</th><th>Grade</th><th>Statements</th><th>Branches</th><th>Functions</th><th>Files</th></tr>
         </thead>
         <tbody>
-          <!-- Grade A -->
-          <tr><td colspan="7" style="padding:6px 16px;background:#f0fdf4;font-size:11px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:0.05em;">🟢 Grade A — Excellent (≥85%)</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">1</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">router</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">4</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">2</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/mixins</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:100%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">100.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">1</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">3</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/admin</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:98.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">98.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82.4%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:80%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">80.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">3</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">4</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/auth</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:94.9%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">94.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.8%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:86.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">86.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">10</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">5</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/airMonitoring</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">A</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:89.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">89.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:84.6%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">84.6%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:72.7%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">72.7%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">3</td></tr>
-          <!-- Grade B -->
-          <tr><td colspan="7" style="padding:6px 16px;background:#eff6ff;font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.05em;">🔵 Grade B — Good (70–84%)</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">6</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/marketplace</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82.3%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:75%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">75.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.3%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">5</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">7</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/tools</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.8%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:82%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">82.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:59.4%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">59.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">12</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">8</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/teams</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:76%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">76.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:76.5%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">76.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:53.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">53.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">9</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">9</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">api</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">B</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:71.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">71.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.1%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:78.2%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">78.2%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">24</td></tr>
-          <!-- Grade C -->
-          <tr><td colspan="7" style="padding:6px 16px;background:#fffbeb;font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.05em;">🟡 Grade C — Fair (50–69%)</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">10</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">store</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:62.7%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">62.7%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:91.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">91.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:89.5%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">89.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">5</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">11</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/ottSettings</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:59.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">59.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:77%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">77.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:61.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">61.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">23</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">12</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/clubs</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:57.5%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">57.5%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:68.8%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">68.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:38.4%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">38.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">9</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">13</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/virtualAds</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">C</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:51.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">51.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:93.8%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">93.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:71%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">71.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">6</td></tr>
-          <!-- Grade D -->
-          <tr><td colspan="7" style="padding:6px 16px;background:#fff7ed;font-size:11px;font-weight:700;color:#9a3412;text-transform:uppercase;letter-spacing:0.05em;">🟠 Grade D — Poor (30–49%)</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">14</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/inventory</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:44.9%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">44.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:85.1%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">85.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:61.8%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">61.8%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">29</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">15</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/accounts</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:39.3%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">39.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:81.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">81.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:54%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">54.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">6</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">16</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/media</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:36.1%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">36.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:73.1%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">73.1%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:50%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">50.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">7</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">17</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/users</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#ffedd5;color:#9a3412;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">D</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:34.9%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">34.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:92.3%;background:#059669;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#059669;min-width:40px;">92.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:63.6%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">63.6%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">7</td></tr>
-          <!-- Grade F -->
-          <tr><td colspan="7" style="padding:6px 16px;background:#fef2f2;font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:0.05em;">🔴 Grade F — Critical (&lt;30%)</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">18</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">modules/events</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">F</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:27.3%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">27.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:74.9%;background:#10b981;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#10b981;min-width:40px;">74.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:56.9%;background:#f59e0b;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f59e0b;min-width:40px;">56.9%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">50</td></tr>
-          <tr><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-size:13px;color:#6b7280;">19</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;font-weight:600;font-size:14px;">plugins</td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;"><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;">F</span></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:16.3%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">16.3%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:40%;background:#f97316;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#f97316;min-width:40px;">40.0%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;background:#e5e7eb;border-radius:4px;height:8px;"><div style="width:17.4%;background:#dc2626;border-radius:4px;height:8px;"></div></div><span style="font-size:12px;font-weight:700;color:#dc2626;min-width:40px;">17.4%</span></div></td><td style="padding:9px 16px;border-bottom:1px solid #f3f4f6;text-align:center;color:#6b7280;font-size:13px;">11</td></tr>
+          <tr><td>1</td><td><strong>router</strong></td><td><span class="grade grade-A">A</span></td><td class="pgood num">100.0%</td><td class="pgood num">100.0%</td><td class="pgood num">100.0%</td><td class="num">4</td></tr>
+          <tr><td>2</td><td><strong>mixins</strong></td><td><span class="grade grade-A">A</span></td><td class="pgood num">100.0%</td><td class="pgood num">100.0%</td><td class="pgood num">100.0%</td><td class="num">1</td></tr>
+          <tr><td>3</td><td><strong>admin</strong></td><td><span class="grade grade-A">A</span></td><td class="pgood num">98.3%</td><td class="pgood num">82.4%</td><td class="pgood num">80.0%</td><td class="num">3</td></tr>
+          <tr><td>4</td><td><strong>auth</strong> <span style="font-size:11px;color:var(--muted);">(module)</span></td><td><span class="grade grade-A">A</span></td><td class="pgood num">94.9%</td><td class="pgood num">92.8%</td><td class="pgood num">86.5%</td><td class="num">10</td></tr>
+          <tr><td>5</td><td><strong>airMonitoring</strong></td><td><span class="grade grade-A">A</span></td><td class="pgood num">89.5%</td><td class="pgood num">84.6%</td><td class="pgood num">72.7%</td><td class="num">3</td></tr>
+          <tr><td>6</td><td><strong>marketplace</strong></td><td><span class="grade grade-B">B</span></td><td class="pgood num">82.3%</td><td class="pmid num">75.0%</td><td class="pgood num">78.3%</td><td class="num">5</td></tr>
+          <tr><td>7</td><td><strong>tools</strong></td><td><span class="grade grade-B">B</span></td><td class="pgood num">78.8%</td><td class="pgood num">82.0%</td><td class="pmid num">59.4%</td><td class="num">12</td></tr>
+          <tr><td>8</td><td><strong>teams</strong></td><td><span class="grade grade-B">B</span></td><td class="pmid num">75.0%</td><td class="pmid num">77.2%</td><td class="pmid num">57.7%</td><td class="num">9</td></tr>
+          <tr><td>9</td><td><strong>api</strong></td><td><span class="grade grade-B">B</span></td><td class="pmid num">71.7%</td><td class="pgood num">92.0%</td><td class="pmid num">77.6%</td><td class="num">24</td></tr>
+          <tr><td>10</td><td><strong>store</strong></td><td><span class="grade grade-C">C</span></td><td class="pmid num">62.7%</td><td class="pgood num">84.4%</td><td class="pgood num">89.5%</td><td class="num">5</td></tr>
+          <tr><td>11</td><td><strong>components</strong></td><td><span class="grade grade-C">C</span></td><td class="pmid num">66.4%</td><td class="pmid num">79.9%</td><td class="pmid num">53.9%</td><td class="num">53</td></tr>
+          <tr><td>12</td><td><strong>ottSettings</strong></td><td><span class="grade grade-C">C</span></td><td class="pmid num">59.7%</td><td class="pmid num">74.7%</td><td class="pmid num">61.9%</td><td class="num">23</td></tr>
+          <tr><td>13</td><td><strong>clubs</strong></td><td><span class="grade grade-C">C</span></td><td class="pmid num">57.5%</td><td class="pmid num">68.8%</td><td class="plow num">38.4%</td><td class="num">9</td></tr>
+          <tr><td>14</td><td><strong>virtualAds</strong></td><td><span class="grade grade-C">C</span></td><td class="pmid num">51.8%</td><td class="pgood num">93.8%</td><td class="pmid num">71.0%</td><td class="num">6</td></tr>
+          <tr><td>15</td><td><strong>inventory</strong></td><td><span class="grade grade-D">D</span></td><td class="pmid num">44.9%</td><td class="pgood num">85.1%</td><td class="pmid num">61.8%</td><td class="num">29</td></tr>
+          <tr><td>16</td><td><strong>accounts</strong></td><td><span class="grade grade-D">D</span></td><td class="pmid num">38.1%</td><td class="pgood num">81.9%</td><td class="pmid num">54.0%</td><td class="num">6</td></tr>
+          <tr><td>17</td><td><strong>utils</strong></td><td><span class="grade grade-D">D</span></td><td class="pmid num">38.4%</td><td class="pmid num">62.1%</td><td class="plow num">34.8%</td><td class="num">30</td></tr>
+          <tr><td>18</td><td><strong>media</strong></td><td><span class="grade grade-D">D</span></td><td class="pmid num">36.1%</td><td class="pmid num">73.1%</td><td class="pmid num">50.0%</td><td class="num">7</td></tr>
+          <tr><td>19</td><td><strong>users</strong></td><td><span class="grade grade-D">D</span></td><td class="plow num">34.9%</td><td class="pgood num">92.3%</td><td class="pmid num">63.6%</td><td class="num">7</td></tr>
+          <tr><td>20</td><td><strong>events</strong> ⚠️</td><td><span class="grade grade-D">D</span></td><td class="plow num">27.3%</td><td class="pmid num">74.9%</td><td class="pmid num">56.9%</td><td class="num">50</td></tr>
+          <tr><td>21</td><td><strong>plugins</strong> 🚨</td><td><span class="grade grade-F">F</span></td><td class="plow num">16.3%</td><td class="pmid num">40.0%</td><td class="plow num">17.4%</td><td class="num">11</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <div style="text-align:center;font-size:12px;color:#9ca3af;padding:16px 0;">
-    Generated by repo-quality-metrics · CMS v2.122.0 · Jest 27 · April 15, 2026
+  <div class="footer">
+    Generated by repo-quality-metrics &nbsp;·&nbsp; CMS v2.122.0 &nbsp;·&nbsp; Jest 27 &nbsp;·&nbsp; May 6, 2026
   </div>
+
 </div>
 </body>
 </html>
