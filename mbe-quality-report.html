@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBE Test Quality Report — dashboard-backend (MBE)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9fafb; color: #111827; }
+  .header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%); color: white; padding: 40px 48px; }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .header p { opacity: 0.8; font-size: 14px; }
+  .warning-banner { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px 48px; }
+  .warning-banner strong { color: #92400e; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 32px 48px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center; }
+  .card .value { font-size: 36px; font-weight: 800; margin-bottom: 4px; }
+  .card .label { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+  .card.red .value { color: #ef4444; }
+  .card.amber .value { color: #f59e0b; }
+  .card.blue .value { color: #3b82f6; }
+  .card.purple .value { color: #8b5cf6; }
+  .card.green .value { color: #22c55e; }
+  .section { background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #111827; display: flex; align-items: center; gap: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; padding: 8px 12px; border-bottom: 2px solid #e5e7eb; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+  tr:hover td { background: #f9fafb; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+  .insight { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px; }
+  .insight strong { color: #1d4ed8; }
+  .meta { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 Test Quality Report — dashboard-backend (MBE)</h1>
+  <p>Generated 2026-05-19 00:23 &nbsp;·&nbsp; Analysis method: <strong>Code Analysis</strong> (static) &nbsp;·&nbsp; Stack: javascript, node.js, express, jest, mongodb</p>
+  <p class="meta" style="margin-top:8px">Repository: https://github.com/Pixellot/dashboard-backend.git</p>
+</div>
+
+<div class="warning-banner">
+  ⚠️ <strong>Runner not executed:</strong> <code>node_modules</code> not installed in the analysis worktree. 
+  Statement/branch/function percentages are <strong>unavailable</strong>. Coverage assessment is based on static code analysis — mapping test files to source modules. 
+  Run <code>npm install &amp;&amp; npx jest --coverage</code> in the repo to get live metrics.
+</div>
+
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="cards">
+    <div class="card blue">
+      <div class="value">410</div>
+      <div class="label">Unit Tests (run)</div>
+    </div>
+    <div class="card purple">
+      <div class="value">577</div>
+      <div class="label">Tests Not Run<br>(need live env)</div>
+    </div>
+    <div class="card">
+      <div class="value">157</div>
+      <div class="label">Source Files</div>
+    </div>
+    <div class="card">
+      <div class="value">36,757</div>
+      <div class="label">Source Lines</div>
+    </div>
+    <div class="card">
+      <div class="value">0.96x</div>
+      <div class="label">Test/Source Ratio</div>
+    </div>
+    <div class="card red">
+      <div class="value">6</div>
+      <div class="label">High-Criticality Gaps</div>
+    </div>
+    <div class="card amber">
+      <div class="value">5</div>
+      <div class="label">Files with Zero Tests</div>
+    </div>
+  </div>
+
+  <!-- Key Insights -->
+  <div class="section">
+    <h2>🔍 Key Findings</h2>
+    <div class="insight">
+      <strong>Test suite is fragmented across 4 runners.</strong> Default jest run executes 219 unit tests. 
+      The <code>unit-new</code> suite adds 191 more. But 577 tests in functional+integration suites 
+      require a live environment and are <strong>never run in CI without explicit setup</strong>.
+    </div>
+    <div class="insight">
+      <strong>Critical business logic is undertested.</strong> 
+      <code>lib/tenant-handlers.js</code> (1142 lines), <code>lib/vas-event-handlers.js</code> (755 lines), 
+      <code>lib/authentication.js</code>, and <code>lib/db-handlers.js</code> have <strong>zero unit tests</strong>.
+    </div>
+    <div class="insight">
+      <strong>Large handlers are only partially covered.</strong> 
+      <code>streaming-action-handlers.js</code> (3593 lines) has only 2 functions tested. 
+      <code>event-handlers.js</code> (4390 lines, the largest file) covers only delete/insert/update 
+      — most GET and schedule logic is untested at unit level.
+    </div>
+    <div class="insight">
+      <strong>Best-covered area: eventsAnalytics.</strong> 
+      The analytics component (controller + service + DAL) has dedicated tests in <code>unit-new</code> 
+      with 48 test cases across 3 files — a good model to replicate elsewhere.
+    </div>
+  </div>
+
+  <!-- Test Suites Summary -->
+  <div class="section">
+    <h2>🧪 Test Suites Breakdown</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <h3 style="font-size:14px;color:#374151;margin-bottom:12px">✅ Executed by default (<code>npm test</code>)</h3>
+        <table>
+          <tr><th>Suite</th><th>Files</th><th>Tests</th><th>Type</th></tr>
+          <tr><td>Default jest (root)</td><td>21</td><td>219</td><td><span class="badge" style="background:#3b82f6;color:white">unit</span></td></tr>
+          <tr><td>unit-new (<code>npm run test:unit-new</code>)</td><td>19</td><td>191</td><td><span class="badge" style="background:#3b82f6;color:white">unit</span></td></tr>
+          <tr style="font-weight:700"><td>Total run</td><td>40</td><td>410</td><td></td></tr>
+        </table>
+      </div>
+      <div>
+        <h3 style="font-size:14px;color:#374151;margin-bottom:12px">❌ NOT executed (require live environment)</h3>
+        <table>
+          <tr><th>Suite</th><th>Files</th><th>Tests</th></tr>
+          <tr><td>functional</td><td>28</td><td style="color:#f59e0b;font-weight:700">558</td></tr>
+          <tr><td>integration</td><td>4</td><td style="color:#f59e0b;font-weight:700">19</td></tr>
+          <tr style="font-weight:700"><td>Total not run</td><td>32</td><td style="color:#ef4444">577</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not-Run Suites -->
+  <div class="section">
+    <h2>⛔ Not-Run Suites (live environment required)</h2>
+    <table>
+      <tr><th>Path</th><th>Script</th><th>Tests</th><th>Reason</th></tr>
+      <tr>
+      <td style="font-family:monospace;font-size:12px">__tests__/functional/suites/</td>
+      <td style="text-align:center"><code>test:functional</code></td>
+      <td style="text-align:center;font-weight:700;color:#f59e0b">558</td>
+      <td style="font-size:12px;color:#6b7280">Requires live MBE, MongoDB, RabbitMQ, AWS S3/SNS/SQS — excluded from default jest run (NODE_ENV=functional)</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">__tests__/integration/suites/</td>
+      <td style="text-align:center"><code>test:integration</code></td>
+      <td style="text-align:center;font-weight:700;color:#f59e0b">19</td>
+      <td style="font-size:12px;color:#6b7280">Requires live Redis and MongoDB connections (NODE_ENV=integration)</td>
+    </tr>
+    </table>
+  </div>
+
+  <!-- Priority Gaps -->
+  <div class="section">
+    <h2>🚨 Coverage Gaps (Priority Order)</h2>
+    <table>
+      <tr><th>File</th><th>Lines</th><th>Criticality</th><th>Issue</th><th>Recommendation</th></tr>
+      <tr>
+      <td style="font-family:monospace;font-size:12px">lib/tenant-handlers.js</td>
+      <td style="text-align:center">1142</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">1142-line tenant management module with ZERO unit tests</td>
+      <td style="font-size:12px;color:#374151">Add unit tests for getTenant, createTenant, updateTenant handlers. Mock MongoDal and rabbitHelpers. Multi-tenant isolation logic should be priority.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/authentication.js</td>
+      <td style="text-align:center">89</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">Authentication middleware completely untested — auth bypass or lockout bugs would go undetected</td>
+      <td style="font-size:12px;color:#374151">Add unit tests for token validation, JWT decode, and middleware flow. Small file (89 lines), highest security impact.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/vas-event-handlers.js</td>
+      <td style="text-align:center">755</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">VAS event pipeline handlers (755 lines) have zero unit tests; only covered by not-run functional tests</td>
+      <td style="font-size:12px;color:#374151">Add unit tests for VAS event processing, validation, and error paths. Mock vasService and vasUtils.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/db-handlers.js</td>
+      <td style="text-align:center">477</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">Database handler layer (477 lines) entirely untested</td>
+      <td style="font-size:12px;color:#374151">Add unit tests for connection setup, query helpers, and error handling. Mock mongodb driver.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/streaming-action-handlers.js</td>
+      <td style="text-align:center">3593</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">Only 2 of ~100+ functions tested (localHlsStatus, newRecording) in a 3593-line critical file controlling live broadcasts</td>
+      <td style="font-size:12px;color:#374151">Expand unit test coverage to cover startStreaming, stopStreaming, and stream status transitions.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/event-handlers.js</td>
+      <td style="text-align:center">4390</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px">Largest file (4390 lines); only 3 event operations tested. Most route handlers have no unit tests.</td>
+      <td style="font-size:12px;color:#374151">Add tests for getEvent, scheduleEvent, patchEvent, and event cloning. Focus on branches with business logic.</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/monitoring-handlers.js</td>
+      <td style="text-align:center">907</td>
+      <td><span style="background:#f59e0b;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">MEDIUM</span></td>
+      <td style="font-size:12px">Monitoring/health-check handlers (907 lines) fully untested</td>
+      <td style="font-size:12px;color:#374151">Add unit tests for health check endpoints and status aggregation logic.</td>
+    </tr>
+    </table>
+  </div>
+
+  <!-- Coverage by File -->
+  <div class="section">
+    <h2>📁 Coverage Assessment by File</h2>
+    <table>
+      <tr><th>File</th><th>Lines</th><th>Test Files</th><th>Covered By</th><th>Criticality</th><th>Gap Notes</th></tr>
+      <tr>
+      <td style="font-family:monospace;font-size:12px">lib/event-handlers.js</td>
+      <td style="text-align:center">4390</td>
+      <td style="text-align:center">3</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">most route handlers — only deleteEvent/insertEvent/updateEvent have unit tests</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/streaming-action-handlers.js</td>
+      <td style="text-align:center">3593</td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">~100+ handlers untested — only localHlsStatus and newRecording covered</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/venue-handlers.js</td>
+      <td style="text-align:center">3567</td>
+      <td style="text-align:center">4</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">most venue sync flows, bulk ops, lifecycle transitions</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/tenant-handlers.js</td>
+      <td style="text-align:center">1142</td>
+      <td style="text-align:center">0</td>
+      <td style="text-align:center"><span style="color:#ef4444">none</span></td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">ALL — zero test coverage</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/monitoring-handlers.js</td>
+      <td style="text-align:center">907</td>
+      <td style="text-align:center">0</td>
+      <td style="text-align:center"><span style="color:#ef4444">none</span></td>
+      <td><span style="background:#f59e0b;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">MEDIUM</span></td>
+      <td style="font-size:12px;color:#6b7280">ALL — zero test coverage</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/general-functions.js</td>
+      <td style="text-align:center">862</td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">partial — 16 test cases but file has many utility functions</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/vas-event-handlers.js</td>
+      <td style="text-align:center">755</td>
+      <td style="text-align:center">0</td>
+      <td style="text-align:center"><span style="color:#ef4444">none</span></td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">ALL — zero unit tests; only unreachable functional tests</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/db-handlers.js</td>
+      <td style="text-align:center">477</td>
+      <td style="text-align:center">0</td>
+      <td style="text-align:center"><span style="color:#ef4444">none</span></td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">ALL — zero test coverage</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/authentication.js</td>
+      <td style="text-align:center">89</td>
+      <td style="text-align:center">0</td>
+      <td style="text-align:center"><span style="color:#ef4444">none</span></td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">ALL — authentication middleware completely untested</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/zixi-action-handlers.js</td>
+      <td style="text-align:center">1004</td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#ef4444;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">HIGH</span></td>
+      <td style="font-size:12px;color:#6b7280">majority of Zixi API handlers — only 2 test cases</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">lib/components/eventsAnalytics/eventsAnalyticsService.js</td>
+      <td style="text-align:center">232</td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">unit</td>
+      <td><span style="background:#f59e0b;color:white;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600">MEDIUM</span></td>
+      <td style="font-size:12px;color:#6b7280">minor gaps — 38 test cases provide good coverage</td>
+    </tr>
+    </table>
+  </div>
+
+  <!-- Top Test Files -->
+  <div class="section">
+    <h2>📋 Top Test Files by Coverage (Top 15)</h2>
+    <table>
+      <tr><th>Test File</th><th>Type</th><th>Tests</th><th>Covers</th></tr>
+      <tr>
+      <td style="font-family:monospace;font-size:12px">functional/suites/marketplace.test.js</td>
+      <td><span style="background:#8b5cf6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">integration</span></td>
+      <td style="text-align:center;font-weight:700">163</td>
+      <td style="font-size:12px;color:#6b7280">lib/components/plugins/marketplaceManager.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">functional/suites/events.test.js</td>
+      <td><span style="background:#8b5cf6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">integration</span></td>
+      <td style="text-align:center;font-weight:700">89</td>
+      <td style="font-size:12px;color:#6b7280">lib/event-handlers.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">validations/schemaValidations/event.validation.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">58</td>
+      <td style="font-size:12px;color:#6b7280">lib/schemas.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">functional/suites/venue.test.js</td>
+      <td><span style="background:#8b5cf6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">integration</span></td>
+      <td style="text-align:center;font-weight:700">39</td>
+      <td style="font-size:12px;color:#6b7280">lib/venue-handlers.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">unit-new/suites/eventsAnalyticsService.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">38</td>
+      <td style="font-size:12px;color:#6b7280">lib/components/eventsAnalytics/eventsAnalyticsService.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">unit-new/suites/getAwsRunInstanceParams.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">23</td>
+      <td style="font-size:12px;color:#6b7280">lib/infrastructure/getAwsRunInstanceParams.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">unit-new/suites/multirate-stream-helper.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">21</td>
+      <td style="font-size:12px;color:#6b7280">lib/multirate-stream-helper.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">polyEvents/utilsTests.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">17</td>
+      <td style="font-size:12px;color:#6b7280">lib/components/polyEvent/polyEventUtils.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">general-finction.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">16</td>
+      <td style="font-size:12px;color:#6b7280">lib/general-functions.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">streamingSettings/streamingSettingsService.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">16</td>
+      <td style="font-size:12px;color:#6b7280">lib/components/streamingSettings/stsUtils.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">targetVersion/target-version-helper.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">16</td>
+      <td style="font-size:12px;color:#6b7280">lib/target-version-helper.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">validations/schemaValidations/tenant.validation.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">16</td>
+      <td style="font-size:12px;color:#6b7280">lib/schemas.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">unit-new/suites/shouldTriggerMlProcessForCloudRecording.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">14</td>
+      <td style="font-size:12px;color:#6b7280">lib/components/plugins/shouldTriggerMlProcessForCloudRecording.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">events/updateEvent.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">13</td>
+      <td style="font-size:12px;color:#6b7280">lib/event-handlers.js</td>
+    </tr><tr>
+      <td style="font-family:monospace;font-size:12px">events/insertEvent.test.js</td>
+      <td><span style="background:#3b82f6;color:white;padding:2px 8px;border-radius:9999px;font-size:11px">unit</span></td>
+      <td style="text-align:center;font-weight:700">12</td>
+      <td style="font-size:12px;color:#6b7280">lib/event-handlers.js</td>
+    </tr>
+    </table>
+  </div>
+
+  <div style="text-align:center;color:#9ca3af;font-size:12px;padding:24px 0">
+    Generated by Claude Code repo-quality-metrics skill · 2026-05-19 00:23<br>
+    Analysis method: static code analysis (test runner unavailable — node_modules not installed)
+  </div>
+
+</div>
+</body>
+</html>
