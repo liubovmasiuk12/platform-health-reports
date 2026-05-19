@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAPI — Test Quality Report</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%); padding: 32px 40px; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; }
+  .header .subtitle { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 10px; }
+  .badge-warn { background: #7c3f00; color: #fdba74; }
+  .badge-ok { background: #14532d; color: #86efac; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 40px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+  .card { background: #1e2130; border: 1px solid #2d3748; border-radius: 12px; padding: 20px; }
+  .card-title { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .card-value { font-size: 36px; font-weight: 700; }
+  .card-sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+  .red { color: #f87171; }
+  .yellow { color: #fbbf24; }
+  .green { color: #4ade80; }
+  .blue { color: #60a5fa; }
+  .section { margin-bottom: 32px; }
+  .section h2 { font-size: 18px; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #2d3748; }
+  .bar-container { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .bar-label { width: 100px; font-size: 13px; color: #94a3b8; }
+  .bar-track { flex: 1; background: #2d3748; border-radius: 4px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .bar-pct { width: 50px; text-align: right; font-size: 13px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #2d3748; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1a1d2e; vertical-align: top; }
+  tr:hover td { background: #252837; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .pill-high { background: #7f1d1d; color: #fca5a5; }
+  .pill-medium { background: #78350f; color: #fcd34d; }
+  .pill-low { background: #14532d; color: #86efac; }
+  .pill-unit { background: #1e3a5f; color: #93c5fd; }
+  .pill-component { background: #4a1d96; color: #c4b5fd; }
+  .pill-integration { background: #14532d; color: #86efac; }
+  .pill-notrun { background: #2d3748; color: #94a3b8; }
+  .gap-card { background: #1e2130; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #f87171; }
+  .gap-card.medium { border-left-color: #fbbf24; }
+  .gap-file { font-weight: 600; font-size: 13px; font-family: 'SF Mono', monospace; color: #60a5fa; margin-bottom: 4px; }
+  .gap-summary { font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
+  .gap-rec { font-size: 13px; color: #e2e8f0; background: #252837; padding: 8px 12px; border-radius: 6px; }
+  .not-run-box { background: #1e2130; border: 1px solid #2d3748; border-radius: 8px; padding: 16px; border-left: 3px solid #fbbf24; }
+  .footer { text-align: center; padding: 24px; color: #475569; font-size: 12px; border-top: 1px solid #2d3748; margin-top: 32px; }
+  .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  .progress-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .pct-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+  .pct-item { background: #252837; border-radius: 6px; padding: 8px 12px; }
+  .pct-item .label { font-size: 11px; color: #64748b; }
+  .pct-item .val { font-size: 20px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>partner-api (PAPI) — Test Quality Report
+    <span class="badge badge-warn">CRITICAL: 6% coverage</span>
+  </h1>
+  <div class="subtitle">Analysis method: runner + code-reading &nbsp;·&nbsp; Stack: JavaScript / Jest / Restify / Node.js &nbsp;·&nbsp; Generated: 2026-05-19</div>
+</div>
+
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-title">Statement Coverage</div>
+      <div class="card-value red">6.2%</div>
+      <div class="card-sub">48 / 771 statements</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Branch Coverage</div>
+      <div class="card-value red">2.7%</div>
+      <div class="card-sub">16 / 582 branches</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Function Coverage</div>
+      <div class="card-value red">5.2%</div>
+      <div class="card-sub">7 / 135 functions</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tests Passing</div>
+      <div class="card-value green">21 / 21</div>
+      <div class="card-sub">unit: 13 · component: 8</div>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card">
+      <div class="card-title">Source Files</div>
+      <div class="card-value blue">34</div>
+      <div class="card-sub">6,585 lines</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Test Files</div>
+      <div class="card-value blue">3 run + 12 not-run</div>
+      <div class="card-sub">2,069 total test lines</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Functional Tests</div>
+      <div class="card-value yellow">151 NOT RUN</div>
+      <div class="card-sub">require Tilt/kind env</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Test:Source Ratio</div>
+      <div class="card-value yellow">0.31</div>
+      <div class="card-sub">healthy is ≥ 0.5</div>
+    </div>
+  </div>
+
+  <!-- Coverage Bars -->
+  <div class="section">
+    <h2>Coverage by Metric</h2>
+    <div class="card">
+      <div class="bar-container">
+        <div class="bar-label">Statements</div>
+        <div class="bar-track"><div class="bar-fill" style="width:6.22%; background:#f87171;"></div></div>
+        <div class="bar-pct red">6.2%</div>
+      </div>
+      <div class="bar-container">
+        <div class="bar-label">Branches</div>
+        <div class="bar-track"><div class="bar-fill" style="width:2.74%; background:#f87171;"></div></div>
+        <div class="bar-pct red">2.7%</div>
+      </div>
+      <div class="bar-container">
+        <div class="bar-label">Functions</div>
+        <div class="bar-track"><div class="bar-fill" style="width:5.18%; background:#f87171;"></div></div>
+        <div class="bar-pct red">5.2%</div>
+      </div>
+      <div class="bar-container">
+        <div class="bar-label">Lines</div>
+        <div class="bar-track"><div class="bar-fill" style="width:6.15%; background:#f87171;"></div></div>
+        <div class="bar-pct red">6.2%</div>
+      </div>
+      <div style="margin-top:12px; font-size:12px; color:#64748b;">
+        ⚠ Only 2 files appear in runner output (events.js + lenient-json-parser.js). The remaining 32 source files are not instrumented by any runnable test.
+      </div>
+    </div>
+  </div>
+
+  <!-- File Coverage Table -->
+  <div class="section">
+    <h2>Coverage by File</h2>
+    <div class="card" style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Lines %</th>
+            <th>Stmts %</th>
+            <th>Branches %</th>
+            <th>Funcs %</th>
+            <th>Criticality</th>
+            <th>Covered By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">api/mw/lenient-json-parser.js</td>
+            <td class="green">100%</td><td class="green">100%</td><td class="yellow">83%</td><td class="green">100%</td>
+            <td><span class="pill pill-medium">medium</span></td>
+            <td><span class="pill pill-unit">unit</span> <span class="pill pill-component">component</span></td>
+          </tr>
+          <tr>
+            <td class="mono">api/controllers/events.js</td>
+            <td class="red">3.8%</td><td class="red">3.7%</td><td class="red">1.9%</td><td class="red">3.0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td><span class="pill pill-unit">unit (1 fn)</span></td>
+          </tr>
+          <tr>
+            <td class="mono">api/mw/auth.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/helpers/mbe-event-mapper.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/helpers/appbe-event-mapper.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/controllers/clubs.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/controllers/graphics.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/controllers/venues.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-high">high</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/helpers/epg-helper.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-medium">medium</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">api/helpers/mbe.js + appbe.js + sdkbe.js</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-medium">medium</span></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="mono">app.js + remaining 22 files</td>
+            <td class="red">0%</td><td class="red">0%</td><td class="red">0%</td><td class="red">0%</td>
+            <td><span class="pill pill-medium">medium</span></td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Test Files -->
+  <div class="section">
+    <h2>Test Files</h2>
+    <div class="card" style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Type</th>
+            <th>Tests</th>
+            <th>Pass</th>
+            <th>Classification Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">__tests__/unit/lenient-json-parser.test.js</td>
+            <td><span class="pill pill-unit">unit</span></td>
+            <td>11</td><td class="green">11</td>
+            <td style="color:#94a3b8; font-size:12px;">Mock EventEmitter requests, no real I/O</td>
+          </tr>
+          <tr>
+            <td class="mono">__tests__/unit/events-helper.test.js</td>
+            <td><span class="pill pill-unit">unit</span></td>
+            <td>2</td><td class="green">2</td>
+            <td style="color:#94a3b8; font-size:12px;">jest.mock('restify'), tests 1 function only</td>
+          </tr>
+          <tr>
+            <td class="mono">__tests__/integration/lenient-json-parser-integration.test.js</td>
+            <td><span class="pill pill-component">component</span></td>
+            <td>8</td><td class="green">8</td>
+            <td style="color:#94a3b8; font-size:12px;">Real in-process HTTP server, supertest, no external services</td>
+          </tr>
+          <tr style="opacity:0.6;">
+            <td class="mono">__tests__/functional/suites/ (12 files)</td>
+            <td><span class="pill pill-notrun">integration (NOT RUN)</span></td>
+            <td>151</td><td>—</td>
+            <td style="color:#94a3b8; font-size:12px;">axios → live API, MBE_MOCK_SERVER_CLIENT, requires Tilt/kind env</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Not-Run Suite Note -->
+  <div class="section">
+    <h2>Excluded Test Suite</h2>
+    <div class="not-run-box">
+      <div style="font-weight:600; color:#fbbf24; margin-bottom:8px;">⚠ 151 functional tests not executed in this environment</div>
+      <div style="font-size:13px; color:#94a3b8;">
+        <strong>Suite:</strong> <span class="mono">__tests__/functional/</span> (script: <span class="mono">npm run test:functional</span>)<br>
+        <strong>Reason:</strong> Requires a live PartnerAPI server, MBE mock server (MockServer), and full Tilt/kind Kubernetes environment.<br>
+        <strong>What they cover:</strong> Events (GET, POST, EPG, links, stream targets, VAS), Venues (stream types), Login, Extensions parameters list.<br>
+        <strong>Impact:</strong> These tests likely exercise large portions of the controllers — but their coverage is invisible in this report because they can't run locally without the full stack.
+      </div>
+    </div>
+  </div>
+
+  <!-- Gaps -->
+  <div class="section">
+    <h2>Top Coverage Gaps (Prioritized)</h2>
+
+    <div class="gap-card">
+      <div class="gap-file">api/mw/auth.js <span class="pill pill-high">HIGH</span> · 0% coverage</div>
+      <div class="gap-summary">JWT validation, tenant extraction, and cookie-signature checks are completely untested outside the functional suite. A bug here could allow token bypass or tenant data leakage.</div>
+      <div class="gap-rec">✦ Add unit tests mocking jwt-simple: cover valid token, expired token, missing cookie header, wrong tenant extraction. These are security-critical paths that must be verified independently of the full stack.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-file">api/helpers/mbe-event-mapper.js + appbe-event-mapper.js <span class="pill pill-high">HIGH</span> · 0% coverage</div>
+      <div class="gap-summary">625 lines of pure data transformation with zero unit test coverage. Silent wrong mappings return incorrect data to API partners with no observable error.</div>
+      <div class="gap-rec">✦ Pure transformation functions are ideal unit test targets (no I/O, deterministic). Add snapshot/assertion tests with representative MBE and AppBE payloads, especially for edge cases like missing fields and null values.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-file">api/controllers/events.js <span class="pill pill-high">HIGH</span> · 3.8% coverage (128/132 functions uncovered)</div>
+      <div class="gap-summary">The largest file in the codebase (1821 lines, 132 functions). Only notifyOnFilesUploaded error-forwarding is tested. All create/update/delete/stream-target/VAS paths are untested at the unit level.</div>
+      <div class="gap-rec">✦ Prioritize: createEvent, updateEvent, addStreamTarget, addVas — write paths where bugs cause data mutations. Mock mbe/appbe/sdkbe helper clients. The functional suite covers these via HTTP but can't run locally.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-file">api/controllers/clubs.js + graphics.js + venues.js <span class="pill pill-high">HIGH</span> · 0% coverage</div>
+      <div class="gap-summary">1827 lines across 3 resource controllers with zero unit test coverage. No test isolation at all for these resources.</div>
+      <div class="gap-rec">✦ Add at minimum one happy-path GET test and one create test per controller to establish a baseline and catch regressions.</div>
+    </div>
+
+    <div class="gap-card medium">
+      <div class="gap-file">api/helpers/epg-helper.js <span class="pill pill-medium">MEDIUM</span> · 0% coverage</div>
+      <div class="gap-summary">EPG schedule transformation (154 lines) is covered only by functional E2E tests that require the live stack.</div>
+      <div class="gap-rec">✦ Unit test the EPG parsing and transformation functions with fixture payloads. Pure transformation — easy to test, high ROI.</div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <h2>Recommendations Summary</h2>
+    <div class="card">
+      <ol style="padding-left:20px; font-size:14px; color:#e2e8f0; line-height:2;">
+        <li><strong>Auth middleware first</strong> — api/mw/auth.js is security-critical and has 0 unit tests. This is the highest-risk gap.</li>
+        <li><strong>Test the mapper layer</strong> — mbe-event-mapper.js and appbe-event-mapper.js are pure functions ideal for unit tests; bugs cause silent wrong data.</li>
+        <li><strong>Expand events.js coverage</strong> — 128 uncovered functions in the core resource controller. Focus on write paths first.</li>
+        <li><strong>Add baseline tests to clubs, graphics, venues</strong> — even 1-2 tests per controller catches regressions and enables safer refactoring.</li>
+        <li><strong>Track functional test results in CI</strong> — the 151 functional tests are valuable but invisible in standard coverage reports. Consider publishing coverage from the Tilt run.</li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  PAPI Test Quality Report · Generated 2026-05-19 · runner: jest --coverage (unit suite) · 21 tests run, 151 functional tests not run (require live environment)
+</div>
+
+</body>
+</html>
