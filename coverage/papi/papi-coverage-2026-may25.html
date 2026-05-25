@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test Quality — partner-api</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+         background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 24px; }
+  h1 { font-size: 22px; font-weight: 700; color: #f8fafc; }
+  h2 { font-size: 15px; font-weight: 600; color: #94a3b8; text-transform: uppercase;
+       letter-spacing: .05em; margin-bottom: 12px; }
+  a { color: #818cf8; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .meta { color: #64748b; font-size: 12px; margin-top: 4px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-4 { grid-template-columns: repeat(4,1fr); }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; }
+  .stat { font-size: 32px; font-weight: 800; }
+  .stat-label { font-size: 12px; color: #64748b; margin-top: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 10px; color: #64748b; font-weight: 600;
+       font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #334155; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e293b; vertical-align: middle; }
+  tr:hover td { background: #0f172a44; }
+  .badge-method { background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+                   padding: 4px 10px; font-size: 11px; color: #94a3b8; }
+  .section { margin-top: 24px; }
+  canvas { max-width: 160px; max-height: 160px; }
+  .legend { display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="max-width:1200px;margin:0 auto">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <h1><a href='https://github.com/Pixellot/partner-api' target='_blank'>partner-api</a></h1>
+      <div class="meta">Generated 2026-05-25 12:30 &nbsp;·&nbsp; Stack: javascript, node, restify, swagger, mocha (declared, unused)
+        &nbsp;·&nbsp; <span class="badge-method">code-analysis</span>
+        &nbsp;·&nbsp; Source: code-analysis (no test files exist in repository; npm test runs `swagger project test` against an empty test tree)
+      </div>
+    </div>
+  </div>
+
+  <!-- Coverage KPIs -->
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="stat" style="color:#6b7280">n/a</div>
+      <div class="stat-label">Statements</div>
+      
+    </div>
+    <div class="card">
+      <div class="stat" style="color:#6b7280">n/a</div>
+      <div class="stat-label">Branches</div>
+      
+    </div>
+    <div class="card">
+      <div class="stat" style="color:#6b7280">n/a</div>
+      <div class="stat-label">Functions</div>
+      
+    </div>
+    <div class="card">
+      <div class="stat" style="color:#6b7280">n/a</div>
+      <div class="stat-label">Lines</div>
+      
+    </div>
+  </div>
+
+  <!-- Test counts + donut -->
+  <div class="grid grid-2 section">
+    <div class="card" style="display:flex;align-items:center;gap:32px">
+      <canvas id="donut" width="160" height="160"></canvas>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card">
+      <h2>Summary</h2>
+      <table>
+        <tr><td style="color:#94a3b8">Total tests run</td><td style="font-weight:700">0</td></tr>
+        <tr><td style="color:#94a3b8">Passed</td><td style="color:#10b981;font-weight:700">0</td></tr>
+        <tr><td style="color:#94a3b8">Failed</td><td style="color:#10b981;font-weight:700">0</td></tr>
+        <tr><td style="color:#94a3b8">Integration (not run)</td><td style="color:#64748b">0</td></tr>
+        <tr><td style="color:#94a3b8">Source files</td><td>34</td></tr>
+        <tr><td style="color:#94a3b8">Test / source ratio</td><td>0.00</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gaps -->
+  <div class='card section'><h2>Coverage Gaps (4)</h2><table><thead><tr><th>Criticality</th><th>File</th><th>Coverage</th><th>Summary</th><th>Recommendation</th></tr></thead><tbody>
+        <tr>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td title="REPOSITORY-WIDE">REPOSITORY-WIDE</td>
+          <td style="color:#ef4444;font-weight:600">0.0%</td>
+          <td style="font-size:12px">The repository contains zero test files. `npm test` is wired to `swagger project test`, which runs the swagger test harness against an empty test tree. There are no unit, component, or integration tests. Every line of business logic (event/stream-target/topology/auth/partner mappers) is unverified by automated tests.</td>
+          <td style="font-size:12px;color:#a78bfa">Start by adding mocha+chai unit tests (devDependencies already declare them) for the high-criticality mappers and gateways: api/helpers/mbe-event-mapper.js, api/helpers/appbe-event-mapper.js, api/helpers/topology-assertion.js, api/helpers/auth.js, and api/mw/auth.js. These are small, pure-ish, and contain the non-trivial translation rules where silent bugs hurt most. Follow with supertest-based component tests for api/controllers/events.js (1,818 LOC) using nock or sinon to fake AppBE/MBE/SDKBE responses.</td>
+        </tr>
+        <tr>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td title="api/controllers/events.js">events.js</td>
+          <td style="color:#ef4444;font-weight:600">0.0%</td>
+          <td style="font-size:12px">1,818 LOC — the single largest module in the repo, with zero tests. Handles event CRUD, stream-target sync, extensions, breakdown runs and partner-event translation; bugs here surface as production data loss or broken broadcasts.</td>
+          <td style="font-size:12px;color:#a78bfa">Highest ROI target. Add supertest-driven controller tests covering the create/update/delete happy paths plus the breakdown-runs and extensions branches added in recent commits (PXCLD-11181, PXCLD-10423, PXCLD-10426).</td>
+        </tr>
+        <tr>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td title="api/helpers/mbe-event-mapper.js + api/helpers/appbe-event-mapper.js">appbe-event-mapper.js</td>
+          <td style="color:#ef4444;font-weight:600">0.0%</td>
+          <td style="font-size:12px">620 LOC combined of partner<->internal event translation with branching on protocol, production type, and stream targets. No tests pin the mapping contract; recent additions (DI-1691 australianFootball) had no regression net.</td>
+          <td style="font-size:12px;color:#a78bfa">Pure-function unit tests with fixture in/out pairs are the cheapest, highest-signal first pass.</td>
+        </tr>
+        <tr>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td title="api/mw/auth.js + api/helpers/auth.js">auth.js</td>
+          <td style="color:#ef4444;font-weight:600">0.0%</td>
+          <td style="font-size:12px">Auth middleware and JWT helpers — security boundary, completely untested.</td>
+          <td style="font-size:12px;color:#a78bfa">Add unit tests for token validation (valid/expired/malformed/wrong-issuer) and middleware behaviour (401/403/200 paths).</td>
+        </tr></tbody></table></div>
+
+  <!-- Coverage by file -->
+  <div class='card section'><h2>Coverage by File</h2><table><thead><tr><th>File</th><th>Statements</th><th>Branches</th><th>Functions</th><th>Criticality</th><th>Covered by</th><th>Uncovered</th></tr></thead><tbody>
+        <tr>
+          <td title="api/controllers/events.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">events.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module — event CRUD, stream-target mgmt, breakdown runs, extensions, partner event mapping</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/clubs.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">clubs.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module — club CRUD, hierarchy, partner mapping</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/graphics.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">graphics.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module — graphics CRUD, asset binding</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/venues.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">venues.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/mbe-event-mapper.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">mbe-event-mapper.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire mapper — protocol parsing, stream-target translation, topology assertion</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/streamTargets.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">streamTargets.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/highlights.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">highlights.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module — highlights CRUD, archiver triggers</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/monitoring.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">monitoring.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/appbe-event-mapper.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">appbe-event-mapper.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire mapper</td>
+        </tr>
+        <tr>
+          <td title="app.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">app.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">bootstrap, swagger init, middleware wiring</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/epg-helper.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">epg-helper.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">EPG transformation helpers</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/appbe.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">appbe.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">AppBE HTTP client wrapper</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/teams.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">teams.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/sdkbe.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">sdkbe.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">SDKBE HTTP client</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/users.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">users.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="config/local-development.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">local-development.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">config glue</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/mbe.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">mbe.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">MBE HTTP client</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/categories.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">categories.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/tenants.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">tenants.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/utils.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">utils.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">shared helpers</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/sdk.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">sdk.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/request.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">request.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">HTTP request helper</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/logger.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">logger.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">logger init</td>
+        </tr>
+        <tr>
+          <td title="api/mw/auth.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">auth.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">auth middleware</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/genius-scheduler.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">genius-scheduler.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/controllers/advertisements.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">advertisements.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">entire module</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/topology-assertion.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">topology-assertion.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">topology consistency helper</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/auth.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">auth.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#ef444420;color:#ef4444;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">high</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">JWT helpers</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/analytics.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">analytics.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">analytics emit</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/context.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">context.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">cls-hooked context</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/video-api-analytics.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">video-api-analytics.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">analytics emit</td>
+        </tr>
+        <tr>
+          <td title="api/mw/requestLogger.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">requestLogger.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">request logging mw</td>
+        </tr>
+        <tr>
+          <td title="api/helpers/aws.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">aws.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#f59e0b20;color:#f59e0b;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">medium</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">AWS SDK init</td>
+        </tr>
+        <tr>
+          <td title="api/mw/rid.js" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">rid.js</td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><div style="display:inline-flex;align-items:center;gap:6px"><div style="width:80px;height:10px;background:#374151;border-radius:5px;overflow:hidden"><div style="width:0px;height:100%;background:#ef4444;border-radius:5px"></div></div><span style="color:#ef4444;font-weight:600">0.0%</span></div></td>
+          <td><span style="background:#10b98120;color:#10b981;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;text-transform:uppercase">low</span></td>
+          <td></td>
+          <td style="font-size:11px;color:#9ca3af;max-width:200px">request-id middleware</td>
+        </tr></tbody></table></div>
+
+  <!-- Test files -->
+  
+
+  <!-- Not-run suites -->
+  
+
+</div>
+
+<script>
+(function() {
+  var data = [{"label": "Unit", "value": 0, "color": "#6366f1"}, {"label": "Component", "value": 0, "color": "#8b5cf6"}, {"label": "Integration", "value": 0, "color": "#0ea5e9"}, {"label": "Not run", "value": 0, "color": "#374151"}];
+  var canvas = document.getElementById('donut');
+  var legend = document.getElementById('legend');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var total = data.reduce(function(s,d){return s+d.value;},0);
+  if (total === 0) {
+    ctx.fillStyle = '#374151';
+    ctx.beginPath();
+    ctx.arc(80,80,70,0,Math.PI*2);
+    ctx.fill();
+  } else {
+    var start = -Math.PI/2;
+    data.forEach(function(d) {
+      if (!d.value) return;
+      var slice = (d.value / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(80,80);
+      ctx.arc(80,80,70,start,start+slice);
+      ctx.closePath();
+      ctx.fillStyle = d.color;
+      ctx.fill();
+      start += slice;
+    });
+  }
+  // Donut hole
+  ctx.beginPath();
+  ctx.arc(80,80,42,0,Math.PI*2);
+  ctx.fillStyle = '#1e293b';
+  ctx.fill();
+  // Center text
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'bold 20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(total, 80, 80);
+
+  data.forEach(function(d) {
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = '<div class="legend-dot" style="background:'+d.color+'"></div>'
+      + '<span>'+d.label+': <strong>'+d.value+'</strong></span>';
+    legend.appendChild(item);
+  });
+})();
+</script>
+</body>
+</html>
