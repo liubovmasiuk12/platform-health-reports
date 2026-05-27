@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Events – Extension Analysis (2026-05-20 to 2026-05-27)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#f0f2f5; color:#1a1a2e; }
+header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:white; padding:28px 40px; }
+header h1 { font-size:1.7rem; font-weight:700; }
+header p { opacity:.7; font-size:.9rem; margin-top:4px; }
+.container { max-width:1400px; margin:0 auto; padding:28px 24px; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
+.stat-card { background:white; border-radius:12px; padding:22px 24px; box-shadow:0 2px 8px rgba(0,0,0,.07); }
+.stat-card .label { font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:#666; margin-bottom:6px; }
+.stat-card .value { font-size:2rem; font-weight:700; color:#1a1a2e; }
+.stat-card .note { font-size:.75rem; color:#999; margin-top:4px; }
+.section { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,.07); margin-bottom:24px; }
+.section h2 { font-size:1.1rem; font-weight:600; margin-bottom:18px; color:#1a1a2e; padding-bottom:10px; border-bottom:2px solid #f0f2f5; }
+.chart-wrap { position:relative; height:320px; }
+.chart-wrap-lg { position:relative; height:400px; }
+table { width:100%; border-collapse:collapse; font-size:.88rem; }
+th { background:#f8f9fa; font-weight:600; text-align:left; padding:10px 14px; border-bottom:2px solid #e9ecef; }
+td { padding:9px 14px; border-bottom:1px solid #f0f2f5; vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:#fafbff; }
+.badge { display:inline-block; padding:2px 10px; border-radius:99px; font-size:.78rem; font-weight:600; color:white; }
+.ext-pill { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.75rem; font-weight:600; color:white; margin:2px; }
+.tenant-pill { display:inline-block; padding:3px 10px; border-radius:6px; font-size:.75rem; font-weight:600; color:white; margin:2px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+@media(max-width:900px) { .two-col { grid-template-columns:1fr; } }
+.progress-bar { background:#e9ecef; border-radius:4px; height:8px; overflow:hidden; }
+.progress-bar-fill { height:100%; border-radius:4px; }
+.scroll-table { overflow-x:auto; }
+.info-note { background:#e8f4fd; border-left:4px solid #4BACC6; padding:10px 14px; border-radius:4px; font-size:.85rem; color:#1a1a2e; margin-bottom:16px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Partner Events – Extension Usage Analysis</h1>
+  <p>Period: 2026-05-20 to 2026-05-27 &nbsp;|&nbsp; Generated: 2026-05-27</p>
+</header>
+<div class="container">
+
+  <!-- KPI Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="label">Total Events</div>
+      <div class="value">2000</div>
+      <div class="note">unique creation requests</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">With Extensions</div>
+      <div class="value">2000</div>
+      <div class="note">events</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Extension Applications</div>
+      <div class="value">2766</div>
+      <div class="note">sum across all extensions</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Unique Extensions</div>
+      <div class="value">6</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Unique Tenants</div>
+      <div class="value">3</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Unique Clubs</div>
+      <div class="value">409</div>
+    </div>
+  </div>
+
+  <div class="info-note">
+    ℹ️ <strong>Note:</strong> "Extension Applications" (2766) exceeds "With Extensions" (2000) because some events apply multiple extensions simultaneously (e.g. AF Replay Live + AF Yellow Line are always applied together on the same 766 events).
+  </div>
+
+  <!-- Tenant bar chart -->
+  <div class="section">
+    <h2>Events by Tenant (Top 20)</h2>
+    <div class="chart-wrap-lg">
+      <canvas id="tenantChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Extension bar chart -->
+  <div class="section">
+    <h2>Events per Extension (Total)</h2>
+    <div class="chart-wrap">
+      <canvas id="extBarChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Daily trend -->
+  <div class="section">
+    <h2>Daily Events by Extension</h2>
+    <div class="chart-wrap-lg">
+      <canvas id="dailyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- Extension table -->
+    <div class="section">
+      <h2>Extension Breakdown</h2>
+      <div class="scroll-table">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Name</th><th>ID</th><th>Events</th><th>Share</th></tr>
+        </thead>
+        <tbody>
+<tr>
+      <td>1</td>
+      <td><span class="ext-pill" style="background:#4F81BD">AF Replay Live</span></td>
+      <td><code style="font-size:.75rem;color:#555">67a1f202678c7ae2b65cc8ec</code></td>
+      <td><strong>766</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:38.3%;background:#4F81BD"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">38.3%</span>
+        </div>
+      </td>
+    </tr>
+<tr>
+      <td>2</td>
+      <td><span class="ext-pill" style="background:#C0504D">AF Yellow Line</span></td>
+      <td><code style="font-size:.75rem;color:#555">6818d4c386671ce17748d4e9</code></td>
+      <td><strong>766</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:38.3%;background:#C0504D"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">38.3%</span>
+        </div>
+      </td>
+    </tr>
+<tr>
+      <td>3</td>
+      <td><span class="ext-pill" style="background:#9BBB59">AI Player Highlights - Data</span></td>
+      <td><code style="font-size:.75rem;color:#555">68c12f0420b7b60a87504c81</code></td>
+      <td><strong>754</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:37.7%;background:#9BBB59"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">37.7%</span>
+        </div>
+      </td>
+    </tr>
+<tr>
+      <td>4</td>
+      <td><span class="ext-pill" style="background:#8064A2">Advanced GFX</span></td>
+      <td><code style="font-size:.75rem;color:#555">66a9e8a41496838cbad5d8ea</code></td>
+      <td><strong>364</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:18.2%;background:#8064A2"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">18.2%</span>
+        </div>
+      </td>
+    </tr>
+<tr>
+      <td>5</td>
+      <td><span class="ext-pill" style="background:#4BACC6">Coupled Events</span></td>
+      <td><code style="font-size:.75rem;color:#555">676d6cf2784af0110b179d74</code></td>
+      <td><strong>105</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:5.2%;background:#4BACC6"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">5.2%</span>
+        </div>
+      </td>
+    </tr>
+<tr>
+      <td>6</td>
+      <td><span class="ext-pill" style="background:#F79646">Sport Engine</span></td>
+      <td><code style="font-size:.75rem;color:#555">67ceea69ac14c9be58d6dd48</code></td>
+      <td><strong>11</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-bar" style="flex:1"><div class="progress-bar-fill" style="width:0.5%;background:#F79646"></div></div>
+          <span style="font-size:.8rem;width:38px;text-align:right">0.5%</span>
+        </div>
+      </td>
+    </tr>
+      </tbody></table></div>
+    </div>
+
+    <!-- Combo table -->
+    <div class="section">
+      <h2>Extension Combinations</h2>
+      <div class="scroll-table">
+      <table>
+        <thead><tr><th>Extensions Applied Together</th><th>Events</th></tr></thead>
+        <tbody>
+<tr><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line</span></td><td><strong>766</strong></td></tr>
+<tr><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data</span></td><td><strong>754</strong></td></tr>
+<tr><td><span class="ext-pill" style="background:#8064A2" title="66a9e8a41496838cbad5d8ea">Advanced GFX</span></td><td><strong>364</strong></td></tr>
+<tr><td><span class="ext-pill" style="background:#4BACC6" title="676d6cf2784af0110b179d74">Coupled Events</span></td><td><strong>105</strong></td></tr>
+<tr><td><span class="ext-pill" style="background:#F79646" title="67ceea69ac14c9be58d6dd48">Sport Engine</span></td><td><strong>11</strong></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <!-- Tenant detail table -->
+  <div class="section">
+    <h2>Tenant Summary</h2>
+    <div class="scroll-table">
+    <table>
+      <thead><tr><th>#</th><th>Tenant</th><th>Events</th><th>Clubs</th><th>Extensions Used</th></tr></thead>
+      <tbody>
+<tr><td>1</td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><strong>1520</strong></td><td>396</td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (766)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (766)</span><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (754)</span></td></tr>
+<tr><td>2</td><td><span class='tenant-pill' style='background:#E91E63'>ifaLeagues</span></td><td><strong>364</strong></td><td>9</td><td><span class="ext-pill" style="background:#8064A2" title="66a9e8a41496838cbad5d8ea">Advanced GFX (364)</span></td></tr>
+<tr><td>3</td><td><span class='tenant-pill' style='background:#4CAF50'>sportsEngine</span></td><td><strong>116</strong></td><td>4</td><td><span class="ext-pill" style="background:#4BACC6" title="676d6cf2784af0110b179d74">Coupled Events (105)</span><span class="ext-pill" style="background:#F79646" title="67ceea69ac14c9be58d6dd48">Sport Engine (11)</span></td></tr>
+      </tbody></table></div>
+  </div>
+
+  <!-- Top clubs -->
+  <div class="section">
+    <h2>Top Clubs by Events with Extensions</h2>
+    <div class="scroll-table">
+    <table>
+      <thead><tr><th>#</th><th>Club Name</th><th>Tenant</th><th>Club ID</th><th>Events</th><th>Extensions</th></tr></thead>
+      <tbody>
+<tr><td>1</td><td><strong>ליגת ותיקים</strong></td><td><span class='tenant-pill' style='background:#E91E63'>ifaLeagues</span></td><td><code style='font-size:.75rem'>6746e2e4583591d540bfc2c0</code></td><td><strong>278</strong></td><td><span class="ext-pill" style="background:#8064A2" title="66a9e8a41496838cbad5d8ea">Advanced GFX (278)</span></td></tr>
+<tr><td>2</td><td><strong>Abilene Youth Sports Authority</strong></td><td><span class='tenant-pill' style='background:#4CAF50'>sportsEngine</span></td><td><code style='font-size:.75rem'>671b96858ccaf36d9f01b900</code></td><td><strong>96</strong></td><td><span class="ext-pill" style="background:#4BACC6" title="676d6cf2784af0110b179d74">Coupled Events (96)</span></td></tr>
+<tr><td>3</td><td><strong>סקציה נס ציונה - נוער לאומית</strong></td><td><span class='tenant-pill' style='background:#E91E63'>ifaLeagues</span></td><td><code style='font-size:.75rem'>6567048b5fbd4f19677d9bcf</code></td><td><strong>78</strong></td><td><span class="ext-pill" style="background:#8064A2" title="66a9e8a41496838cbad5d8ea">Advanced GFX (78)</span></td></tr>
+<tr><td>4</td><td><strong>PlayOn! - Hazen - North Dakota</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5f2c5ee2ef3317000883ce61</code></td><td><strong>41</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (19)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (11)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (11)</span></td></tr>
+<tr><td>5</td><td><strong>PlayOn! - Century - Idaho</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5d67dcc8199cab0b77ddb632</code></td><td><strong>36</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (16)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>6</td><td><strong>PlayOn! - Marshall - Virginia</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>602c14890b5b8aa7d5485548</code></td><td><strong>34</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (17)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (17)</span></td></tr>
+<tr><td>7</td><td><strong>PlayOn! - Culpeper County - Virginia</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5c01babe1a7f9137668d9690</code></td><td><strong>31</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (23)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (4)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (4)</span></td></tr>
+<tr><td>8</td><td><strong>PlayOn! - Seaforth High School - North Carolina</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>60b7c0a9f3c8763ddf6c53f7</code></td><td><strong>30</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (16)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (7)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (7)</span></td></tr>
+<tr><td>9</td><td><strong>PlayOn! - Unity - Illinois</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5b082b9b16bb2b6254b69425</code></td><td><strong>28</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (14)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (14)</span></td></tr>
+<tr><td>10</td><td><strong>PlayOn! - Granite Hills (El Cajon) - California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>606f5349f828ea18e3883334</code></td><td><strong>28</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (14)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (14)</span></td></tr>
+<tr><td>11</td><td><strong>PlayOn! - External Content</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>683f5fd59cf4934b331562a6</code></td><td><strong>28</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (14)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (14)</span></td></tr>
+<tr><td>12</td><td><strong>PlayOn! - Valley Forge - Ohio</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>6657844f4637192f8f2a72e6</code></td><td><strong>25</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (13)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (6)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (6)</span></td></tr>
+<tr><td>13</td><td><strong>PlayOn! - Wolf Point High School - Montana</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5fb6d9ecdd5f090008b2dae7</code></td><td><strong>24</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (14)</span><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (5)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (5)</span></td></tr>
+<tr><td>14</td><td><strong>PlayOn! - Cheatham County Central - Tennessee</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>6022c5d1c26516e04fff7712</code></td><td><strong>24</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (24)</span></td></tr>
+<tr><td>15</td><td><strong>PlayOn! - Mentor - Ohio</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5f4e67a63aa2a8000881b196</code></td><td><strong>24</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (12)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (12)</span></td></tr>
+<tr><td>16</td><td><strong>PlayOn! - William Byrd - Virginia</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>603d0869fd56bb1a204a7ea4</code></td><td><strong>24</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (12)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (12)</span></td></tr>
+<tr><td>17</td><td><strong>PlayOn! - North Henderson - North Carolina</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5ee914726efe410009c764c6</code></td><td><strong>20</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>18</td><td><strong>PlayOn! - East Jackson - Georgia</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>69dd40cd9300a54fb35ef203</code></td><td><strong>20</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>19</td><td><strong>PlayOn! - Bear River California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>63b5e610a24de30ede24a744</code></td><td><strong>20</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>20</td><td><strong>PlayOn! - Moreau Catholic - California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>62d1be2416095c6fd54d3972</code></td><td><strong>20</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>21</td><td><strong>PlayOn! - Ayala - California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>604ac9ee1233921e304ee3f3</code></td><td><strong>20</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (10)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (10)</span></td></tr>
+<tr><td>22</td><td><strong>PlayOn! - Ligonier Valley HS - Pennsylvania</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5fa063d2b717c80008f92b80</code></td><td><strong>19</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (19)</span></td></tr>
+<tr><td>23</td><td><strong>Palm Desert High School - California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5ff8b19011df38193a0ba7dc</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (9)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (9)</span></td></tr>
+<tr><td>24</td><td><strong>PlayOn! Quaboag Regional - Massachusetts</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>602ae7cc5f8a19217d083ea5</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (9)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (9)</span></td></tr>
+<tr><td>25</td><td><strong>PlayOn! - Timberlake - Idaho</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5f43f306ba74fb000ad61026</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (9)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (9)</span></td></tr>
+<tr><td>26</td><td><strong>PlayOn! - Artesia - California</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5d97b545888e81751d0c00fc</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (9)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (9)</span></td></tr>
+<tr><td>27</td><td><strong>PlayOn! - Mattawan - MIchigan</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>6905235a7ed291d6d9d6455c</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (18)</span></td></tr>
+<tr><td>28</td><td><strong>PlayOn! - Eastern Alamance - North Carolina</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>68a4a46d2589d0326f42949f</code></td><td><strong>18</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (9)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (9)</span></td></tr>
+<tr><td>29</td><td><strong>PlayOn! - Leesville Road - North Carolina</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5d7a483fc0055d0ad6569f8e</code></td><td><strong>16</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (8)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (8)</span></td></tr>
+<tr><td>30</td><td><strong>PlayOn! - Biglerville - Pennsylvania</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>62cda1c730556766645627c4</code></td><td><strong>16</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (8)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (8)</span></td></tr>
+<tr><td>31</td><td><strong>PlayOn! - Carver High School - North Carolina</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5fa0600d2e07dc0008709215</code></td><td><strong>16</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (8)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (8)</span></td></tr>
+<tr><td>32</td><td><strong>PlayOn! - Eureka - Illinois</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>617ff7bc2cb00e29fcb0f4b5</code></td><td><strong>16</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (8)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (8)</span></td></tr>
+<tr><td>33</td><td><strong>PlayOn! - Moriarty - New Mexico</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5f791483acc5fa00094079b1</code></td><td><strong>16</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (8)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (8)</span></td></tr>
+<tr><td>34</td><td><strong>PlayOn! - Mansfield - Arkansas</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>6132af137c28120dd8ace1c6</code></td><td><strong>15</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (15)</span></td></tr>
+<tr><td>35</td><td><strong>PlayOn! - Joseph A. Foran - Connecticut</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5ec28afc052aba00097213c4</code></td><td><strong>15</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (15)</span></td></tr>
+<tr><td>36</td><td><strong>PlayOn! - Linganore - Maryland</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>61a7ccc0dd17a7235c3795c9</code></td><td><strong>15</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (15)</span></td></tr>
+<tr><td>37</td><td><strong>PlayOn! - Battle Creek - Michigan</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>615b893a964a13838624c666</code></td><td><strong>15</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (15)</span></td></tr>
+<tr><td>38</td><td><strong>PlayOn! - Junction - Texas</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>5f4d06f6b5568300082bfedd</code></td><td><strong>15</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (15)</span></td></tr>
+<tr><td>39</td><td><strong>PlayOn! - El Dorado - Arkansas</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>620eb63f306903ea744ab41d</code></td><td><strong>14</strong></td><td><span class="ext-pill" style="background:#9BBB59" title="68c12f0420b7b60a87504c81">AI Player Highlights - Data (14)</span></td></tr>
+<tr><td>40</td><td><strong>PlayOn! - Swainsboro - Georgia</strong></td><td><span class='tenant-pill' style='background:#2196F3'>playOnPoly</span></td><td><code style='font-size:.75rem'>6890f44f4fb7aea7658bd9ca</code></td><td><strong>14</strong></td><td><span class="ext-pill" style="background:#4F81BD" title="67a1f202678c7ae2b65cc8ec">AF Replay Live (7)</span><span class="ext-pill" style="background:#C0504D" title="6818d4c386671ce17748d4e9">AF Yellow Line (7)</span></td></tr>
+      </tbody></table></div>
+  </div>
+
+  <!-- Production types -->
+  <div class="section">
+    <h2>Production Types per Extension</h2>
+    <div class="chart-wrap">
+      <canvas id="prodTypeChart"></canvas>
+    </div>
+  </div>
+
+</div>
+<script>
+
+const extLabels = ["AF Replay Live", "AF Yellow Line", "AI Player Highlights - Data", "Advanced GFX", "Coupled Events", "Sport Engine"];
+const extFullLabels = ["AF Replay Live (67a1f202678c7ae2b65cc8ec)", "AF Yellow Line (6818d4c386671ce17748d4e9)", "AI Player Highlights - Data (68c12f0420b7b60a87504c81)", "Advanced GFX (66a9e8a41496838cbad5d8ea)", "Coupled Events (676d6cf2784af0110b179d74)", "Sport Engine (67ceea69ac14c9be58d6dd48)"];
+const extCounts = [766, 766, 754, 364, 105, 11];
+const extColors = ["#4F81BD", "#C0504D", "#9BBB59", "#8064A2", "#4BACC6", "#F79646"];
+const dayLabels = ["2026-05-22", "2026-05-23", "2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27"];
+const dayDatasets = [{"label": "AF Replay Live", "fullLabel": "AF Replay Live (67a1f202678c7ae2b65cc8ec)", "data": [105, 96, 70, 93, 268, 134], "color": "#4F81BD"}, {"label": "AF Yellow Line", "fullLabel": "AF Yellow Line (6818d4c386671ce17748d4e9)", "data": [105, 96, 70, 93, 268, 134], "color": "#C0504D"}, {"label": "AI Player Highlights - Data", "fullLabel": "AI Player Highlights - Data (68c12f0420b7b60a87504c81)", "data": [111, 114, 33, 72, 335, 89], "color": "#9BBB59"}, {"label": "Advanced GFX", "fullLabel": "Advanced GFX (66a9e8a41496838cbad5d8ea)", "data": [31, 61, 74, 73, 74, 51], "color": "#8064A2"}, {"label": "Coupled Events", "fullLabel": "Coupled Events (676d6cf2784af0110b179d74)", "data": [6, 0, 0, 1, 0, 98], "color": "#4BACC6"}, {"label": "Sport Engine", "fullLabel": "Sport Engine (67ceea69ac14c9be58d6dd48)", "data": [0, 3, 3, 3, 0, 2], "color": "#F79646"}];
+const tenantLabels = ["playOnPoly", "ifaLeagues", "sportsEngine"];
+const tenantData = [1520, 364, 116];
+const tenantColors = ["#2196F3", "#E91E63", "#4CAF50"];
+
+// Tenant bar chart
+new Chart(document.getElementById('tenantChart'), {
+  type: 'bar',
+  data: {
+    labels: tenantLabels,
+    datasets: [{ label: 'Events', data: tenantData, backgroundColor: tenantColors, borderRadius: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: i => ' Events: ' + i.raw } } },
+    scales: { y: { beginAtZero: true, grid: { color: '#f0f2f5' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Extension bar chart
+new Chart(document.getElementById('extBarChart'), {
+  type: 'bar',
+  data: { labels: extLabels, datasets: [{ label: 'Events', data: extCounts, backgroundColor: extColors, borderRadius: 6 }] },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { title: i => extFullLabels[i[0].dataIndex], label: i => ' Events: ' + i.raw } }
+    },
+    scales: { y: { beginAtZero: true, grid: { color: '#f0f2f5' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Daily chart
+new Chart(document.getElementById('dailyChart'), {
+  type: 'line',
+  data: {
+    labels: dayLabels,
+    datasets: dayDatasets.map(ds => ({
+      label: ds.label, data: ds.data,
+      borderColor: ds.color, backgroundColor: ds.color + '22',
+      fill: false, tension: 0.3, pointRadius: 4, pointHoverRadius: 6
+    }))
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom' } },
+    scales: { y: { beginAtZero: true, grid: { color: '#f0f2f5' } }, x: { grid: { color: '#f0f2f5' } } }
+  }
+});
+
+// Production types
+new Chart(document.getElementById('prodTypeChart'), {
+  type: 'bar',
+  data: { labels: extLabels, datasets: [{"label": "americanFootball", "data": [766, 766, 0, 0, 0, 0], "backgroundColor": "#4F81BD", "borderRadius": 4}, {"label": "baseball", "data": [0, 0, 0, 0, 0, 11], "backgroundColor": "#C0504D", "borderRadius": 4}, {"label": "basketball", "data": [0, 0, 754, 0, 0, 0], "backgroundColor": "#9BBB59", "borderRadius": 4}, {"label": "leftside", "data": [0, 0, 0, 0, 53, 0], "backgroundColor": "#8064A2", "borderRadius": 4}, {"label": "rightside", "data": [0, 0, 0, 0, 52, 0], "backgroundColor": "#4BACC6", "borderRadius": 4}, {"label": "soccer", "data": [0, 0, 0, 364, 0, 0], "backgroundColor": "#F79646", "borderRadius": 4}] },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      tooltip: { callbacks: { title: i => extFullLabels[i[0].dataIndex] } },
+      legend: { position: 'bottom' }
+    },
+    scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: '#f0f2f5' } } }
+  }
+});
+</script>
+</body>
+</html>
